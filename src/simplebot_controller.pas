@@ -32,7 +32,6 @@ const
   _AI_SESSION_VISITED = 'AI_VISITED';
   _AI_SESSION_LASTVISIT = 'AI_LASTVISIT';
 
-
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
 
@@ -42,6 +41,7 @@ type
   THandlerCallback = function(const ActionName: string;
     Params: TStrings): string of object;
   THandlerCallbackMap = specialize TStringHashMap<THandlerCallback>;
+
 
   { TSimpleBotModule }
 
@@ -58,7 +58,7 @@ type
     procedure LoadConfig(DataName: string);
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
-    function execHandler( ActionName, Message:string):string;
+    function execHandler(ActionName, Message: string): string;
     function URL_Handler(const ActionName: string; Params: TStrings): string;
 
     // example handler
@@ -69,7 +69,7 @@ type
     constructor Create; virtual;
     destructor Destroy; virtual;
 
-    function Exec( Message: string):string;
+    function Exec(Message: string): string;
 
     property Debug: boolean read getDebug write setDebug;
     property TelegramToken: string read FTelegramToken write FTelegramToken;
@@ -152,7 +152,7 @@ end;
 
 procedure TSimpleBotModule.setDebug(AValue: boolean);
 begin
-  SimpleAI.Debug:= AValue;
+  SimpleAI.Debug := AValue;
 end;
 
 function TSimpleBotModule.getDebug: boolean;
@@ -172,21 +172,72 @@ end;
 
 function TSimpleBotModule.execHandler(ActionName, Message: string): string;
 var
-  i : integer;
-  h : THandlerCallback;
+  i: integer;
+  h: THandlerCallback;
 begin
   Result := SimpleAI.ResponseText;
-  i := ___HandlerCallbackMap.IndexOf( ActionName);
+  i := ___HandlerCallbackMap.IndexOf(ActionName);
   if i = -1 then
     Exit;
   h := ___HandlerCallbackMap.Data[i];
-  Result := h( ActionName, SimpleAI.Parameters);
+  Result := h(ActionName, SimpleAI.Parameters);
 end;
 
-function TSimpleBotModule.URL_Handler(const ActionName: string; Params: TStrings
-  ): string;
+function TSimpleBotModule.URL_Handler(const ActionName: string;
+  Params: TStrings): string;
+var
+  i: integer;
+  lst: TStrings;
+  s, url, method, parameters: string;
+  httpClient: THTTPLib;
+  httpResponse: IHTTPResponse;
 begin
-  Result := ActionName + ':==';
+  lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
+  if lst.Count = 1 then
+    Exit;
+
+  method := 'get';
+  if lst.Count = 2 then
+    url := lst[1]
+  else
+  begin
+    method := lst[1];
+    url := lst[2];
+  end;
+
+  if pos('?', url) = 0 then
+    url := url + '?';
+
+  httpClient := THTTPLib.Create;
+  parameters := '';
+  for i := 0 to SimpleAI.Parameters.Count - 1 do
+  begin
+    if method = 'get' then
+    begin
+      if i <= SimpleAI.Parameters.Count - 1 then
+        parameters := parameters + '&';
+      parameters := parameters + SimpleAI.Parameters.Names[i] + '=' +
+        SimpleAI.Parameters.ValueFromIndex[i];
+    end;
+    if method = 'post' then
+    begin
+      s := SimpleAI.Parameters.Names[i];
+      httpClient.FormData[s] := SimpleAI.Parameters.ValueFromIndex[i];
+    end;
+  end;
+
+  httpClient.FormData['wow'] := 'keren';
+  httpClient.URL := url + parameters;
+
+  if method = 'get' then
+    httpResponse := httpClient.Get();
+  if method = 'post' then
+    httpResponse := httpClient.Post();
+
+  if httpResponse.ResultCode = 200 then
+    Result := httpResponse.ResultText;
+
+  httpClient.Free;
 end;
 
 function TSimpleBotModule.Example_Handler(const ActionName: string;
@@ -204,14 +255,14 @@ var
   result_json: TJSONData;
   _text: string;
   s, text_response, search_title: string;
-  lst : TStrings;
+  lst: TStrings;
 
   lastvisit_time, lastvisit_length: cardinal;
 begin
   if _GET['_DEBUG'] <> '' then
     SimpleAI.Debug := True;
 
-  Text:= LowerCase( Message);
+  Text := LowerCase(Message);
   text_response := '';
   SimpleAI.PrefixText := '';
   SimpleAI.SuffixText := '';
@@ -241,8 +292,8 @@ begin
 
     if SimpleAI.Action <> '' then
     begin
-      lst := Explode( SimpleAI.Action, ':');
-      text_response:= execHandler( lst[0], Message);
+      lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
+      text_response := execHandler(lst[0], Message);
       lst.Free;
 
       json := TJSONUtil.Create;

@@ -10,6 +10,8 @@ uses
 
 const
   _AI_NAME = 'RockBot';
+  _AI_ACTION_SEPARATOR = '|';
+
 
 type
 
@@ -280,7 +282,7 @@ var
 begin
   Result := '';
   actionName:= Action;
-  lst := FSimpleAILib.Intent.Explode( Action, ':');
+  lst := FSimpleAILib.Intent.Explode( Action, _AI_ACTION_SEPARATOR);
   if lst.Count > 0 then
      actionName := lst[0];
 
