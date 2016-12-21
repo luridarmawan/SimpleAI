@@ -59,9 +59,10 @@ type
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
     function execHandler( ActionName, Message:string):string;
+    function URL_Handler(const ActionName: string; Params: TStrings): string;
 
     // example handler
-    function Example_Handler(const TagName: string; Params: TStrings): string;
+    function Example_Handler(const ActionName: string; Params: TStrings): string;
 
   public
     SimpleAI: TSimpleAI;
@@ -94,7 +95,8 @@ begin
   SimpleAI := TSimpleAI.Create;
   LoadConfig('');
 
-  Handler['example'] := @Example_Handler; //<<-- tag $maincontent handler
+  Handler['example'] := @Example_Handler;
+  Handler['url'] := @URL_Handler;
 end;
 
 destructor TSimpleBotModule.Destroy;
@@ -173,7 +175,7 @@ var
   i : integer;
   h : THandlerCallback;
 begin
-  Result := '';
+  Result := SimpleAI.ResponseText;
   i := ___HandlerCallbackMap.IndexOf( ActionName);
   if i = -1 then
     Exit;
@@ -181,10 +183,18 @@ begin
   Result := h( ActionName, SimpleAI.Parameters);
 end;
 
-function TSimpleBotModule.Example_Handler(const TagName: string;
+function TSimpleBotModule.URL_Handler(const ActionName: string; Params: TStrings
+  ): string;
+begin
+  Result := ActionName + ':==';
+end;
+
+function TSimpleBotModule.Example_Handler(const ActionName: string;
   Params: TStrings): string;
 begin
-  Result := 'this is example';
+  if not SimpleAI.Debug then
+    Exit;
+  Result := 'This is Example Hook Handler';
 
 end;
 
@@ -194,6 +204,7 @@ var
   result_json: TJSONData;
   _text: string;
   s, text_response, search_title: string;
+  lst : TStrings;
 
   lastvisit_time, lastvisit_length: cardinal;
 begin
@@ -230,7 +241,9 @@ begin
 
     if SimpleAI.Action <> '' then
     begin
-      text_response:= execHandler( SimpleAI.Action, Message);
+      lst := Explode( SimpleAI.Action, ':');
+      text_response:= execHandler( lst[0], Message);
+      lst.Free;
 
       json := TJSONUtil.Create;
       json.LoadFromJsonString(SimpleAI.ResponseJson);

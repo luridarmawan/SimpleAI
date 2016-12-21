@@ -29,7 +29,6 @@ type
     FParameters: TStrings;
     FPattern: string;
 
-    function Explode(Str, Delimiter: string): TStrings;
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
@@ -39,6 +38,7 @@ type
       _SIMPLEAI_INTENT_DATA_FILENAME): boolean;
 
     function Exec(Text: string): boolean;
+    function Explode(Str, Delimiter: string): TStrings;
 
     procedure Clear;
     function AddDataIntentFromFile(FileName: string): boolean;

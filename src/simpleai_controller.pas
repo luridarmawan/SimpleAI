@@ -275,9 +275,14 @@ end;
 function TSimpleAI.getResponseJson: string;
 var
   i: integer;
-  json: string;
+  json, actionName : string;
+  lst : TStrings;
 begin
   Result := '';
+  actionName:= Action;
+  lst := FSimpleAILib.Intent.Explode( Action, ':');
+  if lst.Count > 0 then
+     actionName := lst[0];
 
   json := json + '';
   json := json + '{';
@@ -287,7 +292,7 @@ begin
   json := json + '},';
   json := json + '"response" : {';
   json := json + '"intents" : {';
-  json := json + '"action" : "' + Action + '",';
+  json := json + '"action" : "' + actionName + '",';
   json := json + '"name" : "' + IntentName + '",';
   if Debug then
     json := json + '"pattern" : "' + SimpleAI.Pattern + '",';
@@ -308,6 +313,8 @@ begin
     json := json + ',"msg" : "' + FMsg + '"';
   json := json + '}';
   json := json + '}';
+
+  lst.Free;
   Result := json;
 end;
 
