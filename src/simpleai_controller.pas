@@ -67,6 +67,12 @@ type
 
 implementation
 
+var
+  NamaHari: TWeekNameArray = ('Minggu', 'Senin', 'Selasa', 'Rabu',
+    'Kamis', 'Jumat', 'Sabtu');
+  NamaBulan: TMonthNameArray = ('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Augustus', 'September', 'Oktober', 'November', 'Desember');
+
 { TSimpleAI }
 
 function TSimpleAI.getIntentName: string;
@@ -90,12 +96,33 @@ begin
 end;
 
 function TSimpleAI.StringReplacement(Text: string): string;
+var
+  s, t: string;
+  y, m, d: word;
 begin
   Result := Text;
   Result := FSimpleAILib.Intent.Entities.preg_replace(
     '%(time_session)%', getTimeSession, Result, False);
   Result := FSimpleAILib.Intent.Entities.preg_replace(
     '%(AIName)%', AIName, Result, False);
+
+  // waktu
+  if FSimpleAILib.Intent.Entities.preg_match('%(time)%', Result) then
+  begin
+    DecodeDate(Date, y, m, d);
+    s := Parameters.Values['Waktu'];
+    t := '';
+    case s of
+      'jam': t := FormatDateTime('hh:nn', Now) + ' ' + getTimeSession;
+      'hari': t := NamaHari[DayOfWeek(Now)];
+      'bulan': t := NamaBulan[m];
+      'tahun': t := IntToStr(y);
+      'tanggal': t := FormatDateTime('dd/mm/yyyy', Now)
+    end;
+    t := s + ' ' + t;
+    Result := FSimpleAILib.Intent.Entities.preg_replace(
+      '%(time)%', t, Result, False);
+  end;
 end;
 
 procedure TSimpleAI.setDebug(AValue: boolean);

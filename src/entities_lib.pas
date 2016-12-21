@@ -168,8 +168,11 @@ begin
 
   if SpecificKey <> '' then
   begin
-    Result := '(' + FData.ReadString(EntityName, SpecificKey, '') + ')';
-    Exit;
+    if Pos('-',SpecificKey) = -1 then
+    begin
+      Result := '(' + FData.ReadString(EntityName, SpecificKey, '') + ')';
+      Exit;
+    end;
   end;
 
   str := TStringList.Create;
@@ -178,10 +181,12 @@ begin
   Result := '';
   for i := 0 to str.Count - 1 do
   begin
-    //Result := Result + FData.ReadString( EntityName, str[i], '');
-    Result := Result + FData.ReadString(EntityName, str[i], '');
-    if i < str.Count - 1 then
-      Result := Result + _SIMPLEAI_ENTITIES_SEPARATOR;
+    if ( ('-'+str[i]) <> SpecificKey) then
+    begin
+      Result := Result + FData.ReadString(EntityName, str[i], '');
+      if i < str.Count - 1 then
+        Result := Result + _SIMPLEAI_ENTITIES_SEPARATOR;
+    end;
   end;
   if Result = '' then
     Result := '.*';

@@ -157,10 +157,10 @@ begin
           end;
           s := FEntities.GetPregString(entity_name, key_used);
 
+          FParameters.Insert(0, entity_name + '=');
           if key_used <> '' then
             entity_name := entity_name + ':' + key_used;
           pattern := StringReplace(pattern, '@' + entity_name, s, [rfReplaceAll]);
-          FParameters.Insert(0, entity_name + '=');
         end;
         if k = 0 then
           Break;
