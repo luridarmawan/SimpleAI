@@ -23,7 +23,7 @@ type
     FMsg: string;
     FPrefixText: string;
     FRequestText: string;
-    FResponseText: string;
+    FResponseText: TStringList;
     FSimpleAILib: TSimpleAILib;
     FResponseData: TMemIniFile;
     FResponseDataAsList: TStringList;
@@ -58,7 +58,7 @@ type
     property IntentName: string read getIntentName;
     property Parameters: TStrings read getParameters;
     property Values[KeyName: string]: string read getParameterValue; default;
-    property ResponseText: string read FResponseText write FResponseText;
+    property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
     property PrefixText: string read FPrefixText write FPrefixText;
     property SuffixText: string read FSuffixText write FSuffixText;
@@ -164,11 +164,13 @@ begin
   FResponseData := TMemIniFile.Create('');
   FResponseDataAsList := TStringList.Create;
   FSimpleAILib := TSimpleAILib.Create;
+  FResponseText := TStringList.Create;
   FMsg := '';
 end;
 
 destructor TSimpleAI.Destroy;
 begin
+  FResponseText.Free;;
   FResponseDataAsList.Free;
   FResponseData.Free;
   FSimpleAILib.Free;
@@ -215,7 +217,6 @@ end;
 function TSimpleAI.Exec(Text: string; AutoResponse: boolean): boolean;
 begin
   Result := False;
-  FResponseText := '';
   if Text = '' then
     Exit;
   Result := FSimpleAILib.Exec(Text);
@@ -225,17 +226,17 @@ begin
   FRequestText := Text;
   if Result then
   begin
-    FResponseText := GetResponse(IntentName, Action, '');
+    FResponseText.Add( GetResponse(IntentName, Action, ''));
   end
   else
   begin
-    FResponseText := GetResponse('none', '', '');
+    FResponseText.Add( GetResponse('none', '', ''));
   end;
 
-  FResponseText := FPrefixText + FResponseText + FSuffixText;
-  if FSimpleAILib.Intent.Entities.preg_match('%(.*)%', FResponseText) then
+  FResponseText.Text := FPrefixText + FResponseText.Text + FSuffixText;
+  if FSimpleAILib.Intent.Entities.preg_match('%(.*)%', FResponseText.Text) then
   begin
-    FResponseText := StringReplacement(FResponseText);
+    FResponseText.Text := StringReplacement(FResponseText.Text);
   end;
 end;
 
@@ -246,12 +247,10 @@ var
 begin
   Result := '';
   FMsg := '';
-  FResponseText := '';
 
   if EntitiesKey <> '' then
   begin
-    FResponseText := FResponseData.ReadString(IntentName, EntitiesKey, '._');
-    Result := FResponseText;
+    Result := FResponseData.ReadString(IntentName, EntitiesKey, '._');
     Exit;
   end;
 
@@ -263,13 +262,12 @@ begin
     Randomize;
     i := Random(item_list.Count);
 
-    FResponseText := item_list[i];
+    Result := item_list[i];
     if Debug then
       FMsg := ' (' + IntToStr(i + 1) + '/' + IntToStr(item_list.Count) + ')';
-    FResponseText := copy(FResponseText, pos('=', FResponseText) + 1);
+    Result := copy(Result, pos('=', Result) + 1);
   end;
 
-  Result := FResponseText;
   item_list.Free;
 end;
 
@@ -277,7 +275,7 @@ end;
 function TSimpleAI.getResponseJson: string;
 var
   i: integer;
-  json, actionName : string;
+  json, actionName, txt : string;
   lst : TStrings;
 begin
   Result := '';
@@ -285,6 +283,15 @@ begin
   lst := FSimpleAILib.Intent.Explode( Action, _AI_ACTION_SEPARATOR);
   if lst.Count > 0 then
      actionName := lst[0];
+
+  // response text
+  txt := '';
+  for i:= 0 to FResponseText.Count-1 do
+  begin
+    txt := txt + '"' + FResponseText[i]+ '"';
+    if i < FResponseText.Count-1 then
+      txt := txt + ',';
+  end;
 
   json := json + '';
   json := json + '{';
@@ -310,7 +317,7 @@ begin
   end;
   json := json + '}';
   json := json + '},';
-  json := json + '"text" : "' + FResponseText + '"';
+  json := json + '"text" : [' + txt + ']';
   if FMsg <> '' then
     json := json + ',"msg" : "' + FMsg + '"';
   json := json + '}';

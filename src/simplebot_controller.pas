@@ -175,7 +175,7 @@ var
   i: integer;
   h: THandlerCallback;
 begin
-  Result := SimpleAI.ResponseText;
+  Result := SimpleAI.ResponseText.Text;
   i := ___HandlerCallbackMap.IndexOf(ActionName);
   if i = -1 then
     Exit;
@@ -271,8 +271,9 @@ begin
   if s = '' then
   begin
     s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '', _AI_RESPONSE_FIRSTSESSION);
-    SimpleAI.SuffixText := s + SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION,
-      '', _AI_RESPONSE_ABOUTME);
+    s := s + SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
+      _AI_RESPONSE_ABOUTME);
+    SimpleAI.ResponseText.Add(s);
     _SESSION[_AI_SESSION_VISITED] := '1';
     _SESSION[_AI_SESSION_LASTVISIT] := _GetTickCount;
   end;
@@ -282,23 +283,26 @@ begin
   lastvisit_length := (_GetTickCount - lastvisit_time) div 3600000; // jam
   if lastvisit_length > 1 then
   begin
-    SimpleAI.SuffixText := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION,
-      '', _AI_RESPONSE_SECONDSESSION);
+    s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
+      _AI_RESPONSE_SECONDSESSION);
+    SimpleAI.ResponseText.Add(s);
   end;
 
   if SimpleAI.Exec(Text) then
   begin
+    SimpleAI.ResponseText.Text := trim(SimpleAI.ResponseText.Text);
     text_response := SimpleAI.ResponseJson;
 
     if SimpleAI.Action <> '' then
     begin
       lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
       text_response := execHandler(lst[0], Message);
+      SimpleAI.ResponseText.add(text_response);
       lst.Free;
 
       json := TJSONUtil.Create;
       json.LoadFromJsonString(SimpleAI.ResponseJson);
-      json['response/text'] := text_response;
+      //json['response/text'] := text_response;
       text_response := json.AsJSON;
       json.Free;
     end; //SimpleAI.Action;
