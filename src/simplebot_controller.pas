@@ -10,10 +10,18 @@ add this to routes
 
 }
 
+{$ifdef AI_REDIS}
+{$else}
+{$endif}
+
 interface
 
 uses
+  {$ifdef AI_REDIS}
   simpleairedis_controller,
+  {$else}
+  simpleai_controller,
+  {$endif}
   fastplaz_handler, html_lib, logutil_lib, http_lib,
   fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
 
@@ -68,7 +76,7 @@ type
     procedure LoadAIDataFromFile;
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
-    function execHandler(ActionName, Message: string): string;
+    function handlerExec(ActionName, Message: string): string;
     function URL_Handler(const ActionName: string; Params: TStrings): string;
     function OnErrorHandler(const Message: string): string;
 
@@ -76,7 +84,11 @@ type
     function Example_Handler(const ActionName: string; Params: TStrings): string;
 
   public
+    {$ifdef AI_REDIS}
     SimpleAI: TSimpleAIRedis;
+    {$else}
+    SimpleAI: TSimpleAI;
+    {$endif}
     constructor Create; virtual;
     destructor Destroy; virtual;
 
@@ -108,7 +120,11 @@ begin
 
   FDataLoaded := False;
   HTTP := THTTPLib.Create;
+  {$ifdef AI_REDIS}
   SimpleAI := TSimpleAIRedis.Create;
+  {$else}
+  SimpleAI := TSimpleAI.Create;
+  {$endif}
   LoadConfig('');
 
   Handler['example'] := @Example_Handler;
@@ -118,7 +134,8 @@ end;
 destructor TSimpleBotModule.Destroy;
 begin
   ___HandlerCallbackMap.Free;
-  SimpleAI.Free;
+  if Assigned(SimpleAI) then
+    SimpleAI.Free;
   HTTP.Free;
 end;
 
@@ -137,6 +154,7 @@ begin
   end;
 
   // redis
+  {$ifdef AI_REDIS}
   SimpleAI.UseRedis := False;
   s := Config[_AI_CONFIG_DATASOURCE];
   if s = _AI_DATASOURCE_REDIS then
@@ -145,6 +163,7 @@ begin
     if SimpleAI.LoadDataFromRedis then
       Exit;
   end;
+  {$endif}
 
   //-- sementar buat test
   LoadAIDataFromFile;
@@ -209,7 +228,7 @@ begin
   Result := ___HandlerCallbackMap[TagName];
 end;
 
-function TSimpleBotModule.execHandler(ActionName, Message: string): string;
+function TSimpleBotModule.handlerExec(ActionName, Message: string): string;
 var
   i: integer;
   h: THandlerCallback;
@@ -344,7 +363,7 @@ begin
     if SimpleAI.Action <> '' then
     begin
       lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
-      text_response := execHandler(lst[0], Message);
+      text_response := handlerExec(lst[0], Message);
       SimpleAI.ResponseText.add(text_response);
       lst.Free;
 

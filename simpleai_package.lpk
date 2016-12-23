@@ -20,12 +20,12 @@
         <UnitName Value="intents_lib"/>
       </Item2>
       <Item3>
-        <Filename Value="src/simpleai_lib.pas"/>
-        <UnitName Value="simpleai_lib"/>
-      </Item3>
-      <Item4>
         <Filename Value="src/simpleai_controller.pas"/>
         <UnitName Value="simpleai_controller"/>
+      </Item3>
+      <Item4>
+        <Filename Value="src/simpleai_lib.pas"/>
+        <UnitName Value="simpleai_lib"/>
       </Item4>
     </Files>
     <i18n>

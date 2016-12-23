@@ -219,6 +219,7 @@ end;
 
 function TSimpleAI.Exec(Text: string; AutoResponse: boolean): boolean;
 begin
+  FMsg := '';
   Result := False;
   if Text = '' then
     Exit;
@@ -249,7 +250,6 @@ var
   item_list: TStringList;
 begin
   Result := '';
-  FMsg := '';
 
   if EntitiesKey <> '' then
   begin

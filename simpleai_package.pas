@@ -7,7 +7,7 @@ unit simpleai_package;
 interface
 
 uses
-  entities_lib, intents_lib, simpleai_lib, simpleai_controller, 
+  entities_lib, intents_lib, simpleai_controller, simpleai_lib, 
   LazarusPackageIntf;
 
 implementation

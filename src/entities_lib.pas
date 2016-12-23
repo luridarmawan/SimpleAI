@@ -45,7 +45,7 @@ type
     function preg_replace(const RegexExpression, ReplaceString, SourceString: string;
       UseSubstitution: boolean): string;
 
-    function SetData( List: TStrings): boolean;
+    function SetData(List: TStrings): boolean;
 
   published
     property Data: TMemIniFile read FData write FData;
@@ -148,7 +148,7 @@ end;
 function TEntitiesFAI.SetData(List: TStrings): boolean;
 begin
   Result := False;
-  if not Assigned( List) then
+  if not Assigned(List) then
     Exit;
 
   if Assigned(FData) then
@@ -156,7 +156,7 @@ begin
   FData := TMemIniFile.Create('');
   FData.Clear;
 
-  FDataAsList.Add( List.Text);
+  FDataAsList.Add(List.Text);
   FData.SetStrings(List);
 
   FisLoaded := True;
@@ -189,7 +189,7 @@ begin
 
   if SpecificKey <> '' then
   begin
-    if Pos('-',SpecificKey) = -1 then
+    if Pos('-', SpecificKey) <> 1 then
     begin
       Result := '(' + FData.ReadString(EntityName, SpecificKey, '') + ')';
       Exit;
@@ -202,7 +202,7 @@ begin
   Result := '';
   for i := 0 to str.Count - 1 do
   begin
-    if ( ('-'+str[i]) <> SpecificKey) then
+    if (('-' + str[i]) <> SpecificKey) then
     begin
       Result := Result + FData.ReadString(EntityName, str[i], '');
       if i < str.Count - 1 then

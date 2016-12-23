@@ -5,8 +5,9 @@ unit simpleairedis_controller;
 interface
 
 uses
+  cthreads,
   common,
-  simpleai_controller, redis_controller,
+  fpcgi, simpleai_controller, redis_controller,
   Classes, SysUtils;
 
 const
@@ -41,16 +42,28 @@ implementation
 constructor TSimpleAIRedis.Create;
 begin
   inherited Create;
-  FUseRedis := False;
-  FRedis := TRedisConstroller.Create;
 end;
 
 destructor TSimpleAIRedis.Destroy;
 begin
-  FRedis.Free;
   inherited Destroy;
 end;
 
+{
+constructor TSimpleAIRedis.Create;
+begin
+  inherited Create;
+  FUseRedis := False;
+  //FRedis := TRedisConstroller.Create;
+end;
+
+destructor TSimpleAIRedis.Destroy;
+begin
+  if Assigned( FRedis) then
+    FRedis.Free;
+  inherited Destroy;
+end;
+}
 function TSimpleAIRedis.RedisInit: boolean;
 var
   redis_text: WideString;
