@@ -45,6 +45,8 @@ type
     function preg_replace(const RegexExpression, ReplaceString, SourceString: string;
       UseSubstitution: boolean): string;
 
+    function SetData( List: TStrings): boolean;
+
   published
     property Data: TMemIniFile read FData write FData;
     property Action: string read FAction;
@@ -142,6 +144,25 @@ begin
   end;
   lst.Free;
 end;
+
+function TEntitiesFAI.SetData(List: TStrings): boolean;
+begin
+  Result := False;
+  if not Assigned( List) then
+    Exit;
+
+  if Assigned(FData) then
+    FData.Free;
+  FData := TMemIniFile.Create('');
+  FData.Clear;
+
+  FDataAsList.Add( List.Text);
+  FData.SetStrings(List);
+
+  FisLoaded := True;
+  Result := True;
+end;
+
 
 function TEntitiesFAI.LoadDataFromFile(FileName: string): boolean;
 begin

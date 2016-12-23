@@ -13,7 +13,7 @@ add this to routes
 interface
 
 uses
-  simpleai_controller,
+  simpleairedis_controller,
   fastplaz_handler, html_lib, logutil_lib, http_lib,
   fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
 
@@ -24,11 +24,17 @@ const
   _AI_CONFIG_INTENTS = 'ai/default/intents';
   _AI_CONFIG_RESPONSE = 'ai/default/response';
   _AI_CONFIG_DEBUG = 'ai/default/debug';
+  _AI_CONFIG_DATASOURCE = 'ai/default/datasource';
+  _AI_DATASOURCE_REDIS = 'redis';
+  _AI_DATASOURCE_FILE = 'file';
   _AI_RESPONSE_INTRODUCTION = 'introduction';
   _AI_RESPONSE_FIRSTSESSION = 'firstsession';
   _AI_RESPONSE_ABOUTME = 'aboutme';
   _AI_RESPONSE_SECONDSESSION = 'secondsession';
 
+  _AI_ACTION_SEPARATOR = '|';
+
+  _AL_LOG_LEARN = 'learn:';
   _AI_SESSION_VISITED = 'AI_VISITED';
   _AI_SESSION_LASTVISIT = 'AI_LASTVISIT';
 
@@ -42,12 +48,15 @@ type
     Params: TStrings): string of object;
   THandlerCallbackMap = specialize TStringHashMap<THandlerCallback>;
 
+  TOnErrorCallback = function(const Text: string): string of object;
 
   { TSimpleBotModule }
 
   TSimpleBotModule = class
   private
     ChatID, MessageID: string;
+    FOnError: TOnErrorCallback;
+    FDataLoaded: boolean;
     FTelegramToken: string;
     Text: string;
     HTTP: THTTPLib;
@@ -56,27 +65,32 @@ type
     function getHandler(const TagName: string): THandlerCallback;
 
     procedure LoadConfig(DataName: string);
+    procedure LoadAIDataFromFile;
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
     function execHandler(ActionName, Message: string): string;
     function URL_Handler(const ActionName: string; Params: TStrings): string;
+    function OnErrorHandler(const Message: string): string;
 
     // example handler
     function Example_Handler(const ActionName: string; Params: TStrings): string;
 
   public
-    SimpleAI: TSimpleAI;
+    SimpleAI: TSimpleAIRedis;
     constructor Create; virtual;
     destructor Destroy; virtual;
 
     function Exec(Message: string): string;
+    function GetResponse(IntentName, Action: string; EntitiesKey: string = ''): string;
 
     property Debug: boolean read getDebug write setDebug;
+    property isDataLoaded: boolean read FDataLoaded;
     property TelegramToken: string read FTelegramToken write FTelegramToken;
     function TelegramSend(ChatIDRef, ReplyToMessageID, Message: string): boolean;
 
     property Handler[const TagName: string]: THandlerCallback
       read getHandler write setHandler;
+    property OnError: TOnErrorCallback read FOnError write FOnError;
 
   end;
 
@@ -89,10 +103,12 @@ uses json_lib, common;
 
 constructor TSimpleBotModule.Create;
 begin
+  FOnError := nil;
   ___HandlerCallbackMap := THandlerCallbackMap.Create;
 
+  FDataLoaded := False;
   HTTP := THTTPLib.Create;
-  SimpleAI := TSimpleAI.Create;
+  SimpleAI := TSimpleAIRedis.Create;
   LoadConfig('');
 
   Handler['example'] := @Example_Handler;
@@ -109,17 +125,39 @@ end;
 procedure TSimpleBotModule.LoadConfig(DataName: string);
 var
   i: integer;
-  s, basedir: string;
+  s: string;
   lst: TStrings;
 begin
   FTelegramToken := Config[_TELEGRAM_CONFIG_TOKEN];
 
   try
-    basedir := Config[_AI_CONFIG_BASEDIR];
     SimpleAI.Debug := Config[_AI_CONFIG_DEBUG];
     SimpleAI.AIName := Config[_AI_CONFIG_NAME];
   except
   end;
+
+  // redis
+  SimpleAI.UseRedis := False;
+  s := Config[_AI_CONFIG_DATASOURCE];
+  if s = _AI_DATASOURCE_REDIS then
+  begin
+    SimpleAI.UseRedis := True;
+    if SimpleAI.LoadDataFromRedis then
+      Exit;
+  end;
+
+  //-- sementar buat test
+  LoadAIDataFromFile;
+
+end;
+
+procedure TSimpleBotModule.LoadAIDataFromFile;
+var
+  i: integer;
+  s, basedir: string;
+  lst: TStrings;
+begin
+  basedir := Config[_AI_CONFIG_BASEDIR];
 
   // load Entities
   s := Config[_AI_CONFIG_ENTITIES];
@@ -148,6 +186,7 @@ begin
   end;
   lst.Free;
 
+  FDataLoaded := True;
 end;
 
 procedure TSimpleBotModule.setDebug(AValue: boolean);
@@ -240,6 +279,11 @@ begin
   httpClient.Free;
 end;
 
+function TSimpleBotModule.OnErrorHandler(const Message: string): string;
+begin
+
+end;
+
 function TSimpleBotModule.Example_Handler(const ActionName: string;
   Params: TStrings): string;
 begin
@@ -266,6 +310,10 @@ begin
   text_response := '';
   SimpleAI.PrefixText := '';
   SimpleAI.SuffixText := '';
+
+
+  //s := SimpleAI.GetResponse( 'Greeting', '');
+  //die( s);
 
   s := _SESSION[_AI_SESSION_VISITED];
   if s = '' then
@@ -303,21 +351,38 @@ begin
       json := TJSONUtil.Create;
       json.LoadFromJsonString(SimpleAI.ResponseJson);
       //json['response/text'] := text_response;
-      text_response := json.AsJSON;
+      if SimpleAI.Debug then
+        text_response := json.AsJSONFormated
+      else
+        text_response := json.AsJSON;
       json.Free;
     end; //SimpleAI.Action;
 
   end
   else
   begin
-    text_response := SimpleAI.ResponseJson;
-    LogUtil.Add(Text, 'AI_LEARN');
+    if FOnError <> nil then
+    begin
+      SimpleAI.ResponseText.Text := FOnError(Text);
+      text_response := SimpleAI.ResponseJson;
+    end
+    else
+    begin
+      text_response := SimpleAI.ResponseJson;
+      LogUtil.Add(Text, _AL_LOG_LEARN);
+    end;
   end;
 
 
   //---
   Result := text_response;
   _SESSION[_AI_SESSION_LASTVISIT] := _GetTickCount;
+end;
+
+function TSimpleBotModule.GetResponse(IntentName, Action: string;
+  EntitiesKey: string): string;
+begin
+  Result := SimpleAI.GetResponse(IntentName, Action, EntitiesKey);
 end;
 
 

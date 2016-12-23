@@ -7,7 +7,7 @@ unit simplebot_package;
 interface
 
 uses
-  simplebot_controller, LazarusPackageIntf;
+  simplebot_controller, simpleairedis_controller, LazarusPackageIntf;
 
 implementation
 

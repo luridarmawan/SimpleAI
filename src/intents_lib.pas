@@ -43,7 +43,9 @@ type
     procedure Clear;
     function AddDataIntentFromFile(FileName: string): boolean;
     function AddDataEntitiesFromFile(FileName: string): boolean;
+    function SetData( List: TStrings): boolean;
   published
+    property Data: TMemIniFile read FData write FData;
     property Entities: TEntitiesFAI read FEntities;
     property Action: string read FAction;
     property IntentName: string read FIntentName;
@@ -252,6 +254,24 @@ end;
 function TIntentsFAI.AddDataEntitiesFromFile(FileName: string): boolean;
 begin
   Result := FEntities.AddDataEntitiesFromFile(FileName);
+end;
+
+function TIntentsFAI.SetData(List: TStrings): boolean;
+begin
+  Result := False;
+  if not Assigned( List) then
+    Exit;
+
+  if Assigned(FData) then
+    FData.Free;
+  FData := TMemIniFile.Create('');
+  FData.Clear;
+
+  FDataAsList.Add( List.Text);
+  FData.SetStrings(List);
+
+  FisLoaded := True;
+  Result := True;
 end;
 
 function TIntentsFAI.LoadData: boolean;

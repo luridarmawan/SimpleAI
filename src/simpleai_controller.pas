@@ -51,15 +51,17 @@ type
 
     function Exec(Text: string; AutoResponse: boolean = True): boolean;
     function GetResponse(IntentName, Action: string; EntitiesKey: string = ''): string;
+    function SetResponseData(List: TStrings): boolean;
 
     property AIName: string read FAIName write FAIName;
-    property SimpleAI: TSimpleAILib read FSimpleAILib;
+    property SimpleAILib: TSimpleAILib read FSimpleAILib;
     property Action: string read getAction;
     property IntentName: string read getIntentName;
     property Parameters: TStrings read getParameters;
     property Values[KeyName: string]: string read getParameterValue; default;
     property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
+    property ResponData: TMemIniFile read FResponseData;
     property PrefixText: string read FPrefixText write FPrefixText;
     property SuffixText: string read FSuffixText write FSuffixText;
     property Debug: boolean read getDebug write setDebug;
@@ -72,8 +74,8 @@ implementation
 var
   NamaHari: TWeekNameArray = ('Minggu', 'Senin', 'Selasa', 'Rabu',
     'Kamis', 'Jumat', 'Sabtu');
-  NamaBulan: TMonthNameArray = ('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Augustus', 'September', 'Oktober', 'November', 'Desember');
+  NamaBulan: TMonthNameArray = ('Januari', 'Februari', 'Maret', 'April',
+    'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'Desember');
 
 { TSimpleAI }
 
@@ -170,7 +172,8 @@ end;
 
 destructor TSimpleAI.Destroy;
 begin
-  FResponseText.Free;;
+  FResponseText.Free;
+  ;
   FResponseDataAsList.Free;
   FResponseData.Free;
   FSimpleAILib.Free;
@@ -226,11 +229,11 @@ begin
   FRequestText := Text;
   if Result then
   begin
-    FResponseText.Add( GetResponse(IntentName, Action, ''));
+    FResponseText.Add(GetResponse(IntentName, Action, ''));
   end
   else
   begin
-    FResponseText.Add( GetResponse('none', '', ''));
+    FResponseText.Add(GetResponse('none', '', ''));
   end;
 
   FResponseText.Text := FPrefixText + FResponseText.Text + FSuffixText;
@@ -271,25 +274,42 @@ begin
   item_list.Free;
 end;
 
+function TSimpleAI.SetResponseData(List: TStrings): boolean;
+begin
+  Result := False;
+  if not Assigned(List) then
+    Exit;
+
+  if Assigned(FResponseData) then
+    FResponseData.Free;
+  FResponseData := TMemIniFile.Create('');
+  FResponseData.Clear;
+
+  FResponseDataAsList.Add(List.Text);
+  FResponseData.SetStrings(List);
+
+  Result := True;
+end;
+
 
 function TSimpleAI.getResponseJson: string;
 var
   i: integer;
-  json, actionName, txt : string;
-  lst : TStrings;
+  json, actionName, txt: string;
+  lst: TStrings;
 begin
   Result := '';
-  actionName:= Action;
-  lst := FSimpleAILib.Intent.Explode( Action, _AI_ACTION_SEPARATOR);
+  actionName := Action;
+  lst := FSimpleAILib.Intent.Explode(Action, _AI_ACTION_SEPARATOR);
   if lst.Count > 0 then
-     actionName := lst[0];
+    actionName := lst[0];
 
   // response text
   txt := '';
-  for i:= 0 to FResponseText.Count-1 do
+  for i := 0 to FResponseText.Count - 1 do
   begin
-    txt := txt + '"' + FResponseText[i]+ '"';
-    if i < FResponseText.Count-1 then
+    txt := txt + '"' + FResponseText[i] + '"';
+    if i < FResponseText.Count - 1 then
       txt := txt + ',';
   end;
 
@@ -304,7 +324,7 @@ begin
   json := json + '"action" : "' + actionName + '",';
   json := json + '"name" : "' + IntentName + '",';
   if Debug then
-    json := json + '"pattern" : "' + SimpleAI.Pattern + '",';
+    json := json + '"pattern" : "' + FSimpleAILib.Pattern + '",';
   json := json + '"parameters" : {';
 
   //json := json + '"Greeting" : "' + '-' + '"';
