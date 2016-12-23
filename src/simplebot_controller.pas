@@ -44,7 +44,12 @@ const
 
   _AL_LOG_LEARN = 'learn:';
   _AI_SESSION_VISITED = 'AI_VISITED';
-  _AI_SESSION_LASTVISIT = 'AI_LASTVISIT';
+  _AI_SESSION_LASTVISIT = 'AI_VISITLAST';
+  _AI_SESSION_LASTACTION = 'AI_ACTIONLAST';
+  _AI_SESSION_MESSAGECOUNT = 'AI_MESSAGECOUNT';
+
+  _AI_MINIMAL_COUNT_ASKNAME = 5;
+  _AI_SESSION_ASK = 'ASK';
 
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
@@ -76,7 +81,7 @@ type
     procedure LoadAIDataFromFile;
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
-    function handlerExec(ActionName, Message: string): string;
+    function handlerProcessing(ActionName, Message: string): string;
     function URL_Handler(const ActionName: string; Params: TStrings): string;
     function OnErrorHandler(const Message: string): string;
 
@@ -228,7 +233,8 @@ begin
   Result := ___HandlerCallbackMap[TagName];
 end;
 
-function TSimpleBotModule.handlerExec(ActionName, Message: string): string;
+function TSimpleBotModule.handlerProcessing(ActionName, Message: string
+  ): string;
 var
   i: integer;
   h: THandlerCallback;
@@ -317,6 +323,7 @@ var
   json: TJSONUtil;
   result_json: TJSONData;
   _text: string;
+  messageCoimt : integer;
   s, text_response, search_title: string;
   lst: TStrings;
 
@@ -353,6 +360,14 @@ begin
     s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
       _AI_RESPONSE_SECONDSESSION);
     SimpleAI.ResponseText.Add(s);
+    _SESSION[_AI_SESSION_MESSAGECOUNT] := 0;
+  end;
+
+  // message count
+  try
+    messageCoimt := _SESSION[_AI_SESSION_MESSAGECOUNT];
+    messageCoimt := messageCoimt+1
+  except
   end;
 
   if SimpleAI.Exec(Text) then
@@ -362,19 +377,11 @@ begin
 
     if SimpleAI.Action <> '' then
     begin
+      _SESSION[_AI_SESSION_LASTACTION] := SimpleAI.Action;
       lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
-      text_response := handlerExec(lst[0], Message);
+      text_response := handlerProcessing(lst[0], Message);
       SimpleAI.ResponseText.add(text_response);
       lst.Free;
-
-      json := TJSONUtil.Create;
-      json.LoadFromJsonString(SimpleAI.ResponseJson);
-      //json['response/text'] := text_response;
-      if SimpleAI.Debug then
-        text_response := json.AsJSONFormated
-      else
-        text_response := json.AsJSON;
-      json.Free;
     end; //SimpleAI.Action;
 
   end
@@ -383,18 +390,25 @@ begin
     if FOnError <> nil then
     begin
       SimpleAI.ResponseText.Text := FOnError(Text);
-      text_response := SimpleAI.ResponseJson;
     end
     else
     begin
-      text_response := SimpleAI.ResponseJson;
       LogUtil.Add(Text, _AL_LOG_LEARN);
     end;
   end;
 
+  text_response := SimpleAI.ResponseJson;
+  json := TJSONUtil.Create;
+  json.LoadFromJsonString(text_response);
+  if SimpleAI.Debug then
+    text_response := json.AsJSONFormated
+  else
+    text_response := json.AsJSON;
+  json.Free;
 
   //---
   Result := text_response;
+  _SESSION[_AI_SESSION_MESSAGECOUNT] := messageCoimt;
   _SESSION[_AI_SESSION_LASTVISIT] := _GetTickCount;
 end;
 

@@ -202,6 +202,10 @@ begin
         intent_list.Free;
         Result := True;
         Exit;
+      end
+      else
+      begin
+        FPattern := '';
       end;
 
       FParameters.Clear;
