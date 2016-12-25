@@ -466,6 +466,9 @@ begin
   _SESSION[_AI_SESSION_ASK_VAR] := SimpleAI.VarName;
 end;
 
+// todo: next question dgn parameter count
+// count=0 => langsung tanyain
+
 function TSimpleBotModule.isAnswer: boolean;
 var
   askIntent: string;

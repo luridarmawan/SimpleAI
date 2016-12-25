@@ -8,12 +8,12 @@ Disarankan untuk menggunakan Redis atau sejenisnya.
 
 ***Dependency***
 
-- FastPlaz_runtime
-- SimpleAI_package
+- kesabaran dan ketekunan
+
 
 ### Instalasi
 
-....
+Gunakan Lazarus, buka file "simpleai_package.lpk" dan install file tersebut.
 
 
 ***SimpleAI USAGE***
@@ -39,7 +39,7 @@ if SimpleAI.Exec(Text) then
 begin
 
   // output dalam format text (result saja)
-  str := SimpleAPI.SimpleAI.ResponseText;
+  ResponseString := SimpleAPI.SimpleAI.ResponseText;
   
   // output dalam json format
   json := SimpleAPI.SimpleAI.ResponseJson;
@@ -48,18 +48,15 @@ begin
   Action := SimpleAI.Action;
   IntentName := SimpleAI.IntentName;
   Params := SimpleAI.Parameters;
+  
+  // do something
+  .
+  .
+  .
 
 end;
 ```
 
-
-***Input***
-
-method: Post
-
-```
-{"message":{"message_id":0,"text":"Your Message","chat":{"id":0}}}
-```
 
 ***Format Output***
 
@@ -73,7 +70,6 @@ method: Post
 		"intents": {
 			"action": "",
 			"name": "",
-			"pattern": "",
 			"parameters": {}
 		},
 		"text": []
@@ -84,11 +80,29 @@ method: Post
 
 # SimpleBOT
 
+SimpleBOT merupakan salah satu contoh penggunaan SimpleAI yang dipergunakan untuk membuat BOT.
+Memiliki fitur menjawab otomatis, dan belajar suatu definisi kata sederhana.
+
 ***Dependency***
 
 - FastPlaz_runtime
-- SimpleBot_package
+- SimpleAI package
 
+### Instalasi
+
+Gunakan Lazarus, buka file "simplebot_package.lpk" dan install file tersebut.
+Jangan lupa, instalasi ini membutuhkan SimpleAI package.
+
+
+***Input***
+
+method: Post
+
+data disematkan di dalam body post, dengan format berikut
+
+```
+{"message":{"message_id":0,"text":"Your Message","chat":{"id":0}}}
+```
 
 
 
