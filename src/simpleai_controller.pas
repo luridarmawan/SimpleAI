@@ -11,6 +11,7 @@ uses
 const
   _AI_NAME = 'RockBot';
   _AI_ACTION_SEPARATOR = '|';
+  _AI_COUNT__MINIMAL_ASKNAME = 5;
 
 
 type
@@ -51,8 +52,9 @@ type
     function AddResponFromFile(FileName: string): boolean;
 
     function Exec(Text: string; AutoResponse: boolean = True): boolean;
-    function SetQuestions(IntentName, Key: string): string;
-    function GetResponse(IntentName, Action: string; EntitiesKey: string = ''): string;
+    function SetQuestions(IntentName: string; Key: string = '';
+      MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME): string;
+    function GetResponse(IntentName:string; Action: string = ''; EntitiesKey: string = ''): string;
     function SetResponseData(List: TStrings): boolean;
     function StringReplacement(Text: string): string;
 
@@ -249,12 +251,14 @@ begin
   end;
 end;
 
-function TSimpleAI.SetQuestions(IntentName, Key: string): string;
+function TSimpleAI.SetQuestions(IntentName: string; Key: string;
+  MsgCount: integer): string;
 begin
   Result := GetResponse(IntentName, '', Key);
 end;
 
-function TSimpleAI.GetResponse(IntentName, Action: string; EntitiesKey: string): string;
+function TSimpleAI.GetResponse(IntentName: string; Action: string;
+  EntitiesKey: string): string;
 var
   i: integer;
   item_list: TStringList;

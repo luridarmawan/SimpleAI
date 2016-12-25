@@ -6,7 +6,7 @@ Simple AI with Pascal
 Data intent dan entitiest menggunakan file text biasa, tidak menggunakan RDBMS.
 Disarankan untuk menggunakan Redis atau sejenisnya.
 
-***Dependency***
+**Dependency**
 
 - kesabaran dan ketekunan
 
@@ -16,7 +16,7 @@ Disarankan untuk menggunakan Redis atau sejenisnya.
 Gunakan Lazarus, buka file "simpleai_package.lpk" dan install file tersebut.
 
 
-***SimpleAI USAGE***
+**SimpleAI USAGE**
 
 ```delphi
 SimpleAI := TSimpleAI.Create;
@@ -82,8 +82,11 @@ end;
 
 SimpleBOT merupakan salah satu contoh penggunaan SimpleAI yang dipergunakan untuk membuat BOT.
 Memiliki fitur menjawab otomatis, dan belajar suatu definisi kata sederhana.
+Kecerdasan Bot ini tergantung dari data entities dan intent yang Anda miliki, serta logic handler yang Anda buat.
 
-***Dependency***
+Contoh penggunaan bot sederhana dengan SimpleBOT ini bisa anda coba dari situs [ai.fastplaz.com](http://ai.fastplaz.com) atau bisa melalu aplikasi chat **Telegram**, silahkan hubungi contact *'Fastplaz Bot'*.
+
+**Dependency**
 
 - FastPlaz_runtime
 - SimpleAI package
@@ -93,8 +96,35 @@ Memiliki fitur menjawab otomatis, dan belajar suatu definisi kata sederhana.
 Gunakan Lazarus, buka file "simplebot_package.lpk" dan install file tersebut.
 Jangan lupa, instalasi ini membutuhkan SimpleAI package.
 
+**SimpleBOT USAGE**
 
-***Input***
+```
+  SimpleBOT := TSimpleBotModule.Create;
+  SimpleBOT.OnError := @OnErrorHandler;  // Your Custom Message
+  text_response := SimpleBOT.Exec(Text);
+  SimpleBOT.Free;
+
+```
+
+Fungsi 'OnErrorHandler' bisa digunakan untuk melakukan trapping terhadap kata/kalimat yang belum diakomodir oleh data SimpleAI
+
+```delphi
+function TMainModule.OnErrorHandler(const Message: string): string;
+begin
+  .
+  .
+  .
+  // save to log file
+  LogUtil.Add(Message, 'AI');
+  
+  // or save to database
+  .
+  .
+  Result := 'Your custom messages';
+end;
+```
+
+**Input**
 
 method: Post
 
