@@ -20,6 +20,7 @@ type
   TSimpleAI = class
   private
     FAIName: string;
+    FKeyName: string;
     FMsg: string;
     FPrefixText: string;
     FRequestText: string;
@@ -28,6 +29,7 @@ type
     FResponseData: TMemIniFile;
     FResponseDataAsList: TStringList;
     FSuffixText: string;
+    FVarName: string;
 
     function getResponseJson: string;
     function getTimeSession(): string;
@@ -39,7 +41,6 @@ type
     function getParameterValue(KeyName: string): string;
     function getPatternString: string;
 
-    function StringReplacement(Text: string): string;
     procedure setDebug(AValue: boolean);
   public
     constructor Create; virtual;
@@ -50,15 +51,19 @@ type
     function AddResponFromFile(FileName: string): boolean;
 
     function Exec(Text: string; AutoResponse: boolean = True): boolean;
+    function SetQuestions(IntentName, Key: string): string;
     function GetResponse(IntentName, Action: string; EntitiesKey: string = ''): string;
     function SetResponseData(List: TStrings): boolean;
+    function StringReplacement(Text: string): string;
 
     property AIName: string read FAIName write FAIName;
     property SimpleAILib: TSimpleAILib read FSimpleAILib;
     property Action: string read getAction;
     property IntentName: string read getIntentName;
+    property KeyName: string read FKeyName;
+    property VarName: string read FVarName;
     property Parameters: TStrings read getParameters;
-    property Values[KeyName: string]: string read getParameterValue; default;
+    property Values[KeyValue: string]: string read getParameterValue; default;
     property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
     property ResponData: TMemIniFile read FResponseData;
@@ -244,6 +249,11 @@ begin
   end;
 end;
 
+function TSimpleAI.SetQuestions(IntentName, Key: string): string;
+begin
+  Result := GetResponse(IntentName, '', Key);
+end;
+
 function TSimpleAI.GetResponse(IntentName, Action: string; EntitiesKey: string): string;
 var
   i: integer;
@@ -266,8 +276,18 @@ begin
     i := Random(item_list.Count);
 
     Result := item_list[i];
+    FKeyName := item_list.Names[i];
+    i := pos(':', Result);
+    if i > 0 then
+    begin
+      FVarName := copy(FKeyName, i + 1);
+      FKeyName := copy(FKeyName, 0, i - 1);
+    end;
+
     if Debug then
-      FMsg := ' (' + IntToStr(i + 1) + '/' + IntToStr(item_list.Count) + ')';
+    begin
+      //FMsg := '';
+    end;
     Result := copy(Result, pos('=', Result) + 1);
   end;
 
