@@ -11,6 +11,7 @@ uses
 const
   _SIMPLEAI_INTENT_DATA_FILENAME = 'files/intents.txt';
   _SIMPLEAI_INTENT_ACTIONKEY = 'action';
+  _AI_VARKEY = 'varkey';
 
 type
 
@@ -23,6 +24,7 @@ type
     FDataAsList: TStringList;
     FDebug: boolean;
     FIntentKey: string;
+    FIntentKeySpecific: string;
     FIntentName: string;
     FEntities: TEntitiesFAI;
     FisLoaded: boolean;
@@ -50,6 +52,7 @@ type
     property Action: string read FAction;
     property IntentName: string read FIntentName;
     property IntentKey: string read FIntentKey;
+    property IntentKeySpecific: string read FIntentKeySpecific;
     property Entity: TEntitiesFAI read FEntities;
 
     property isLoaded: boolean read FisLoaded;
@@ -116,6 +119,8 @@ var
 begin
   Result := False;
   FIntentName := '';
+  FIntentKey := '';
+  FIntentKeySpecific := '';
   Text := Trim(Text);
   if Text = '' then
     Exit;
@@ -194,6 +199,14 @@ begin
 
         if FDebug then
           FParameters.Values['pattern'] := pattern;
+
+        FIntentKey:= tmp[0];
+        k := pos(':', FIntentKey);
+        if k > 0 then
+        begin
+          FIntentKeySpecific := copy( FIntentKey, k+1);;
+          FParameters.Add( _AI_VARKEY+'='+FIntentKeySpecific);
+        end;
 
         regex.Free;
         tmp.Free;

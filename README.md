@@ -58,7 +58,7 @@ end;
 ```
 
 
-***Format Output***
+***Format JSON Output***
 
 ```
 {
@@ -122,16 +122,6 @@ begin
   .
   Result := 'Your custom messages';
 end;
-```
-
-**Input**
-
-method: Post
-
-data disematkan di dalam body post, dengan format berikut
-
-```
-{"message":{"message_id":0,"text":"Your Message","chat":{"id":0}}}
 ```
 
 

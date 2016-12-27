@@ -2,14 +2,6 @@ unit simplebot_controller;
 
 {$mode objfpc}{$H+}
 
-{
-
-add this to routes
-    Route.Add( 'main', TSimpleBotModule); // for main address
-
-
-}
-
 {$ifdef AI_REDIS}
 {$else}
 {$endif}
@@ -48,6 +40,7 @@ const
   _AI_SESSION_LASTVISIT = 'AI_VISITLAST';
   _AI_SESSION_LASTACTION = 'AI_ACTIONLAST';
   _AI_SESSION_MESSAGECOUNT = 'AI_MESSAGECOUNT';
+  _AI_MESSAGEWAITINGLIMIT = 'AI_MESSAGEWAITINGLIMIT';
 
   _AI_SESSION_ASK_INTENT = 'AI_ASK_INTENT';
   _AI_SESSION_ASK_KEY = 'AI_ASK_KEY';
@@ -56,6 +49,7 @@ const
 
   _AI_DEFINE = 'define';
   _AI_SESSION_USER = 'AI_USER_';
+  _AI_VARKEY = 'varkey';
 
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
@@ -89,8 +83,12 @@ type
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
     function handlerProcessing(ActionName, Message: string): string;
+    function defineHandlerDefault(): string;
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function OnErrorHandler(const Message: string): string;
+    function prepareQuestion: boolean;
+    function echoQuestions(IntentName: string; Key: string = '';
+      MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME): string;
 
     // example handler
     function Example_Handler(const IntentName: string; Params: TStrings): string;
@@ -105,12 +103,12 @@ type
     destructor Destroy; virtual;
 
     function Exec(Message: string): string;
-    function PrepareQuestion: boolean;
-    function SetQuestions(IntentName: string; Key: string = '';
-      MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME): string;
     function isAnswer(): boolean;
     function GetResponse(IntentName:string; Action: string = ''; EntitiesKey: string = ''): string;
     function StringReplacement(Message: string): string;
+    function SetQuestions(IntentName: string; Key: string = '';
+      MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME): string;
+    procedure Answered;
 
     procedure SetSession(Key, Value: string);
     function GetSession(Key: string): string;
@@ -262,6 +260,41 @@ begin
     Exit;
   h := ___HandlerCallbackMap.Data[i];
   Result := h(SimpleAI.IntentName, SimpleAI.Parameters);
+end;
+
+function TSimpleBotModule.defineHandlerDefault: string; // for name & email
+var
+  keyName, keyValue: string;
+begin
+  Result := '--';
+  keyName := SimpleAI.Parameters.Values[_AI_VARKEY];
+  if keyName = '' then
+    keyName := SimpleAI.Parameters.Names[0];
+  keyValue := SimpleAI.Parameters.Values[ keyName];
+
+  if keyName = 'Email' then
+  begin
+    if not isEmail(keyValue) then
+    begin
+      Result := SimpleAI.GetResponse('EmailTidakValid');
+      Exit;
+    end;
+    Answered;
+  end;
+
+  if keyName = 'Name' then
+  begin
+    SetSession(_AI_SESSION_USER + keyName, keyValue);
+    SetQuestions('TanyaEmail');
+  end;
+
+  Result := GetResponse( SimpleAI.IntentName + 'Response', '', '');
+  if preg_match('%(' + keyName + ')%', Result) then
+  begin
+    Result := preg_replace('%(' + keyName + ')%', keyValue, Result, True);
+  end;
+
+  Result := StringReplacement(Result);
 end;
 
 function TSimpleBotModule.URL_Handler(const IntentName: string;
@@ -418,7 +451,11 @@ begin
       // do action
       setSession(_AI_SESSION_LASTACTION, SimpleAI.Action);
       lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
-      text_response := handlerProcessing(lst[0], Message);
+      if lst[0] = 'define' then
+      begin
+        text_response:= defineHandlerDefault();
+      end;
+      text_response := text_response + handlerProcessing(lst[0], Message);
       lst.Free;
 
       if text_response <> '' then
@@ -467,7 +504,7 @@ begin
   setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
 end;
 
-function TSimpleBotModule.PrepareQuestion: boolean;
+function TSimpleBotModule.prepareQuestion: boolean;
 var
   s, askIntent: string;
   askKey, askVar, askValue: string;
@@ -477,10 +514,23 @@ begin
   if askIntent = '' then
     Exit;
 
-  s := SetQuestions(askIntent);
+  s := EchoQuestions(askIntent);
 end;
 
 function TSimpleBotModule.SetQuestions(IntentName: string; Key: string;
+  MsgCount: integer): string;
+begin
+  setSession(_AI_SESSION_ASK_INTENT, IntentName);
+  SetSession(_AI_MESSAGEWAITINGLIMIT, i2s(MsgCount));
+end;
+
+procedure TSimpleBotModule.Answered;
+begin
+  setSession(_AI_SESSION_ASK_INTENT, '');
+end;
+
+
+function TSimpleBotModule.echoQuestions(IntentName: string; Key: string;
   MsgCount: integer): string;
 begin
   Result := SimpleAI.SetQuestions(IntentName);
@@ -515,7 +565,6 @@ begin
 
   if SimpleAI.Action = _AI_DEFINE then
     Exit;
-  ;
 
   // set response
   s := SimpleAI.GetResponse(askIntent + 'Response', '', '');
@@ -543,7 +592,7 @@ var
   regex: TRegExpr;
   s: string;
 begin
-  Result := Text;
+  Result := Message;
 
   Message := SimpleAI.StringReplacement(Message);
 
@@ -557,7 +606,6 @@ begin
   end;
   regex.Free;
 end;
-
 
 function TSimpleBotModule.TelegramSend(ChatIDRef, ReplyToMessageID,
   Message: string): boolean;

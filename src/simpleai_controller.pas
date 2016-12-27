@@ -348,7 +348,10 @@ begin
   json := json + '"action" : "' + actionName + '",';
   json := json + '"name" : "' + IntentName + '",';
   if Debug then
+  begin
+    json := json + '"key" : "' + SimpleAILib.Intent.IntentKey + '",';
     json := json + '"pattern" : "' + FSimpleAILib.Pattern + '",';
+  end;
   json := json + '"parameters" : {';
 
   //json := json + '"Greeting" : "' + '-' + '"';
