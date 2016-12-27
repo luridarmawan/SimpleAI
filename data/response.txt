@@ -1,0 +1,121 @@
+
+[Introduction]
+aboutme=\nPerkenalkan, saya adalah robot penjawab pesan otomatis.\nSaya akan berusaha membantu anda.\nMohon Maaf jika ada yang kurang bisa saya pahami nanti.
+firstsession=\n\nSepertinya kita belum pernah bertemu.
+secondsession=\n\n%Name% Senang bisa berjumpa lagi dengan anda.
+
+[WordCencor]
+say=Maaf, bisa diulang maksudnya ?
+say=Mungkin bisa digunakan alternatif kalimat yang lain.
+say=Maaf, sepertinya akan lebih baik jika menggunakan kata-kata yg lebih sopan
+say=Maaf jika pada kondisi tertentu, sepertinya saya tidak merespon Anda.
+
+[Greeting]
+say=Hi
+say=Yaa
+say=Halo, selamat %time_session% ...
+say=Hi, salam jumpa ...
+say=Hai juga. Kabar baik di sini, semoga kabar baik juga di sana
+say=Selamat %time_session% ...
+
+[none]
+say=... maaf jika saya belum banyak memahami kata2 yang ada
+say=... percakapan ini kami simpan dahulu, untuk perbendaharaan kata2 saya
+say=... bagaimana?
+say=... boleh diulang lagi?
+
+[Waktu]
+say=%time%
+
+[SiapaAku]
+say=Saya adalah BOT. Mesin penjawab otomatis yang akan berkomunikasi singkat dengan Anda.
+say=Saya %AIName%, BOT Chat. Jika ada pertanyaan yang lebih spesifik, sebaiknya menghubungi layanan support yang lainnya.
+say=Anda boleh panggil saya %AIName%
+say=Saya mesin AI, panggil saya %AIName%. \n\rUntuk hal yang lebih spesifik, silahkan hubungi support kami.
+
+[StatusAku]
+say=Sepertinya tidak relevan saya untuk menjawabnya
+say=Apakah ada urgensinya untuk menjawab ini 
+say=Saya ini mesin otomasi, status tentang saya sepertinya tidak perlu dipertanyakan
+say=Saya ROBOT, status tentang saya bukan masalah
+say=Seandainya saja menjadi yang mudah untuk disampaikan :(
+
+[TanyaTentangTokoh]
+say=Sepertinya tokoh terkenal
+say=Terdengar familiar
+say=Banyak orang mengenalnya
+say=Layak untuk jadi panutan
+say=Prestasinya luar biasa
+
+[TanyaTentangTokohTidakDikenal]
+say=Maaf, sepertinya saya belum pernah jumpa dia
+
+[TanyaDiriSendiriPositif]
+say=Entahlah ...
+say=Saya tidak dalam posisi untuk menyatakan itu
+say=Kerendehan hati sungguh amat sangat dihargai
+say=eheemmm....
+say=Banyak orang bilang demikian
+
+[TanyaDiriSendiriNegatif]
+say=Entahlah ...
+say=Saya tidak dalam posisi untuk menyatakan itu
+say=Ada baiknya kita mesti percaya diri
+say=Sepantasnya harus meyakini diri
+
+[Ekspresi]
+say=hehehe
+say=hhmm...
+say=:)
+
+[PernyataanSuka]
+say=Entahlah ...
+say=Kerendehan hati sungguh amat sangat dihargai
+say=eheemmm....
+say=Banyak orang bilang demikian
+say=Demikian juga dengan kamu
+
+[MelakukanSesuatu]
+say=Sepertinya menarik
+say=Sepertinya menyenangkan
+say=Nikmat sekali sepertinya
+say=Kadang bersama-sama lebih menyenangkan
+
+[Keraguan]
+say=begitulah ...
+say=Mesti berposotif thingking
+
+[PerkenalanResponse]
+say=Hi %Name%, terima kasih
+say=Data %Name% telah kami simpan
+
+[PerkenalanEmailResponse]
+say=Hi %Name%, email anda (%Email%) telah kami simpan
+
+[EmailTidakValid]
+say=Maaf, sepertinya email anda tidak valid
+
+[ResponBaik]
+say=baiklah
+say=syukurlah ...
+say=senang mendengarnya
+
+[ResponBuruk]
+say=hhmm..
+say=Semoga akan terus membaik hasilnya
+say=Sedih merasakannya
+say=Seandainya kamu bisa merasakan gerimisnya hati ini
+
+[InginTahu]
+say=mmm.. boleh tau apa itu %word% ?
+say=%word% ... apa itu?
+say=saya belum ada perbendaharaan kata %word%, bisa dijelaskan?
+say=tolong jelasin dong apa itu %word%
+
+[HalBaru]
+say=baiklah... saya coba memahami dulu tentang %word%
+say=hal baru untuk saya.\nsaya akan simpan dulu %word% di perbendaharaan saya.
+
+[PropertyWithDetail]
+say=asdad
+
