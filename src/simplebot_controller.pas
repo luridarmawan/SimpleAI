@@ -14,8 +14,7 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
-  sysctl,
-  fastplaz_handler, html_lib, logutil_lib, http_lib,
+  fastplaz_handler, logutil_lib, http_lib,
   RegExpr, fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
 
 const
@@ -73,13 +72,11 @@ type
     FAskCountdown: integer;
     FChatID: string;
     FisAnswered: boolean;
-    MessageID: string;
     FOnError: TOnErrorCallback;
     FDataLoaded: boolean;
     FTelegramToken: string;
     Text: string;
     HTTP: THTTPLib;
-    HTTP_Response: IHTTPResponse;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
     function getUserData(const KeyName: string): string;
@@ -92,7 +89,6 @@ type
     function defineHandlerDefault(): string;
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
-    function OnErrorHandler(const Message: string): string;
     function prepareQuestion: boolean;
     function echoQuestions(IntentName: string; Key: string = ''): string;
 
@@ -114,8 +110,7 @@ type
       EntitiesKey: string = ''): string;
     function StringReplacement(Message: string): string;
     procedure ClearQuestions;
-    function SetQuestions(IntentName: string; Key: string = '';
-      MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME): string;
+    procedure SetQuestions(IntentName: string; MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME);
     procedure Answered;
 
     procedure SetSession(Key, Value: string);
@@ -384,11 +379,6 @@ begin
   httpClient.Free;
 end;
 
-function TSimpleBotModule.OnErrorHandler(const Message: string): string;
-begin
-
-end;
-
 procedure TSimpleBotModule.SetSession(Key, Value: string);
 var
   sessionKey: string;
@@ -417,10 +407,8 @@ end;
 function TSimpleBotModule.Exec(Message: string): string;
 var
   json: TJSONUtil;
-  result_json: TJSONData;
-  _text: string;
   messageCount: integer;
-  s, text_response, search_title, askIntent: string;
+  s, text_response, askIntent: string;
   lst: TStrings;
 
   lastvisit_time, lastvisit_length: cardinal;
@@ -552,9 +540,7 @@ end;
 
 function TSimpleBotModule.prepareQuestion: boolean;
 var
-  i: integer;
-  s, askIntent: string;
-  askKey, askVar, askValue: string;
+  askIntent: string;
 begin
   Result := False;
   askIntent := getSession(_AI_SESSION_ASK_INTENT);
@@ -570,11 +556,10 @@ begin
     Exit;
   end;
 
-  s := EchoQuestions(askIntent);
+  EchoQuestions(askIntent);
 end;
 
-function TSimpleBotModule.SetQuestions(IntentName: string; Key: string;
-  MsgCount: integer): string;
+procedure TSimpleBotModule.SetQuestions(IntentName: string; MsgCount: integer);
 begin
   setSession(_AI_SESSION_ASK_INTENT, IntentName);
   SetSession(_AI_SESSION_ASK_COUNTDOWN, i2s(MsgCount));
@@ -597,7 +582,7 @@ end;
 
 function TSimpleBotModule.echoQuestions(IntentName: string; Key: string): string;
 begin
-  Result := SimpleAI.GetQuestions(IntentName);
+  Result := SimpleAI.GetQuestions(IntentName, Key);
   SimpleAI.ResponseText.Add(Result);
   setSession(_AI_SESSION_ASK_INTENT, IntentName);
   setSession(_AI_SESSION_ASK_KEY, SimpleAI.KeyName);
@@ -607,7 +592,7 @@ end;
 function TSimpleBotModule.isAnswerOld: boolean;
 var
   askIntent: string;
-  askKey, askVar, askValue, s: string;
+  askVar, askValue, s: string;
 begin
   Result := False;
   askIntent := getSession(_AI_SESSION_ASK_INTENT);
@@ -685,7 +670,7 @@ begin
 
   httpClient := THTTPLib.Create;
   httpClient.URL := _TELEGRAM_API_URL + FTelegramToken + '/sendMessage' +
-    '?chat_id=' + ChatIDRef + '&reply_to_message_id=' + MessageID +
+    '?chat_id=' + ChatIDRef + '&reply_to_message_id=' + ReplyToMessageID +
     '&text=' + Message;
 
   httpResponse := httpClient.Get();
