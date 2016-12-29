@@ -9,5 +9,3 @@ ask:Name=Bisa diinformasikan Email Anda apa?
 
 [TanyaNamaResponse]
 ask=Hi %Name%, terima kasih
-
-

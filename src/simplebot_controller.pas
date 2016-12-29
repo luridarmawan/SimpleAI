@@ -258,6 +258,11 @@ begin
   Result := ___HandlerCallbackMap[TagName];
 end;
 
+procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
+begin
+  SetSession(_AI_SESSION_USER + KeyName, AValue);
+end;
+
 function TSimpleBotModule.getUserData(const KeyName: string): string;
 begin
   Result := GetSession(_AI_SESSION_USER + KeyName);
@@ -293,17 +298,17 @@ begin
       Result := SimpleAI.GetResponse('EmailTidakValid');
       Exit;
     end;
-    SetSession(_AI_SESSION_USER + keyName, keyValue);
+    UserData[keyName] := keyValue;
     Answered;
-    s := GetSession(_AI_SESSION_USER + 'Name');
+    s := UserData['Name'];
     if s = '' then
       SetQuestions(_AI_ASK_NAME);
   end;
 
   if keyName = 'Name' then
   begin
-    SetSession(_AI_SESSION_USER + keyName, keyValue);
-    s := GetSession(_AI_SESSION_USER + 'Email');
+    UserData[keyName] := keyValue;
+    s := UserData['Email'];
     if s = '' then
     begin
       SetQuestions(_AI_ASK_EMAIL);
@@ -317,11 +322,6 @@ begin
   end;
 
   Result := StringReplacement(Result);
-end;
-
-procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
-begin
-  SetSession(_AI_SESSION_USER + KeyName, AValue);
 end;
 
 function TSimpleBotModule.URL_Handler(const IntentName: string;
@@ -597,7 +597,7 @@ begin
   setSession(_AI_SESSION_ASK_INTENT, '');
   setSession(_AI_SESSION_ASK_KEY, '');
   setSession(_AI_SESSION_ASK_VAR, '');
-  setSession(_AI_SESSION_USER + askVar, askValue);
+  UserData[askVar] := askValue;
 
   if SimpleAI.Action = _AI_DEFINE then
     Exit;
@@ -636,7 +636,7 @@ begin
   regex.Expression := '%(.*)%';
   if regex.Exec(Message) then
   begin
-    s := getSession(_AI_SESSION_USER + regex.Match[1]);
+    s := UserData[ regex.Match[1]];
     Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
       '%(.*)%', s, Message, True);
   end;
