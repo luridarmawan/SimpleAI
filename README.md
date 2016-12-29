@@ -124,7 +124,27 @@ begin
 end;
 ```
 
+**User Data**
 
+SimpleBOT menyediakan fitur menyimpan data user untuk kebutuhan temporer.
+
+```
+  SimpleBOT := TSimpleBotModule.Create;
+  ..
+  ..
+  
+  // Set
+  SimpleBOT.UserData[ 'Name'] := 'Luri Darmawan'
+  
+  // Get
+  varstring := SimpleBOT.UserData[ 'Name'];
+  
+  ..
+  ..
+
+  SimpleBOT.Free;
+
+```
 
 
 
