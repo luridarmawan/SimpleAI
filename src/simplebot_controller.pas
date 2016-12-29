@@ -35,17 +35,20 @@ const
 
   _AI_ACTION_SEPARATOR = '|';
 
-  _AL_LOG_LEARN = 'learn:';
+  _AL_LOG_LEARN = 'learn';
   _AI_SESSION_VISITED = 'AI_VISITED';
   _AI_SESSION_LASTVISIT = 'AI_VISITLAST';
   _AI_SESSION_LASTACTION = 'AI_ACTIONLAST';
   _AI_SESSION_MESSAGECOUNT = 'AI_MESSAGECOUNT';
-  _AI_MESSAGEWAITINGLIMIT = 'AI_MESSAGEWAITINGLIMIT';
+  //_AI_MESSAGEWAITINGLIMIT = 'AI_MESSAGEWAITINGLIMIT';
 
   _AI_SESSION_ASK_INTENT = 'AI_ASK_INTENT';
   _AI_SESSION_ASK_KEY = 'AI_ASK_KEY';
   _AI_SESSION_ASK_VAR = 'AI_ASK_VAR';
+  _AI_SESSION_ASK_COUNTDOWN = 'AI_ASK_COUNTDOWN';
   _AI_ASK_NAME = 'TanyaNama';
+  _AI_ASK_EMAIL = 'TanyaEmail';
+  _AI_ASK_COUNTDOWN = 'askCount';
 
   _AI_DEFINE = 'define';
   _AI_SESSION_USER = 'AI_USER_';
@@ -67,6 +70,7 @@ type
 
   TSimpleBotModule = class
   private
+    FAskCountdown: integer;
     FChatID: string;
     MessageID: string;
     FOnError: TOnErrorCallback;
@@ -77,6 +81,7 @@ type
     HTTP_Response: IHTTPResponse;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
+    function getUserData(const KeyName: string): string;
 
     procedure LoadConfig(DataName: string);
     procedure LoadAIDataFromFile;
@@ -84,11 +89,11 @@ type
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
     function handlerProcessing(ActionName, Message: string): string;
     function defineHandlerDefault(): string;
+    procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function OnErrorHandler(const Message: string): string;
     function prepareQuestion: boolean;
-    function echoQuestions(IntentName: string; Key: string = '';
-      MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME): string;
+    function echoQuestions(IntentName: string; Key: string = ''): string;
 
     // example handler
     function Example_Handler(const IntentName: string; Params: TStrings): string;
@@ -104,7 +109,8 @@ type
 
     function Exec(Message: string): string;
     function isAnswer(): boolean;
-    function GetResponse(IntentName:string; Action: string = ''; EntitiesKey: string = ''): string;
+    function GetResponse(IntentName: string; Action: string = '';
+      EntitiesKey: string = ''): string;
     function StringReplacement(Message: string): string;
     function SetQuestions(IntentName: string; Key: string = '';
       MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME): string;
@@ -114,12 +120,14 @@ type
     function GetSession(Key: string): string;
 
     property ChatID: string read FChatID write FChatID;
+    property AskCountdown: integer read FAskCountdown;
 
     property Debug: boolean read getDebug write setDebug;
     property isDataLoaded: boolean read FDataLoaded;
     property TelegramToken: string read FTelegramToken write FTelegramToken;
     function TelegramSend(ChatIDRef, ReplyToMessageID, Message: string): boolean;
 
+    property UserData[const KeyName: string]: string read getUserData write setUserData;
     property Handler[const TagName: string]: THandlerCallback
       read getHandler write setHandler;
     property OnError: TOnErrorCallback read FOnError write FOnError;
@@ -148,6 +156,7 @@ begin
   LoadConfig('');
 
   FChatID := '';
+  FAskCountdown := 0;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
 end;
@@ -249,6 +258,11 @@ begin
   Result := ___HandlerCallbackMap[TagName];
 end;
 
+function TSimpleBotModule.getUserData(const KeyName: string): string;
+begin
+  Result := GetSession(_AI_SESSION_USER + KeyName);
+end;
+
 function TSimpleBotModule.handlerProcessing(ActionName, Message: string): string;
 var
   i: integer;
@@ -264,13 +278,13 @@ end;
 
 function TSimpleBotModule.defineHandlerDefault: string; // for name & email
 var
-  keyName, keyValue: string;
+  s, keyName, keyValue: string;
 begin
   Result := '--';
   keyName := SimpleAI.Parameters.Values[_AI_VARKEY];
   if keyName = '' then
     keyName := SimpleAI.Parameters.Names[0];
-  keyValue := SimpleAI.Parameters.Values[ keyName];
+  keyValue := SimpleAI.Parameters.Values[keyName];
 
   if keyName = 'Email' then
   begin
@@ -279,22 +293,35 @@ begin
       Result := SimpleAI.GetResponse('EmailTidakValid');
       Exit;
     end;
+    SetSession(_AI_SESSION_USER + keyName, keyValue);
     Answered;
+    s := GetSession(_AI_SESSION_USER + 'Name');
+    if s = '' then
+      SetQuestions(_AI_ASK_NAME);
   end;
 
   if keyName = 'Name' then
   begin
     SetSession(_AI_SESSION_USER + keyName, keyValue);
-    SetQuestions('TanyaEmail');
+    s := GetSession(_AI_SESSION_USER + 'Email');
+    if s = '' then
+    begin
+      SetQuestions(_AI_ASK_EMAIL);
+    end;
   end;
 
-  Result := GetResponse( SimpleAI.IntentName + 'Response', '', '');
+  Result := GetResponse(SimpleAI.IntentName + 'Response', '', '');
   if preg_match('%(' + keyName + ')%', Result) then
   begin
     Result := preg_replace('%(' + keyName + ')%', keyValue, Result, True);
   end;
 
   Result := StringReplacement(Result);
+end;
+
+procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
+begin
+  SetSession(_AI_SESSION_USER + KeyName, AValue);
 end;
 
 function TSimpleBotModule.URL_Handler(const IntentName: string;
@@ -403,10 +430,7 @@ begin
   SimpleAI.PrefixText := '';
   SimpleAI.SuffixText := '';
 
-
-  //s := SimpleAI.GetResponse( 'Greeting', '');
-  //die( s);
-
+  // is firsttime ?
   s := getSession(_AI_SESSION_VISITED);
   if s = '' then
   begin
@@ -417,7 +441,7 @@ begin
     //SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_VISITED, '1');
     setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
-    setSession(_AI_SESSION_ASK_INTENT, _AI_ASK_NAME);
+    SetQuestions(_AI_ASK_NAME);
   end;
 
   s := getSession(_AI_SESSION_LASTVISIT);
@@ -453,7 +477,7 @@ begin
       lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
       if lst[0] = 'define' then
       begin
-        text_response:= defineHandlerDefault();
+        text_response := defineHandlerDefault();
       end;
       text_response := text_response + handlerProcessing(lst[0], Message);
       lst.Free;
@@ -480,6 +504,7 @@ begin
     end;
   end;
 
+  {
   if messageCount > _AI_COUNT__MINIMAL_ASKNAME then
   begin
     if PrepareQuestion then
@@ -488,6 +513,8 @@ begin
       // do something
     end;
   end;
+  }
+  prepareQuestion;
 
   text_response := SimpleAI.ResponseJson;
   json := TJSONUtil.Create;
@@ -506,6 +533,7 @@ end;
 
 function TSimpleBotModule.prepareQuestion: boolean;
 var
+  i: integer;
   s, askIntent: string;
   askKey, askVar, askValue: string;
 begin
@@ -514,6 +542,15 @@ begin
   if askIntent = '' then
     Exit;
 
+  FAskCountdown := s2i(GetSession(_AI_SESSION_ASK_COUNTDOWN)) - 1;
+  if SimpleAI.Debug then
+    SimpleAI.Parameters.Values[_AI_ASK_COUNTDOWN] := i2s(FAskCountdown);
+  if FAskCountdown > 0 then
+  begin
+    SetSession(_AI_SESSION_ASK_COUNTDOWN, i2s(FAskCountdown));
+    Exit;
+  end;
+
   s := EchoQuestions(askIntent);
 end;
 
@@ -521,7 +558,7 @@ function TSimpleBotModule.SetQuestions(IntentName: string; Key: string;
   MsgCount: integer): string;
 begin
   setSession(_AI_SESSION_ASK_INTENT, IntentName);
-  SetSession(_AI_MESSAGEWAITINGLIMIT, i2s(MsgCount));
+  SetSession(_AI_SESSION_ASK_COUNTDOWN, i2s(MsgCount));
 end;
 
 procedure TSimpleBotModule.Answered;
@@ -530,10 +567,9 @@ begin
 end;
 
 
-function TSimpleBotModule.echoQuestions(IntentName: string; Key: string;
-  MsgCount: integer): string;
+function TSimpleBotModule.echoQuestions(IntentName: string; Key: string): string;
 begin
-  Result := SimpleAI.SetQuestions(IntentName);
+  Result := SimpleAI.GetQuestions(IntentName);
   SimpleAI.ResponseText.Add(Result);
   setSession(_AI_SESSION_ASK_INTENT, IntentName);
   setSession(_AI_SESSION_ASK_KEY, SimpleAI.KeyName);

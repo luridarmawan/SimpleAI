@@ -200,12 +200,12 @@ begin
         if FDebug then
           FParameters.Values['pattern'] := pattern;
 
-        FIntentKey:= tmp[0];
+        FIntentKey := tmp[0];
         k := pos(':', FIntentKey);
         if k > 0 then
         begin
-          FIntentKeySpecific := copy( FIntentKey, k+1);;
-          FParameters.Add( _AI_VARKEY+'='+FIntentKeySpecific);
+          FIntentKeySpecific := copy(FIntentKey, k + 1);
+          FParameters.Add(_AI_VARKEY + '=' + FIntentKeySpecific);
         end;
 
         regex.Free;
@@ -315,7 +315,6 @@ begin
 end;
 
 end.
-
 
 
 
