@@ -72,6 +72,7 @@ type
   private
     FAskCountdown: integer;
     FChatID: string;
+    FisAnswered: boolean;
     MessageID: string;
     FOnError: TOnErrorCallback;
     FDataLoaded: boolean;
@@ -98,6 +99,7 @@ type
     // example handler
     function Example_Handler(const IntentName: string; Params: TStrings): string;
 
+    function isAnswerOld(): boolean;
   public
     {$ifdef AI_REDIS}
     SimpleAI: TSimpleAIRedis;
@@ -108,10 +110,10 @@ type
     destructor Destroy; virtual;
 
     function Exec(Message: string): string;
-    function isAnswer(): boolean;
     function GetResponse(IntentName: string; Action: string = '';
       EntitiesKey: string = ''): string;
     function StringReplacement(Message: string): string;
+    procedure ClearQuestions;
     function SetQuestions(IntentName: string; Key: string = '';
       MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME): string;
     procedure Answered;
@@ -124,6 +126,7 @@ type
 
     property Debug: boolean read getDebug write setDebug;
     property isDataLoaded: boolean read FDataLoaded;
+    property isAnswer: boolean read FisAnswered;
     property TelegramToken: string read FTelegramToken write FTelegramToken;
     function TelegramSend(ChatIDRef, ReplyToMessageID, Message: string): boolean;
 
@@ -417,7 +420,7 @@ var
   result_json: TJSONData;
   _text: string;
   messageCount: integer;
-  s, text_response, search_title: string;
+  s, text_response, search_title, askIntent: string;
   lst: TStrings;
 
   lastvisit_time, lastvisit_length: cardinal;
@@ -425,6 +428,7 @@ begin
   if _GET['_DEBUG'] <> '' then
     SimpleAI.Debug := True;
 
+  FisAnswered := False;
   Text := LowerCase(Message);
   text_response := '';
   SimpleAI.PrefixText := '';
@@ -486,15 +490,40 @@ begin
         SimpleAI.ResponseText.add(text_response);
     end; //SimpleAI.Action;
 
+    {
     if isAnswer() then
     begin
       // something to do
     end;
+    }
 
   end // if exec
   else
-  begin
-    if FOnError <> nil then
+  begin // if not exist in intentDB
+
+    // if answer email
+    askIntent:= GetSession( _AI_SESSION_ASK_INTENT);
+    if askIntent <> '' then
+    begin
+      if askIntent = _AI_ASK_EMAIL then
+      begin
+        if isEmail( Message) then
+        begin
+          UserData[ 'Email'] := Message;
+          text_response := GetResponse(askIntent + 'Response', '', '');
+          if preg_match('%(Email)%', text_response) then
+          begin
+            text_response := preg_replace('%(Email)%', Message, text_response, True);
+          end;
+          Answered;
+          text_response := StringReplacement( text_response);
+          SimpleAI.ResponseText.Text := text_response;
+        end;
+      end;
+    end;
+
+    //
+    if (FOnError <> nil)and(not FisAnswered) then
     begin
       SimpleAI.ResponseText.Text := FOnError(Text);
     end
@@ -504,16 +533,6 @@ begin
     end;
   end;
 
-  {
-  if messageCount > _AI_COUNT__MINIMAL_ASKNAME then
-  begin
-    if PrepareQuestion then
-    begin
-      messageCount := 0;
-      // do something
-    end;
-  end;
-  }
   prepareQuestion;
 
   text_response := SimpleAI.ResponseJson;
@@ -561,9 +580,18 @@ begin
   SetSession(_AI_SESSION_ASK_COUNTDOWN, i2s(MsgCount));
 end;
 
-procedure TSimpleBotModule.Answered;
+procedure TSimpleBotModule.ClearQuestions;
 begin
   setSession(_AI_SESSION_ASK_INTENT, '');
+  SetSession(_AI_SESSION_ASK_COUNTDOWN, '0');
+  setSession(_AI_SESSION_ASK_KEY, '');
+  setSession(_AI_SESSION_ASK_VAR, '');
+end;
+
+procedure TSimpleBotModule.Answered;
+begin
+  ClearQuestions;
+  FisAnswered := True;
 end;
 
 
@@ -576,10 +604,7 @@ begin
   setSession(_AI_SESSION_ASK_VAR, SimpleAI.VarName);
 end;
 
-// todo: next question dgn parameter count
-// count=0 => langsung tanyain
-
-function TSimpleBotModule.isAnswer: boolean;
+function TSimpleBotModule.isAnswerOld: boolean;
 var
   askIntent: string;
   askKey, askVar, askValue, s: string;

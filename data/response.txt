@@ -92,6 +92,9 @@ say=Data %Name% telah kami simpan
 [PerkenalanEmailResponse]
 say=Hi %Name%, email anda (%Email%) telah kami simpan
 
+[TanyaEmailResponse]
+say=Hi %Name%, email anda (%Email%) telah kami simpan.
+
 [EmailTidakValid]
 say=Maaf, sepertinya email anda tidak valid
 

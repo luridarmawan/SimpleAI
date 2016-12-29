@@ -128,7 +128,7 @@ end;
 
 SimpleBOT menyediakan fitur menyimpan data user untuk kebutuhan temporer.
 
-```
+```delphi
   SimpleBOT := TSimpleBotModule.Create;
   ..
   ..
