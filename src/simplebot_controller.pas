@@ -433,7 +433,8 @@ begin
     //SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_VISITED, '1');
     setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
-    SetQuestions(_AI_ASK_NAME);
+    if UserData['Name'] = '' then
+      SetQuestions(_AI_ASK_NAME);
   end;
 
   s := getSession(_AI_SESSION_LASTVISIT);
