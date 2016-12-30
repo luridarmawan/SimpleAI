@@ -11,8 +11,7 @@ say=Maaf, sepertinya akan lebih baik jika menggunakan kata-kata yg lebih sopan
 say=Maaf jika pada kondisi tertentu, sepertinya saya tidak merespon Anda.
 
 [Greeting]
-say=Hi
-say=Yaa
+say=Hi, selamat %time_session% ...
 say=Halo, selamat %time_session% ...
 say=Hi, salam jumpa ...
 say=Hai juga. Kabar baik di sini, semoga kabar baik juga di sana

@@ -21,7 +21,6 @@ type
 
   TSimpleAIRedis = class(TSimpleAI)
   private
-    FATest: boolean;
     FUseRedis: boolean;
     FRedis: TRedisConstroller;
   public

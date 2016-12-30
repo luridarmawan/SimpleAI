@@ -1,3 +1,10 @@
+{
+This file is part of the SimpleAI package.
+(c) Luri Darmawan <luri@fastplaz.com>
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+}
 unit simpleai_lib;
 
 {$mode objfpc}{$H+}
@@ -5,7 +12,7 @@ unit simpleai_lib;
 interface
 
 uses
-  entities_lib, intents_lib,
+  intents_lib,
   Classes, SysUtils;
 
 type

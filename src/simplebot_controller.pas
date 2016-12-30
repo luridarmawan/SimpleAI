@@ -1,3 +1,10 @@
+{
+This file is part of the SimpleBOT package.
+(c) Luri Darmawan <luri@fastplaz.com>
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+}
 unit simplebot_controller;
 
 {$mode objfpc}{$H+}
@@ -168,10 +175,6 @@ begin
 end;
 
 procedure TSimpleBotModule.LoadConfig(DataName: string);
-var
-  i: integer;
-  s: string;
-  lst: TStrings;
 begin
   FTelegramToken := Config[_TELEGRAM_CONFIG_TOKEN];
 
@@ -331,6 +334,7 @@ var
   httpClient: THTTPLib;
   httpResponse: IHTTPResponse;
 begin
+  Result := '';
   lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
   if lst.Count = 1 then
     Exit;
@@ -398,10 +402,10 @@ end;
 function TSimpleBotModule.Example_Handler(const IntentName: string;
   Params: TStrings): string;
 begin
+  Result := '';
   if not SimpleAI.Debug then
     Exit;
   Result := 'This is Example Hook Handler';
-
 end;
 
 function TSimpleBotModule.Exec(Message: string): string;

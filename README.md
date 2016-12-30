@@ -1,17 +1,25 @@
 # SimpleAI
 
+## What is it?
+
 Simple AI with Pascal
 
 
 Data intent dan entitiest menggunakan file text biasa, tidak menggunakan RDBMS.
 Disarankan untuk menggunakan Redis atau sejenisnya.
 
-**Dependency**
+
+## Why use it?
+
+
+## How to use it
+
+
+### Requirements
 
 - kesabaran dan ketekunan
 
-
-### Instalasi
+### Instalation
 
 Gunakan Lazarus, buka file "simpleai_package.lpk" dan install file tersebut.
 
@@ -76,6 +84,9 @@ end;
 	}
 }
 ```
+
+
+---
 
 
 # SimpleBOT
@@ -149,3 +160,35 @@ SimpleBOT menyediakan fitur menyimpan data user untuk kebutuhan temporer.
 
 
 ![Format](img/format_01.png "Format")
+
+## Documentation
+
+Take a look at the repo [Wiki](https://github.com/luridarmawan/SimpleAI/wiki) for further information and tutorials!
+Feel free to improve!
+
+## Projects with this library
+
+Here's a list of projects that feats this library, feel free to add yours!
+
+- [SimpleBOT example](https://github.com/luridarmawan/SimpleBOT/) 
+
+
+
+## Troubleshooting
+
+If you like living on the edge, please report any bugs you find on the
+[SimpleAI issues](https://github.com/luridarmawan/SimpleAI/issues) page.
+
+## Contributing
+
+See [CONTRIBUTING](.github/CONTRIBUTING.md) for more information.
+
+## License
+
+Please see the [LICENSE](LICENSE.txt) included in this repository,
+which this project is licensed under.
+
+## Credits
+
+Credit list in [CREDITS](CREDITS)
+

@@ -6,8 +6,8 @@ say=@Example
 say=@WordCencor
 
 [Greeting]
-say=@Greeting
 say=@Greeting apa kabar
+say=@Greeting
 say=selamat @Waktu
 say=how are you
 say=how are u
