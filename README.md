@@ -25,7 +25,7 @@ SimpleAI terbagi dalam 2 (dua) _package_ utama :
 1. SimpleAI Package
 2. SimpleBOT Package
 
-**SimpleAI Package**
+### SimpleAI Package
 
 Merupakan **package utama** dari SimpleAI ini. Berisi pustaka _entities_ dan _intents_ yang digunakan untuk kebutuhan AI secara sederhana.
 
@@ -33,7 +33,7 @@ Package ini bisa digunakan baik untuk _desktop application_ maupun _web applicat
 
 Informasi penggunaan secara lengkap bisa dibaca dari dokumen [README SimpleAI](README-simpleai.md)
 
-**SimpleBOT Package**
+### SimpleBOT Package
 
 Merupakan _package_ pendukung yang siap digunakan untuk membuat AI sederhana berbasis web. Package ini dikhususkan untuk aplikasi-aplikasi berbasis web yang menggunakan [FastPlaz](http://www.fastplaz.com).
 
@@ -45,7 +45,7 @@ SimpleBOT package sudah mendukung juga untuk digunakan sebagai Telegram BOT.
 
 Contoh penggunaan bot sederhana dengan SimpleBOT ini bisa anda coba dari situs [ai.fastplaz.com](http://ai.fastplaz.com) atau bisa melalu aplikasi chat **Telegram**, silahkan hubungi contact *'Fastplaz Bot'*.
 
-**Dependency**
+### Requirements
 
 - FastPlaz_runtime
 - SimpleAI package
