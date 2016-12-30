@@ -465,7 +465,7 @@ begin
   if SimpleAI.Exec(Text) then
   begin
     SimpleAI.ResponseText.Text := trim(SimpleAI.ResponseText.Text);
-    text_response := SimpleAI.ResponseJson;
+    text_response := SimpleAI.ResponseText.Text;
 
     if SimpleAI.Action <> '' then
     begin

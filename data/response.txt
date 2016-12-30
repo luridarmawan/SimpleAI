@@ -118,6 +118,3 @@ say=tolong jelasin dong apa itu %word%
 say=baiklah... saya coba memahami dulu tentang %word%
 say=hal baru untuk saya.\nsaya akan simpan dulu %word% di perbendaharaan saya.
 
-[PropertyWithDetail]
-say=asdad
-
