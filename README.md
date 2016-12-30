@@ -2,98 +2,46 @@
 
 ## What is it?
 
-Simple AI with Pascal
+SimpleAI adalah _package code_ yang bisa digunakan untuk menerapkan AI (_Artificial Intelligence_) secara sederhana.
 
+SimpleAI ini dibangun dalam bahasa Pascal, khususnya dengan [freepascal](http://www.freepascal.org/). Untuk memudahkan dalam proses development, telah disediakan juga _package_ untuk digunakan di dalam IDE [Lazarus](http://www.lazarus-ide.org/)
 
-Data intent dan entitiest menggunakan file text biasa, tidak menggunakan RDBMS.
-Disarankan untuk menggunakan Redis atau sejenisnya.
+SimpleAI dibangun secara sederhana, data diambil dari *file* biasa, tanpa menggunakan RDBMS yang sudah ada.
+
+Untuk meningkatkan performat, telah disediakan juga fitur untuk koneksi ke [Redis](https://redis.io/). Untuk Production atau penggunaan trafik yang tinggi, disarankan untuk menggunakan Redis sebagai pilihan _data storage_-nya.
 
 
 ## Why use it?
 
+**Ringan Tanpa Beban**
+
+SimpleAI dibuat dengan sederhana, simple dan ringan. SimpleAI adalah _binary application_ sehingga diharapkan akan lebih cepat dan ringan. 
+
 
 ## How to use it
 
+SimpleAI terbagi dalam 2 (dua) _package_ utama :
 
-### Requirements
+1. SimpleAI Package
+2. SimpleBOT Package
 
-- kesabaran dan ketekunan
+**SimpleAI Package**
 
-### Instalation
+Merupakan **package utama** dari SimpleAI ini. Berisi pustaka _entities_ dan _intents_ yang digunakan untuk kebutuhan AI secara sederhana.
 
-Gunakan Lazarus, buka file "simpleai_package.lpk" dan install file tersebut.
+Package ini bisa digunakan baik untuk _desktop application_ maupun _web application_ yang berbasis [FastPlaz](http://www.fastplaz.com)
 
+Informasi penggunaan secara lengkap bisa dibaca dari dokumen [README SimpleAI](README-simpleai.md)
 
-**SimpleAI USAGE**
+**SimpleBOT Package**
 
-```delphi
-SimpleAI := TSimpleAI.Create;
-SimpleAI.AddEntitiesFromFile( 'entities.txt');
-SimpleAI.AddEntitiesFromFile( 'entities-pulsa.txt');
-SimpleAI.AddEntitiesFromFile( 'entities-hotel.txt');
-SimpleAI.AddIntentFromFile( 'intents.txt');
-SimpleAI.AddIntentFromFile( 'intents-pulsa.txt');
-SimpleAI.AddIntentFromFile( 'intents-hotel.txt');
-SimpleAI.AddIntentFromFile( 'intents-danlainlain.txt');
-SimpleAI.AddResponFromFile( 'response.txt');
-
-.
-.
-.
-
-Text := 'hi apa kabar?';
-
-if SimpleAI.Exec(Text) then
-begin
-
-  // output dalam format text (result saja)
-  ResponseString := SimpleAPI.SimpleAI.ResponseText;
-  
-  // output dalam json format
-  json := SimpleAPI.SimpleAI.ResponseJson;
-
-  //
-  Action := SimpleAI.Action;
-  IntentName := SimpleAI.IntentName;
-  Params := SimpleAI.Parameters;
-  
-  // do something
-  .
-  .
-  .
-
-end;
-```
-
-
-***Format JSON Output***
-
-```
-{
-	"code": 0,
-	"request": {
-		"text": ""
-	},
-	"response": {
-		"intents": {
-			"action": "",
-			"name": "",
-			"parameters": {}
-		},
-		"text": []
-	}
-}
-```
-
-
----
-
-
-# SimpleBOT
+Merupakan _package_ pendukung yang siap digunakan untuk membuat AI sederhana berbasis web. Package ini dikhususkan untuk aplikasi-aplikasi berbasis web yang menggunakan [FastPlaz](http://www.fastplaz.com).
 
 SimpleBOT merupakan salah satu contoh penggunaan SimpleAI yang dipergunakan untuk membuat BOT.
 Memiliki fitur menjawab otomatis, dan belajar suatu definisi kata sederhana.
-Kecerdasan Bot ini tergantung dari data entities dan intent yang Anda miliki, serta logic handler yang Anda buat.
+Kecerdasan Bot ini tergantung dari data entities dan intent yang Anda miliki, serta logic handler yang bisa dibuat _custom_ sesuai kebutuhan.
+
+SimpleBOT package sudah mendukung juga untuk digunakan sebagai Telegram BOT.
 
 Contoh penggunaan bot sederhana dengan SimpleBOT ini bisa anda coba dari situs [ai.fastplaz.com](http://ai.fastplaz.com) atau bisa melalu aplikasi chat **Telegram**, silahkan hubungi contact *'Fastplaz Bot'*.
 
@@ -102,64 +50,8 @@ Contoh penggunaan bot sederhana dengan SimpleBOT ini bisa anda coba dari situs [
 - FastPlaz_runtime
 - SimpleAI package
 
-### Instalasi
+Informasi penggunaan secara lengkap bisa dibaca dari dokumen [README SimpleBOT](README-simplebot.md)
 
-Gunakan Lazarus, buka file "simplebot_package.lpk" dan install file tersebut.
-Jangan lupa, instalasi ini membutuhkan SimpleAI package.
-
-**SimpleBOT USAGE**
-
-```
-  SimpleBOT := TSimpleBotModule.Create;
-  SimpleBOT.OnError := @OnErrorHandler;  // Your Custom Message
-  text_response := SimpleBOT.Exec(Text);
-  SimpleBOT.Free;
-
-```
-
-Fungsi 'OnErrorHandler' bisa digunakan untuk melakukan trapping terhadap kata/kalimat yang belum diakomodir oleh data SimpleAI
-
-```delphi
-function TMainModule.OnErrorHandler(const Message: string): string;
-begin
-  .
-  .
-  .
-  // save to log file
-  LogUtil.Add(Message, 'AI');
-  
-  // or save to database
-  .
-  .
-  Result := 'Your custom messages';
-end;
-```
-
-**User Data**
-
-SimpleBOT menyediakan fitur menyimpan data user untuk kebutuhan temporer.
-
-```delphi
-  SimpleBOT := TSimpleBotModule.Create;
-  ..
-  ..
-  
-  // Set
-  SimpleBOT.UserData[ 'Name'] := 'Luri Darmawan'
-  
-  // Get
-  varstring := SimpleBOT.UserData[ 'Name'];
-  
-  ..
-  ..
-
-  SimpleBOT.Free;
-
-```
-
-
-
-![Format](img/format_01.png "Format")
 
 ## Documentation
 
