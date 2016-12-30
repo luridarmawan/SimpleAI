@@ -181,7 +181,7 @@ If you like living on the edge, please report any bugs you find on the
 
 ## Contributing
 
-See [CONTRIBUTING](.github/CONTRIBUTING.md) for more information.
+See [CONTRIBUTING](CONTRIBUTING.md) for more information.
 
 ## License
 
