@@ -327,7 +327,7 @@ end;
 function TSimpleAI.getResponseJson: string;
 var
   i: integer;
-  json, actionName, txt: string;
+  json, actionName, txt, v: string;
   lst: TStrings;
 begin
   Result := '';
@@ -365,8 +365,10 @@ begin
   //json := json + '"Greeting" : "' + '-' + '"';
   for i := 0 to FSimpleAILib.Parameters.Count - 1 do
   begin
+    v := FSimpleAILib.Parameters.ValueFromIndex[i];
+    v := StringReplace( v, '\', '\\', [rfReplaceAll]);
     json := json + '"' + FSimpleAILib.Parameters.Names[i] + '" : "' +
-      FSimpleAILib.Parameters.ValueFromIndex[i] + '"';
+      v + '"';
     if i < FSimpleAILib.Parameters.Count - 1 then
       json := json + ',';
   end;
