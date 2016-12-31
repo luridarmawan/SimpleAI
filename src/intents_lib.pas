@@ -201,6 +201,8 @@ begin
           if FParameters.Count > 0 then
             FParameters.Values[section_name] := key_used;
 
+          //FParameters.Values[ '_'+section_name + '_value'] := regex.Match[ match_index];
+          FParameters.Values[section_name + '_value'] := regex.Match[match_index];
           Inc(match_index);
         until regex.Match[match_index] = '';
 
