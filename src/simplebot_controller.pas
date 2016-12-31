@@ -274,7 +274,7 @@ var
   i: integer;
   h: THandlerCallback;
 begin
-  Result := SimpleAI.ResponseText.Text;
+  Result := ''; //SimpleAI.ResponseText.Text;
   i := ___HandlerCallbackMap.IndexOf(ActionName);
   if i = -1 then
     Exit;
@@ -471,6 +471,7 @@ begin
     begin
       // do action
       setSession(_AI_SESSION_LASTACTION, SimpleAI.Action);
+      text_response := '';
       lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
       if lst[0] = 'define' then
       begin
