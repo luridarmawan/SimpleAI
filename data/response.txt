@@ -17,6 +17,11 @@ say=Hi, salam jumpa ...
 say=Hai juga. Kabar baik di sini, semoga kabar baik juga di sana
 say=Selamat %time_session% ...
 
+[Salam]
+say=Waalaikumsalam
+say=Waalaikumsalam wr wb
+say=Waalaikumsalam Warahmatullahi Wabarakatuh
+
 [Perpisahan]
 say=Sampai ketemu lagi
 say=Terima kasih, sampai jumpa lagi
@@ -86,6 +91,9 @@ say=Tidak jauh kok
 say=Saya bisa ada dimana saja
 say=Hhhmm... agak sulit juga menjawabnya...
 
+[TokohSiapa]
+say=sepertinya dia %Figure%
+
 [TanyaTentangTokoh]
 say=Sepertinya tokoh terkenal
 say=Terdengar familiar
@@ -113,6 +121,19 @@ say=Sepantasnya harus meyakini diri
 say=hehehe
 say=hhmm...
 say=:)
+
+[Sanjungan]
+say=Terima kasih, semoga demikian juga dengan kamu
+say=Semoga tidak membuat saya lupa diri
+say=Kerendehan hati sungguh amat sangat dihargai
+say=Demikian juga dengan kamu
+say=Harapan saya bisa memberikan yang selalu lebih baik
+
+[SuruhanPositif]
+say=Saya akan coba melakukan dengan lebih baik
+say=Terima kasih, mohon bimbingannya
+say=Siap, semoga bisa saya jalani
+say=Mohon dukungannya. terima kasih
 
 [PernyataanSuka]
 say=Entahlah ...
@@ -190,15 +211,36 @@ say=dicoba untuk berusaha lebih baik lagi
 say=terbaik yang bisa dilakukan
 say=terus berusaha yang terbaik
 
+[KeadaanNegatif]
+say=jaga diri baik2
+say=jaga kesehatanmu
+say=semangat yaa
+say=mesti semangat
+
 [InginTahu]
 say=mmm.. boleh tau apa itu %word% ?
 say=%word% ... apa itu?
 say=saya belum ada perbendaharaan kata %word%, bisa dijelaskan?
 say=tolong jelasin dong apa itu %word%
 
+[InginTanya]
+say=yaa... ada yg bisa saya bantu?
+say=bagaimana?
+say=silahkan, dengan senang hati
+say=boleh   
+
+[LoremIpsum]
+say=seperti biasa: Lorem ipsum dolor sit amet, consectetur adipiscing elit. De quibus cupio scire quid sentias. Parvi enim primo ortu sic iacent, tamquam omnino sine animo sint. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Duo Reges: constructio interrete. Explanetur igitur. Sumenda potius quam expetenda. 
+say=jawaban standard: Lorem ipsum dolor sit amet, consectetur adipiscing elit. De quibus cupio scire quid sentias. Parvi enim primo ortu sic iacent, tamquam omnino sine animo sint. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Duo Reges: constructio interrete. Explanetur igitur. Sumenda potius quam expetenda. 
+say=anda sudah pasti tau jawabannya apa
 [HalBaru]
 say=baiklah... saya coba memahami dulu tentang %word%
 say=hal baru untuk saya.\nsaya akan simpan dulu %word% di perbendaharaan saya.
+
+[telolet]
+say=telotelotelotelooooooleeettt...
+say=teeeetttt....
+say=telolet telolet let let let
 
 [PropertyWithDetail]
 say=asdad

@@ -287,28 +287,29 @@ var
   s, keyName, keyValue: string;
 begin
   Result := '--';
-  keyName := SimpleAI.Parameters.Values[_AI_VARKEY];
-  if keyName = '' then
-    keyName := SimpleAI.Parameters.Names[0];
-  keyValue := SimpleAI.Parameters.Values[keyName];
 
-  if keyName = 'Email' then
+  // Email
+  if SimpleAI.Parameters.IndexOfName('Email') <> -1 then
   begin
+    keyName := 'Email';
+    keyValue := SimpleAI.Parameters.Values['Email'];
     if not isEmail(keyValue) then
     begin
       Result := SimpleAI.GetResponse('EmailTidakValid');
       Exit;
     end;
-    UserData[keyName] := keyValue;
+    UserData['Email'] := keyValue;
     Answered;
     s := UserData['Name'];
     if s = '' then
       SetQuestions(_AI_ASK_NAME);
   end;
 
-  if keyName = 'Name' then
+  if SimpleAI.Parameters.IndexOfName('Name') <> -1 then
   begin
-    UserData[keyName] := keyValue;
+    keyName := 'Name';
+    keyValue := SimpleAI.Parameters.Values['Name'];
+    UserData['Name'] := keyValue;
     s := UserData['Email'];
     if s = '' then
     begin

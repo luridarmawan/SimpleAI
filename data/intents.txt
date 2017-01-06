@@ -14,6 +14,20 @@ say=bisa @Sapaan:kamu @Lakukan
 say=@Sapaan:kamu bisa @Tanya:apa
 say=bisa @Tanya:apa
 
+[Sanjungan]
+say=@Sapaan:kamu @apapun @Kencantikan:baik
+say=@Sapaan:kamu @Kencantikan:baik
+
+[SuruhanPositif]
+say=@MelakukanSesuatu:belajar @apapun rajin
+
+[Ekspresi]
+say=^@Ekspresi
+say=^@Keraguan
+say=ga pa pa
+say=ga papa
+say=gpp
+
 [Greeting]
 say=@Greeting apa kabar
 say=@Greeting
@@ -22,6 +36,9 @@ say=how are you
 say=how are u
 say=how r you
 say=@Waktu:waktu
+
+[Salam]
+say=@Salam
 
 [Perpisahan]
 say=selamat tinggal
@@ -38,6 +55,7 @@ say=nama ku @Name
 say=nama saya adalah @Name
 say=nama saya @Name
 say=nama sy @Name
+say=nama @Sapaan:aku @Name
 say=@Name nama @Sapaan:aku
 say=^nama @Name
 
@@ -50,11 +68,11 @@ say=email @Email
 	
 [Aktivitas]
 say=@Sapaan:kamu @Sedang @apapun
-say=^@Sedang @apapun
+say=^@Sedang:sedang @apapun
 
 [StatusAku]
 say=masih @PersonalStatus
-say=sudah @PersonalStatus
+say=@Sedang:sudah @PersonalStatus
 say=@Sapaan:kamu @PersonalStatus
 say=@Sapaan @PersonalStatus
 say=@Sapaan:kamu @Sedang @whatever
@@ -63,7 +81,11 @@ say=@Sapaan:kamu @Sedang @whatever
 say=@Tanya:kamu @JenisKelamin
 
 [Umur]
-say=@Usia @Sapaan:kamu
+say=@Umur @Sapaan:kamu
+
+[TokohSiapa]
+say=@Tanya:siapa @apapun @Figure
+say=@Tanya:siapa @Figure   
 
 [SiapaAku]
 say=@Tanya:siapa @Sapaan:aku
@@ -78,7 +100,14 @@ say=@Tanya:siapa @whatever
 say=^@Tanya:siapa
 say=^nama @whatever
 
+[InginTanya]
+say=mau (t|n)anya
+say=boleh (t|n)anya
+
+
 [TanyaLokasi]
+say=rumah @Sapaan:kamu @Tanya:dimana
+say=rumah@Sapaan:kamu @Tanya:dimana
 say=@TanyaLokasi rumah @Sapaan:kamu
 say=@TanyaLokasi rumahmu
 say=@TanyaLokasi rumah
@@ -107,11 +136,6 @@ action=angka
 say=@Angka @Satuan
 say=@berapapun @Satuan
 
-
-[Ekspresi]
-say=^@Ekspresi
-say=^@Keraguan
-
 [UngkapanBaik]
 say=@Sapaan @Sifat:baik
 say=@Sifat:baik
@@ -130,8 +154,10 @@ say=@Respon:buruk
 say=@Tanya @Waktu
 say=@Waktu:-waktu @Tanya
 
+
 [TanyaTentangTokoh]
 say=@Sapaan:kamu @PersonalKnowledge @Figure
+say=@PersonalKnowledge @sebutan @Figure
 say=@PersonalKnowledge @Figure
 
 [TanyaTentangTokohTidakDikenal]
@@ -141,6 +167,10 @@ say=@PersonalKnowledge @siapapun
 [PerkenalanComplex]
 action=define|Name
 say:Name=^@Sapaan:aku @Name
+
+[LoremIpsum]
+say=lorem ipsum
+say=loremipsum
 
 [Deskripsi]
 action=define
@@ -152,6 +182,14 @@ say=@Key itu @Value
 [KenapaDisimpan]
 say=@Tanya:mengapa kok disimpan
 say=@Tanya:mengapa @apapun
+
+[KeadaanNegatif]
+say=@Keadaan:buruk @apapun
+
+[telolet]
+say=om telolet om
+say=omteloletom
+say=telolet
 
 [Cari]
 action=cari

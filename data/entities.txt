@@ -5,13 +5,17 @@ say=example
 [WordCencor]
 gila=gila|gendeng|gemblung|crazy|pea|kampret
 binatang=asu|anjing|babi
-lainnya=tai|taek|eek|pret|setan
+lainnya=tai|taek|eek|pret|setan|kakeane
+sexuality=kontol|ngentu|bawuk|ngentot
 
 [Greeting]
 hi=hi|hii|hai|hei|halo|hallo|halow|hallow|hellow|hola|hox|hy
 kabar=apa kabar|kabar
 salam=salam kenal|salam
 yo=yo|yoyoi
+
+[Salam]
+salam=assalamualaikum|assalamu'alaikum
 
 [Sapaan]
 aku=aku|saya|gue|gw|akyu|ane|私
@@ -40,8 +44,8 @@ tunai=tunai
 cari=cariin|carikan|cari|temukan
 
 [Respon]
-baik=baik|baiklah|okey|oke|okelah|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan
-buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik
+baik=baik|baiklah|okey|oke|okelah|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan|selow|woles
+buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong
 
 [Waktu]
 jam=jam
@@ -65,7 +69,7 @@ kerja=kerja|gawe
 laku=lakukan|jalani|perbuat
 
 [PersonalStatus]
-nikah=nikah|menikah|merid|married
+nikah=nikah|menikah|merid|married|meried
 single=jomblo|single|gadis|gds|lajang|perjaka
 
 [Umur]
@@ -79,8 +83,8 @@ perempuan=perempuan|gadis|ibu
 tahu=kenal|tau|tahu|ngerti|ngertiin
 
 [Keadaan]
-good=sehat|kuat|semangat|sembuh
-bad=sakit|demam|pusing
+baik=sehat|kuat|semangat|sembuh
+buruk=sakit|demam|pusing|capek|lelah
 
 [HargaLevel]
 mahal=paling mahal|termahal|mahal|mhal
@@ -105,8 +109,8 @@ juta=juta|jt
 milyar=milyar|milyr|miliar
 
 [Kencantikan]
-baik=ganteng|cantik|keren|hebat|powerful|top|pinter
-buruk=jelek|songong|gila|budeg
+baik=ganteng|cantik|keren|hebat|powerful|top|pinter|pintar
+buruk=jelek|songong|gila|budeg|bodoh
 
 [Perasaan]
 tidak=benci|jijay|ga suka|ga seneng
@@ -117,18 +121,19 @@ baik=haha|hehe|hihi|hoho|wkwk
 kaget=eehh|ehh|wow
 
 [Sifat]
-baik=baik|super|luar biasa|hebat|keren|cool
-buruk=jahat|genit
+baik=baik|super|luar biasa|hebat|keren|cool|pinter|cerdas
+buruk=jahat|genit|bodoh|goblok|jelek
 
 [Figure]
 presiden=soekarno|soeharto|sby|jokowi|megawati|prabowo|jkw
 pahlawan=pattimura|diponegoro|kartini
 jagoan123=ansori|encang|ihdi|oka|abi|ines
 dev=peter|bams|bambang|anne|deroh|ratu|yudi|joko
-devpascal=indra|tigor|derit
+devpascal=indra|tigor|derit|kofa|maskofa
 
 [MelakukanSesuatu]
 hubungi=menghubungi|hubungi|ngubungin|kontak
+belajar=belajar
 
 [Sedang]
 sudah=sdh|sudah|sdah
