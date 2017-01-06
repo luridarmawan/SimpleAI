@@ -12,7 +12,7 @@ unit simpleai_controller;
 interface
 
 uses
-  simpleai_lib, Dos,
+  simpleai_lib, Dos, RegExpr,
   IniFiles, Classes, SysUtils;
 
 const
@@ -118,6 +118,7 @@ function TSimpleAI.StringReplacement(Text: string): string;
 var
   s, t: string;
   y, m, d: word;
+  regex: TRegExpr;
 begin
   Result := Text;
   Result := FSimpleAILib.Intent.Entities.preg_replace(
@@ -142,6 +143,17 @@ begin
     Result := FSimpleAILib.Intent.Entities.preg_replace(
       '%(time)%', t, Result, False);
   end;
+
+  regex := TRegExpr.Create;
+  regex.Expression := '%(.*)%';
+  if regex.Exec(Result) then
+  begin
+    s := regex.Match[1];
+    Result := SimpleAILib.Intent.Entities.preg_replace(
+      '%'+s+'%', FSimpleAILib.Parameters.Values[ s], Result, True);
+  end;
+  regex.Free;
+
 end;
 
 procedure TSimpleAI.setDebug(AValue: boolean);
@@ -366,9 +378,9 @@ begin
   for i := 0 to FSimpleAILib.Parameters.Count - 1 do
   begin
     v := FSimpleAILib.Parameters.ValueFromIndex[i];
-    v := StringReplace( v, '\', '\\', [rfReplaceAll]);
-    json := json + '"' + FSimpleAILib.Parameters.Names[i] + '" : "' +
-      v + '"';
+    v := StringReplace(v, '\', '\\', [rfReplaceAll]);
+    json := json + '"' + FSimpleAILib.Parameters.Names[i] + '" : "' + v + '"';
+
     if i < FSimpleAILib.Parameters.Count - 1 then
       json := json + ',';
   end;
