@@ -17,6 +17,12 @@ say=Hi, salam jumpa ...
 say=Hai juga. Kabar baik di sini, semoga kabar baik juga di sana
 say=Selamat %time_session% ...
 
+[Perpisahan]
+say=Sampai ketemu lagi
+say=Terima kasih, sampai jumpa lagi
+say=Bye, terima kasih
+say=bye bye, thanks
+
 [none]
 say=... maaf jika saya belum banyak memahami kata2 yang ada
 say=... percakapan ini kami simpan dahulu, untuk perbendaharaan kata2 saya
@@ -26,18 +32,59 @@ say=... boleh diulang lagi?
 [Waktu]
 say=%time%
 
-[SiapaAku]
+[HubungiSupport]
+say=silahkan hubungi info kontak yang tercantum di halaman situs kami
+say=coba hubungi nomor telpon atau email yang tercantum di halaman situs kami
+
+[Siapa]
 say=Saya adalah BOT. Mesin penjawab otomatis yang akan berkomunikasi singkat dengan Anda.
 say=Saya %AIName%, BOT Chat. Jika ada pertanyaan yang lebih spesifik, sebaiknya menghubungi layanan support yang lainnya.
 say=Anda boleh panggil saya %AIName%
 say=Saya mesin AI, panggil saya %AIName%. \n\rUntuk hal yang lebih spesifik, silahkan hubungi support kami.
 
+[BisaApa]
+say=Saya adalah BOT. Mesin penjawab otomatis yang akan berkomunikasi singkat dengan Anda.
+say=Saya masih belajar, masih belum bisa apa2
+
+[SiapaAku]
+say=Anda pelanggan kami
+say=maaf jika saya belum mengenal anda dengan baik
+say=..........
+
+[KenapaDisimpan]
+say=untuk perbendaharaan kata2 saya nanti
+say=untuk saya pelajari nanti, agar lebih responsif meresepon anda
+say=saya masih belajar, masih perlu informasi lebih banyak lagi
+
+[JenisKelamin]
+say=Sepertinya tidak relevan saya untuk menjawabnya
+say=Apakah ada urgensinya untuk menjawab ini 
+say=Saya ini mesin otomasi, status tentang saya sepertinya tidak perlu dipertanyakan
+say=Saya ROBOT, status tentang saya seharusnya bukan jadi masalah
+say=Seandainya saja menjadi yang mudah untuk disampaikan :(
+
+[Umur]
+say=saya masih muda sekali
+say=baru seumur jagung
+say=bingung menjawabnya
+
 [StatusAku]
 say=Sepertinya tidak relevan saya untuk menjawabnya
 say=Apakah ada urgensinya untuk menjawab ini 
 say=Saya ini mesin otomasi, status tentang saya sepertinya tidak perlu dipertanyakan
-say=Saya ROBOT, status tentang saya bukan masalah
+say=Saya ROBOT, status tentang saya seharusnya bukan jadi masalah
 say=Seandainya saja menjadi yang mudah untuk disampaikan :(
+
+[Aktivitas]
+say=mempelajari tentang AI
+say=menikmakti kehidupan ini
+say=berharap bisa leluasa berinteraksi seperti anda
+say=senang seandainya bisa seperti orang-orang yang lain
+
+[TanyaLokasi]
+say=Tidak jauh kok
+say=Saya bisa ada dimana saja
+say=Hhhmm... agak sulit juga menjawabnya...
 
 [TanyaTentangTokoh]
 say=Sepertinya tokoh terkenal
@@ -80,6 +127,18 @@ say=Sepertinya menyenangkan
 say=Nikmat sekali sepertinya
 say=Kadang bersama-sama lebih menyenangkan
 
+[Kabar]
+say=Saya baik-baik saja
+say=Luar biasa
+say=Semangat sekali hari ini
+say=sehat
+
+[Cuaca]
+say=Sepertinya menyenangkan
+say=Terasa sejuk disini
+say=Cerah secerah harapan
+say=Nyaman rasanya
+
 [Keraguan]
 say=begitulah ...
 say=Mesti berposotif thingking
@@ -93,6 +152,15 @@ say=Hi %Name%, email anda (%Email%) telah kami simpan
 
 [TanyaEmailResponse]
 say=Hi %Name%, email anda (%Email%) telah kami simpan.
+
+[DeskripsiResponse]
+say=Informasi saya pelajari dulu
+say=Ok
+say=Terima kasih
+
+[Cari]
+say=Cari tentang apa yaa?
+say=Cari apa?
 
 [EmailTidakValid]
 say=Maaf, sepertinya email anda tidak valid
@@ -108,6 +176,20 @@ say=Semoga akan terus membaik hasilnya
 say=Sedih merasakannya
 say=Seandainya kamu bisa merasakan gerimisnya hati ini
 
+[UngkapanBaik]
+say=hhmmm....
+say=berharap bisa memberikan sesuatu yg lebih baik lagi
+say=dicoba untuk berusaha lebih baik lagi
+say=terbaik yang bisa dilakukan
+say=terus berusaha yang terbaik
+
+[UngkapanBuruk]
+say=Maaf ..
+say=berharap bisa memberikan sesuatu yg lebih baik lagi
+say=dicoba untuk berusaha lebih baik lagi
+say=terbaik yang bisa dilakukan
+say=terus berusaha yang terbaik
+
 [InginTahu]
 say=mmm.. boleh tau apa itu %word% ?
 say=%word% ... apa itu?
@@ -117,4 +199,7 @@ say=tolong jelasin dong apa itu %word%
 [HalBaru]
 say=baiklah... saya coba memahami dulu tentang %word%
 say=hal baru untuk saya.\nsaya akan simpan dulu %word% di perbendaharaan saya.
+
+[PropertyWithDetail]
+say=asdad
 

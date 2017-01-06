@@ -8,12 +8,14 @@ binatang=asu|anjing|babi
 lainnya=tai|taek|eek|pret|setan
 
 [Greeting]
-hi=hi|hii|hai|hei|halo|hallo|halow|hallow|hellow|hola|hox
+hi=hi|hii|hai|hei|halo|hallo|halow|hallow|hellow|hola|hox|hy
 kabar=apa kabar|kabar
+salam=salam kenal|salam
+yo=yo|yoyoi
 
 [Sapaan]
-aku=aku|saya|gue|gw|akyu|ane
-kamu=kamu|kmu|kamyu|kau|dikau|engkau|ngkau|anda|lu|loe|ente
+aku=aku|saya|gue|gw|akyu|ane|私
+kamu=kamu|kmu|mu|kamyu|kau|dikau|engkau|ngkau|anda|lu|loe|ente|sampean|samean
 dia=om|mbah|pak|mas|pakdhe|kak|kakak|mas|bu|ibu|dek
 kakak=kk
 
@@ -23,15 +25,23 @@ yuk=dong|yuk
 [Tanya]
 siapa=siapa|syapa|sapa
 apa=apa|apakah
-mengapa=mengapa|ngapa|napa
+mengapa=mengapa|ngapa|napa|kenapa
 berapa=berapa|brp|brapa
+bagaimana=bagaimana|gimana|gmn|bgmn|bgm
+
+[TanyaLokasi]
+dimana=di mana|dimana
+
+[Pembayaran]
+cicilan=cicilan|cicil|angsuran|angsur|installment|instalment
+tunai=tunai
 
 [Perintah]
 cari=cariin|carikan|cari|temukan
 
 [Respon]
-baik=baik|baiklah|okey|oke|okelah|sip|sipp|senang|seneng
-buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah
+baik=baik|baiklah|okey|oke|okelah|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan
+buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik
 
 [Waktu]
 jam=jam
@@ -51,9 +61,19 @@ mandi=mandi|mndi
 tidur=tidur|turu|bobo
 kerja=kerja|gawe
 
+[Aktivitas]
+laku=lakukan|jalani|perbuat
+
 [PersonalStatus]
 nikah=nikah|menikah|merid|married
 single=jomblo|single|gadis|gds|lajang|perjaka
+
+[Umur]
+umur=umur|usia
+
+[JenisKelamin]
+laki=laki-laki|laki laki|laki|lanang|lelaki
+perempuan=perempuan|gadis|ibu
 
 [PersonalKnowledge]
 tahu=kenal|tau|tahu|ngerti|ngertiin
@@ -63,13 +83,26 @@ good=sehat|kuat|semangat|sembuh
 bad=sakit|demam|pusing
 
 [HargaLevel]
-mahal=mahal|mhal
-murah=murah|mrah
+mahal=paling mahal|termahal|mahal|mhal
+murah=paling murah|termurah|murah|mrah
 
 [Nominal]
 nominal=.*\d
 range=kisaran|seharga|seputar|harga
 harga=harga|hrga
+
+[RangeNilai]
+minimal=minimal|min|mulai dari|mulai|terendah
+maksimal=maksimal|maximal|max|dibawah|di bawah|dibaah|kurang dari|kurang|tidak lebih dari|tdk lebih dr|tidak lebih|tdk lebih|tertinggi
+
+[Angka]
+angka=.*\d
+angkasatuan=satu|dua|tiga|empat|lima|enam|tujuh|delapan|sembilan|sepuluh|seratus|seribu|sejuta
+
+[Satuan]
+ribu=ribu|rb
+juta=juta|jt
+milyar=milyar|milyr|miliar
 
 [Kencantikan]
 baik=ganteng|cantik|keren|hebat|powerful|top|pinter
@@ -83,12 +116,19 @@ baik=suka|demen|seneng|kesengsem|trisna|love
 baik=haha|hehe|hihi|hoho|wkwk
 kaget=eehh|ehh|wow
 
+[Sifat]
+baik=baik|super|luar biasa|hebat|keren|cool
+buruk=jahat|genit
+
 [Figure]
 presiden=soekarno|soeharto|sby|jokowi|megawati|prabowo|jkw
 pahlawan=pattimura|diponegoro|kartini
 jagoan123=ansori|encang|ihdi|oka|abi|ines
 dev=peter|bams|bambang|anne|deroh|ratu|yudi|joko
 devpascal=indra|tigor|derit
+
+[MelakukanSesuatu]
+hubungi=menghubungi|hubungi|ngubungin|kontak
 
 [Sedang]
 sudah=sdh|sudah|sdah

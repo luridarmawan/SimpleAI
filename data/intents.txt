@@ -5,6 +5,15 @@ say=@Example
 [WordCencor]
 say=@WordCencor
 
+[HubungiSupport]
+say=@Tanya:bagaimana @Sapaan:aku @MelakukanSesuatu:hubungi support
+say=@Tanya:bagaimana @Sapaan:aku @MelakukanSesuatu:hubungi
+
+[BisaApa]
+say=bisa @Sapaan:kamu @Lakukan
+say=@Sapaan:kamu bisa @Tanya:apa
+say=bisa @Tanya:apa
+
 [Greeting]
 say=@Greeting apa kabar
 say=@Greeting
@@ -14,6 +23,13 @@ say=how are u
 say=how r you
 say=@Waktu:waktu
 
+[Perpisahan]
+say=selamat tinggal
+say=sampai ketemu lagi
+say=sampai ketemu
+say=sampai jumpa
+say=bye
+
 [Perkenalan]
 action=define|Name
 say=namaku adalah @Name
@@ -22,8 +38,8 @@ say=nama ku @Name
 say=nama saya adalah @Name
 say=nama saya @Name
 say=nama sy @Name
+say=@Name nama @Sapaan:aku
 say=^nama @Name
-say:Name=^@Sapaan:aku @Name
 
 [PerkenalanEmail]
 action=define|Email
@@ -32,6 +48,10 @@ say=emailku @Email
 say=email sy @Email
 say=email @Email
 	
+[Aktivitas]
+say=@Sapaan:kamu @Sedang @apapun
+say=^@Sedang @apapun
+
 [StatusAku]
 say=masih @PersonalStatus
 say=sudah @PersonalStatus
@@ -39,30 +59,88 @@ say=@Sapaan:kamu @PersonalStatus
 say=@Sapaan @PersonalStatus
 say=@Sapaan:kamu @Sedang @whatever
 
+[JenisKelamin]
+say=@Tanya:kamu @JenisKelamin
+
+[Umur]
+say=@Usia @Sapaan:kamu
+
 [SiapaAku]
+say=@Tanya:siapa @Sapaan:aku
+
+[Siapa]
 say=boleh kenalan
 say=mau kenalan
-say=@Tanya @Sapaan:kamu
+say=@Tanya:siapa @Sapaan:kamu
 say=kenalan @Abaikan
 say=@Abaikan kenalan
-say=siapa @whatever
-say=siapa
+say=@Tanya:siapa @whatever
+say=^@Tanya:siapa
 say=^nama @whatever
 
-[Waktu]
-say=@Tanya @Waktu
-say=@Waktu:-waktu @Tanya
+[TanyaLokasi]
+say=@TanyaLokasi rumah @Sapaan:kamu
+say=@TanyaLokasi rumahmu
+say=@TanyaLokasi rumah
+say=@TanyaLokasi @Sapaan:kamu
+say=@Sapaan:kamu @TanyaLokasi
+
+[Kabar]
+say=@Tanya:bagaimana kabar@Sapaan:kamu
+say=@Tanya:bagaimana kabar
+say=@Tanya:bagaimana @Sapaan:kamu
+say=@Tanya:apa kabar@Sapaan:kamu
+say=@Tanya:apa kabar
+say=@Sapaan:kamu @Tanya:bagaimana
+say=kabar@Sapaan:kamu @Tanya:bagaimana
+say=kabar @Tanya:bagaimana
+
+[Cuaca]
+action=cuaca
+say=@Tanya:bagaimana cuaca
+say=cuaca @Tanya
+say=suasana @Tanya:bagaimana
+say=cuaca
+
+[Angka]
+action=angka
+say=@Angka @Satuan
+say=@berapapun @Satuan
 
 
 [Ekspresi]
 say=^@Ekspresi
 say=^@Keraguan
 
+[UngkapanBaik]
+say=@Sapaan @Sifat:baik
+say=@Sifat:baik
+
+[UngkapanBuruk]
+say=@Sapaan @Sifat:buruk
+say=@Sifat:buruk
+
 [ResponBaik]
 say=@Respon:baik
 
 [ResponBuruk]
 say=@Respon:buruk
+
+[Waktu]
+say=@Tanya @Waktu
+say=@Waktu:-waktu @Tanya
+
+[TanyaTentangTokoh]
+say=@Sapaan:kamu @PersonalKnowledge @Figure
+say=@PersonalKnowledge @Figure
+
+[TanyaTentangTokohTidakDikenal]
+say=@Sapaan:kamu @PersonalKnowledge @siapapun
+say=@PersonalKnowledge @siapapun
+
+[PerkenalanComplex]
+action=define|Name
+say:Name=^@Sapaan:aku @Name
 
 [Deskripsi]
 action=define
@@ -71,9 +149,15 @@ say=@Key adalah @Value
 say=@Key adl @Value
 say=@Key itu @Value
 
+[KenapaDisimpan]
+say=@Tanya:mengapa kok disimpan
+say=@Tanya:mengapa @apapun
+
+[Cari]
+action=cari
+say=@Perintah:cari
+
 [Browse]
 action=url|post|http://local-echo.fastplaz.com/?var1=value
 say=browse @whatever
 
-[Tanya]
-say=@Tanya
