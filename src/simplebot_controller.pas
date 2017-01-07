@@ -16,6 +16,7 @@ unit simplebot_controller;
 interface
 
 uses
+  fpexprpars,
   {$ifdef AI_REDIS}
   simpleairedis_controller,
   {$else}
@@ -57,6 +58,7 @@ const
   _AI_ASK_COUNTDOWN = 'askCount';
 
   _AI_DEFINE = 'define';
+  _AI_MATH = 'math';
   _AI_SESSION_USER = 'AI_USER_';
   _AI_VARKEY = 'varkey';
 
@@ -94,6 +96,7 @@ type
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
     function handlerProcessing(ActionName, Message: string): string;
     function defineHandlerDefault(): string;
+    function mathHandlerDefault(): string;
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function prepareQuestion: boolean;
@@ -117,7 +120,8 @@ type
       EntitiesKey: string = ''): string;
     function StringReplacement(Message: string): string;
     procedure ClearQuestions;
-    procedure SetQuestions(IntentName: string; MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME);
+    procedure SetQuestions(IntentName: string;
+      MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME);
     procedure Answered;
 
     procedure SetSession(Key, Value: string);
@@ -287,8 +291,8 @@ var
   s, keyName, keyValue: string;
 begin
   Result := '--';
-  keyName:= 'Key';
-  keyValue:= SimpleAI.Parameters.Values['Key_value'];
+  keyName := 'Key';
+  keyValue := SimpleAI.Parameters.Values['Key_value'];
 
   // Email
   if SimpleAI.Parameters.IndexOfName('Email') <> -1 then
@@ -326,6 +330,27 @@ begin
   end;
 
   Result := StringReplacement(Result);
+end;
+
+function TSimpleBotModule.mathHandlerDefault: string;
+var
+  mathParser: TFPExpressionParser;
+  resultValue: double;
+begin
+  Result := SimpleAI.Parameters.Values['Formula_value'];
+  if Result = '' then
+    Exit;
+  if Pos('(', Result) > 0 then
+    Result := Result + ')';
+  mathParser := TFPExpressionParser.Create(nil);
+  try
+    mathParser.BuiltIns := [bcMath];
+    mathParser.Expression := Result;
+    resultValue := ArgToFloat(mathParser.Evaluate);
+    Result := FloatToStr(resultValue);
+  except
+  end;
+  mathParser.Free;
 end;
 
 function TSimpleBotModule.URL_Handler(const IntentName: string;
@@ -480,6 +505,10 @@ begin
       begin
         text_response := defineHandlerDefault();
       end;
+      if lst[0] = _AI_MATH then
+      begin
+        text_response := mathHandlerDefault();
+      end;
       text_response := text_response + handlerProcessing(lst[0], Message);
       lst.Free;
 
@@ -499,28 +528,28 @@ begin
   begin // if not exist in intentDB
 
     // if answer email
-    askIntent:= GetSession( _AI_SESSION_ASK_INTENT);
+    askIntent := GetSession(_AI_SESSION_ASK_INTENT);
     if askIntent <> '' then
     begin
       if askIntent = _AI_ASK_EMAIL then
       begin
-        if isEmail( Message) then
+        if isEmail(Message) then
         begin
-          UserData[ 'Email'] := Message;
+          UserData['Email'] := Message;
           text_response := GetResponse(askIntent + 'Response', '', '');
           if preg_match('%(Email)%', text_response) then
           begin
             text_response := preg_replace('%(Email)%', Message, text_response, True);
           end;
           Answered;
-          text_response := StringReplacement( text_response);
+          text_response := StringReplacement(text_response);
           SimpleAI.ResponseText.Text := text_response;
         end;
       end;
     end;
 
-    //
-    if (FOnError <> nil)and(not FisAnswered) then
+
+    if (FOnError <> nil) and (not FisAnswered) then
     begin
       SimpleAI.ResponseText.Text := FOnError(Text);
     end
@@ -659,7 +688,7 @@ begin
   regex.Expression := '%(.*)%';
   if regex.Exec(Message) then
   begin
-    s := UserData[ regex.Match[1]];
+    s := UserData[regex.Match[1]];
     Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
       '%(.*)%', s, Message, True);
   end;
