@@ -287,6 +287,8 @@ var
   s, keyName, keyValue: string;
 begin
   Result := '--';
+  keyName:= 'Key';
+  keyValue:= SimpleAI.Parameters.Values['Key_value'];
 
   // Email
   if SimpleAI.Parameters.IndexOfName('Email') <> -1 then
@@ -534,7 +536,11 @@ begin
   json := TJSONUtil.Create;
   json.LoadFromJsonString(text_response);
   if SimpleAI.Debug then
-    text_response := json.AsJSONFormated
+  begin
+    json['response/user/name'] := UserData['Name'];
+    json['response/user/email'] := UserData['Email'];
+    text_response := json.AsJSONFormated;
+  end
   else
     text_response := json.AsJSON;
   json.Free;
