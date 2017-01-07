@@ -151,6 +151,19 @@ begin
         Continue;
       pattern := tmp[1];
 
+      // if there are '=' in text
+      if tmp.Count > 2 then
+      begin
+        pattern := '';
+        for k := 1 to tmp.Count - 1 do
+        begin
+          if k = 1 then
+            pattern := tmp[k]
+          else
+            pattern := pattern + '=' + tmp[k];
+        end;
+      end;
+
       FPattern := pattern;
       FParameters.Clear;
       pattern_str := Explode(pattern, ' ');
