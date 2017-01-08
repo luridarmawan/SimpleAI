@@ -18,6 +18,8 @@ uses
 const
   _SIMPLEAI_INTENT_DATA_FILENAME = 'files/intents.txt';
   _SIMPLEAI_INTENT_ACTIONKEY = 'action';
+  _SIMPLEAI_OBJECT = 'object';
+  _SIMPLEAI_VARIABLE = 'var';
   _AI_VARKEY = 'varkey';
 
 type
@@ -35,6 +37,7 @@ type
     FIntentName: string;
     FEntities: TEntitiesFAI;
     FisLoaded: boolean;
+    FObjectName: string;
     FParameters: TStrings;
     FPattern: string;
 
@@ -57,6 +60,7 @@ type
     property Data: TMemIniFile read FData write FData;
     property Entities: TEntitiesFAI read FEntities;
     property Action: string read FAction;
+    property ObjectName: string read FObjectName;
     property IntentName: string read FIntentName;
     property IntentKey: string read FIntentKey;
     property IntentKeySpecific: string read FIntentKeySpecific;
@@ -101,6 +105,7 @@ begin
   FDataAsList := TStringList.Create;
 
   FAction := '';
+  FObjectName := '';
   FIntentName := '';
   FIntentKey := '';
   FDebug := False;
@@ -148,6 +153,10 @@ begin
     begin
       tmp := Explode(item_list[j], '=');
       if tmp[0] = _SIMPLEAI_INTENT_ACTIONKEY then
+        Continue;
+      if tmp[0] = _SIMPLEAI_OBJECT then
+        Continue;
+      if tmp[0] = _SIMPLEAI_VARIABLE then
         Continue;
       pattern := tmp[1];
 
@@ -201,6 +210,7 @@ begin
       begin
         FIntentName := intent_name;
         FAction := FData.ReadString(FIntentName, _SIMPLEAI_INTENT_ACTIONKEY, '');
+        FObjectName := FData.ReadString(FIntentName, _SIMPLEAI_OBJECT, '');
 
         key_used := '';
         match_index := 1;
