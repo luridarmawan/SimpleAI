@@ -149,8 +149,9 @@ begin
   if regex.Exec(Result) then
   begin
     s := regex.Match[1];
-    Result := SimpleAILib.Intent.Entities.preg_replace(
-      '%'+s+'%', FSimpleAILib.Parameters.Values[ s], Result, True);
+    if FSimpleAILib.Parameters.Values[ s] <> '' then
+      Result := SimpleAILib.Intent.Entities.preg_replace(
+        '%'+s+'%', FSimpleAILib.Parameters.Values[ s], Result, True);
   end;
   regex.Free;
 

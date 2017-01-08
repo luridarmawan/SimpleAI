@@ -61,6 +61,7 @@ const
   _AI_MATH = 'math';
   _AI_SESSION_USER = 'AI_USER_';
   _AI_VARKEY = 'varkey';
+  _AI_OBJECT = 'object';
 
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
@@ -516,6 +517,9 @@ begin
         SimpleAI.ResponseText.add(text_response);
     end; //SimpleAI.Action;
 
+    if SimpleAI.SimpleAILib.Intent.ObjectName <> '' then
+      UserData[ _AI_OBJECT] := SimpleAI.SimpleAILib.Intent.ObjectName;
+
     {
     if isAnswer() then
     begin
@@ -568,6 +572,7 @@ begin
   begin
     json['response/user/name'] := UserData['Name'];
     json['response/user/email'] := UserData['Email'];
+    json['response/object/name'] := UserData[_AI_OBJECT];
     text_response := json.AsJSONFormated;
   end
   else
@@ -673,6 +678,7 @@ function TSimpleBotModule.GetResponse(IntentName: string; Action: string;
   EntitiesKey: string): string;
 begin
   Result := SimpleAI.GetResponse(IntentName, Action, EntitiesKey);
+  Result := StringReplacement( Result);
 end;
 
 function TSimpleBotModule.StringReplacement(Message: string): string;
@@ -689,8 +695,9 @@ begin
   if regex.Exec(Message) then
   begin
     s := UserData[regex.Match[1]];
-    Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
-      '%(.*)%', s, Message, True);
+    if s <> '' then
+      Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
+        '%(.*)%', s, Message, True);
   end;
   regex.Free;
 end;
