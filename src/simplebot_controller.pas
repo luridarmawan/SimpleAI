@@ -482,6 +482,8 @@ begin
     if s <> '' then
       SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_MESSAGECOUNT, '0');
+    UserData[_AI_OBJECT] := '';
+    UserData[_AI_OBJECT_DATE] := '';
   end;
 
   // message count
