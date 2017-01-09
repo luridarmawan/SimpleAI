@@ -193,6 +193,10 @@ say=hal baru untuk saya.\nsaya akan simpan dulu %word% di perbendaharaan saya.
 say=Cari tentang apa yaa?
 say=Cari apa?
 
+[PerintahSaja]
+say=apa yaa?
+say=maaf, saya belum paham.
+
 [EmailTidakValid]
 say=Maaf, sepertinya email anda tidak valid
 
@@ -257,10 +261,10 @@ say=sepertinya belum memungkinkan
 say=bagaimana kalau sebaliknya saja?
 say=agak sulit juga yaa...
 
-[KataTanyaSaya]
+[KataTanyaSaja]
 say=apa?
 say=apa yaa?
-say=%Tanya% apanya?
+say=%Tanya_value% apanya?
 
 [EmailBuat]
 say=Maaf, saya belum bisa

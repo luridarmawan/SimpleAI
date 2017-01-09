@@ -34,6 +34,7 @@ cicilan=cicilan|cicil|angsuran|angsur|installment|instalment
 tunai=tunai
 
 [Tanya]
+tandatanya=\?
 siapa=siapa|syapa|sapa
 apa=apa|apakah
 mengapa=mengapa|ngapa|napa|kenapa
@@ -46,6 +47,8 @@ cari=cariin|carikan|cari|temukan
 beli=belikan|beli|blikan|beliin|pesan|pesen|pesan|pesenin|pesanin
 buat=mbuat|buatkan|buat|buwat|buatin
 hitung=hitung|hitungkan|hitungin
+ambil=ambil|ambilkan
+pergi=pergi
 
 [Respon]
 baik=baik|baiklah|okey|oke|okelah|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak
@@ -151,6 +154,12 @@ belajar=belajar
 sudah=sdh|sudah|sdah
 sedang=sedang|sdg|lagi|lg
 akan=akan|mau|mo
+
+[TandaBaca]
+tanya=\?
+titik=.
+koma=,
+seru=\!
 
 [Keraguan]
 kok=kok|koq|lho

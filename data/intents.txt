@@ -66,7 +66,7 @@ say=email ku @Email
 say=emailku @Email
 say=email sy @Email
 say=email @Email
-	
+    
 [Aktivitas]
 say=@Sapaan:kamu @Sedang @apapun
 say=^@Sedang:sedang @apapun
@@ -177,6 +177,7 @@ say=@Tanya:bagaimana @Kondisi:jika @apapun
 
 [TidakYakin]
 say=@apapun @Logika:tidak @PersonalKnowledge:tahu
+say=beneran
 
 [Deskripsi]
 action=define
@@ -238,8 +239,14 @@ say=@Sapaan:kamu bisa @Tanya:apa
 say=@Tanya:bisa @Tanya:apa
 say=@Tanya:bisa @apapun
 
-[KataTanyaSaya]
+[KataTanyaSaja]
 say=@Tanya
+
+[PerintahSaja]
+say=@Perintah
+
+[TandaBaca]
+say=@TandaBaca
 
 [Browse]
 action=url|post|http://local-echo.fastplaz.com/?var1=value
