@@ -12,7 +12,7 @@ unit simpleai_controller;
 interface
 
 uses
-  simpleai_lib, Dos, RegExpr,
+  simpleai_lib, Dos, RegExpr, fpjson,
   IniFiles, Classes, SysUtils;
 
 const
@@ -362,7 +362,7 @@ begin
   json := json + '{';
   json := json + '"code" : 0,';
   json := json + '"request" : {';
-  json := json + '"text" : "' + FRequestText + '"';
+  json := json + '"text" : "' + StringToJSONString( FRequestText) + '"';
   json := json + '},';
   json := json + '"response" : {';
   json := json + '"intents" : {';
@@ -371,7 +371,7 @@ begin
   if Debug then
   begin
     json := json + '"key" : "' + SimpleAILib.Intent.IntentKey + '",';
-    json := json + '"pattern" : "' + FSimpleAILib.Pattern + '",';
+    json := json + '"pattern" : "' + StringToJSONString( FSimpleAILib.Pattern) + '",';
   end;
   json := json + '"parameters" : {';
 
@@ -379,7 +379,7 @@ begin
   for i := 0 to FSimpleAILib.Parameters.Count - 1 do
   begin
     v := FSimpleAILib.Parameters.ValueFromIndex[i];
-    v := StringReplace(v, '\', '\\', [rfReplaceAll]);
+    v := StringToJSONString( v);
     json := json + '"' + FSimpleAILib.Parameters.Names[i] + '" : "' + v + '"';
 
     if i < FSimpleAILib.Parameters.Count - 1 then

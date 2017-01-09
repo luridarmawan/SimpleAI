@@ -132,6 +132,7 @@ begin
   Result := False;
   FIntentName := '';
   FIntentKey := '';
+  FParameters.Clear;
   FIntentKeySpecific := '';
   Text := Trim(Text);
   if Text = '' then
@@ -174,7 +175,6 @@ begin
       end;
 
       FPattern := pattern;
-      FParameters.Clear;
       pattern_str := Explode(pattern, ' ');
       for k := pattern_str.Count - 1 downto 0 do
       begin
@@ -202,7 +202,8 @@ begin
           Break;
       end;
 
-      pattern := pattern + '\b';
+      if length( Text) > 1 then
+        pattern := pattern + '\b';
 
       regex := TRegExpr.Create;
       regex.Expression := pattern;
