@@ -5,14 +5,18 @@ say=@Example
 [WordCencor]
 say=@WordCencor
 
+[ResponBaik]
+say=^@Respon:baik
+say=^@Respon:maklum
+
+[ResponBuruk]
+say=@Respon:buruk
+say=@Logika:tidak @Tanya:bisa
+say=@Respon:gemblung
+
 [HubungiSupport]
 say=@Tanya:bagaimana @Sapaan:aku @MelakukanSesuatu:hubungi support
 say=@Tanya:bagaimana @Sapaan:aku @MelakukanSesuatu:hubungi
-
-[BisaApa]
-say=bisa @Sapaan:kamu @Lakukan
-say=@Sapaan:kamu bisa @Tanya:apa
-say=bisa @Tanya:apa
 
 [Sanjungan]
 say=@Sapaan:kamu @apapun @Kencantikan:baik
@@ -51,13 +55,10 @@ say=bye
 action=define|Name
 say=namaku adalah @Name
 say=namaku @Name
-say=nama ku @Name
-say=nama saya adalah @Name
-say=nama saya @Name
-say=nama sy @Name
 say=nama @Sapaan:aku @Name
 say=@Name nama @Sapaan:aku
 say=^nama @Name
+say:Name=^@Sapaan:aku @Name
 
 [PerkenalanEmail]
 action=define|Email
@@ -81,7 +82,10 @@ say=@Sapaan:kamu @Sedang @whatever
 say=@Tanya:kamu @JenisKelamin
 
 [Umur]
+say=@Tanya:berapa @Umur
 say=@Umur @Sapaan:kamu
+say=@Umur@Sapaan:kamu
+say=@Umur
 
 [TokohSiapa]
 say=@Tanya:siapa @apapun @Figure
@@ -106,6 +110,7 @@ say=boleh (t|n)anya
 
 
 [TanyaLokasi]
+object=location
 say=rumah @Sapaan:kamu @Tanya:dimana
 say=rumah@Sapaan:kamu @Tanya:dimana
 say=@TanyaLokasi rumah @Sapaan:kamu
@@ -144,15 +149,9 @@ say=@Sifat:baik
 say=@Sapaan @Sifat:buruk
 say=@Sifat:buruk
 
-[ResponBaik]
-say=@Respon:baik
-
-[ResponBuruk]
-say=@Respon:buruk
-
 [Waktu]
 say=@Tanya @Waktu
-say=@Waktu:-waktu @Tanya
+say=@Waktu:-waktu @Tanya:berapa
 
 
 [TanyaTentangTokoh]
@@ -164,13 +163,20 @@ say=@PersonalKnowledge @Figure
 say=@Sapaan:kamu @PersonalKnowledge @siapapun
 say=@PersonalKnowledge @siapapun
 
-[PerkenalanComplex]
-action=define|Name
-say:Name=^@Sapaan:aku @Name
-
 [LoremIpsum]
 say=lorem ipsum
 say=loremipsum
+
+[Math]
+action=math
+say=@Tanya:berapa @Formula
+say=@Perintah:hitung @Formula
+
+[TanyaSeandainya]
+say=@Tanya:bagaimana @Kondisi:jika @apapun
+
+[TidakYakin]
+say=@apapun @Logika:tidak @PersonalKnowledge:tahu
 
 [Deskripsi]
 action=define
@@ -178,6 +184,8 @@ say=@Key itu adalah @Value
 say=@Key adalah @Value
 say=@Key adl @Value
 say=@Key itu @Value
+say=@Key = @Value
+say=@Key=@Value
 
 [KenapaDisimpan]
 say=@Tanya:mengapa kok disimpan
@@ -191,9 +199,47 @@ say=om telolet om
 say=omteloletom
 say=telolet
 
+
+
+
 [Cari]
 action=cari
 say=@Perintah:cari
+
+[EmailBuat]
+object=email
+say=@Perintah:buat @Sapaan:aku email
+say=@Perintah:buat email
+
+[MakanBuat]
+object=makanan
+say=@Perintah:buat @Sapaan:aku @RutinitasHarian:makan
+say=@Perintah:buat @Sapaan:aku @RutinitasHarian:minum
+say=@Perintah:buat @RutinitasHarian:makan
+say=@Perintah:buat @RutinitasHarian:minum
+
+[MakanBeli]
+action=footorder
+object=makanan
+say=@Perintah:beli @Sapaan:aku @RutinitasHarian:makan
+say=@Perintah:beli @Sapaan:aku @RutinitasHarian:minum
+say=@Perintah:beli @RutinitasHarian:makan
+say=@Perintah:beli @RutinitasHarian:minum
+
+[PulsaBeli]
+action=pulsaorder
+object=pulsa
+say=@Perintah:beli @Sapaan:aku pulsa
+say=@Perintah:beli pulsa
+
+[BisaApa]
+say=bisa @Sapaan:kamu @Lakukan
+say=@Sapaan:kamu bisa @Tanya:apa
+say=@Tanya:bisa @Tanya:apa
+say=@Tanya:bisa @apapun
+
+[KataTanyaSaya]
+say=@Tanya
 
 [Browse]
 action=url|post|http://local-echo.fastplaz.com/?var1=value

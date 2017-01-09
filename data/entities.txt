@@ -3,9 +3,9 @@ action=example
 say=example
 
 [WordCencor]
-gila=gila|gendeng|gemblung|crazy|pea|kampret
+gila=gila|gendeng|crazy|pea|kampret
 binatang=asu|anjing|babi
-lainnya=tai|taek|eek|pret|setan|kakeane
+lainnya=tai|taek|eek|pret|setan|kakeane|dancuk|jiancuk
 sexuality=kontol|ngentu|bawuk|ngentot
 
 [Greeting]
@@ -18,20 +18,13 @@ yo=yo|yoyoi
 salam=assalamualaikum|assalamu'alaikum
 
 [Sapaan]
-aku=aku|saya|gue|gw|akyu|ane|私
+aku=aku|saya|gue|gwe|gw|akyu|ane|私
 kamu=kamu|kmu|mu|kamyu|kau|dikau|engkau|ngkau|anda|lu|loe|ente|sampean|samean
 dia=om|mbah|pak|mas|pakdhe|kak|kakak|mas|bu|ibu|dek
 kakak=kk
 
 [Abaikan]
 yuk=dong|yuk
-
-[Tanya]
-siapa=siapa|syapa|sapa
-apa=apa|apakah
-mengapa=mengapa|ngapa|napa|kenapa
-berapa=berapa|brp|brapa
-bagaimana=bagaimana|gimana|gmn|bgmn|bgm
 
 [TanyaLokasi]
 dimana=di mana|dimana
@@ -40,12 +33,29 @@ dimana=di mana|dimana
 cicilan=cicilan|cicil|angsuran|angsur|installment|instalment
 tunai=tunai
 
+[Tanya]
+siapa=siapa|syapa|sapa
+apa=apa|apakah
+mengapa=mengapa|ngapa|napa|kenapa
+berapa=berapa|brp|brapa|piro
+bagaimana=bagaimana|gimana|gmn|bgmn|bgm
+bisa=bisakah|bisa|boleh|bolehkan|bolehkan
+
 [Perintah]
 cari=cariin|carikan|cari|temukan
+beli=belikan|beli|blikan|beliin|pesan|pesen|pesan|pesenin|pesanin
+buat=mbuat|buatkan|buat|buwat|buatin
+hitung=hitung|hitungkan|hitungin
 
 [Respon]
-baik=baik|baiklah|okey|oke|okelah|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan|selow|woles
-buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong
+baik=baik|baiklah|okey|oke|okelah|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak
+buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong|sontoloyo|asem|terserah
+maklum=maklumi|maklum
+gemblung=gemblung|gokil
+
+[Logika]
+ya=iyak|yak|yak|iyes|yes
+tidak=tidak|tdk|nggak|gak|ga
 
 [Waktu]
 jam=jam
@@ -54,13 +64,14 @@ minggu=minggu
 bulan=bulan|bln
 tahun=tahun|thn
 tanggal=tanggal|tgl
-waktu=pagi|siang|sore|malam|malem
+waktu=pagi|siang|sore|malam|malem|morning|night
 
 [Kondisi]
 jika=jika|kalau|kalaw|kalo|klo|apabila|bila
 
 [RutinitasHarian]
-makan=makan|mangan|maem|mkan
+makan=makan|mangan|maem|mkan|makanan
+minum=minum|mnum|minuman
 mandi=mandi|mndi
 tidur=tidur|turu|bobo
 kerja=kerja|gawe
@@ -74,6 +85,7 @@ single=jomblo|single|gadis|gds|lajang|perjaka
 
 [Umur]
 umur=umur|usia
+umurmu=umurmu
 
 [JenisKelamin]
 laki=laki-laki|laki laki|laki|lanang|lelaki

@@ -1,4 +1,3 @@
-
 [Introduction]
 aboutme=\nPerkenalkan, saya adalah robot penjawab pesan otomatis.\nSaya akan berusaha membantu anda.\nMohon Maaf jika ada yang kurang bisa saya pahami nanti.
 firstsession=\n\nSepertinya kita belum pernah bertemu.
@@ -28,6 +27,11 @@ say=Terima kasih, sampai jumpa lagi
 say=Bye, terima kasih
 say=bye bye, thanks
 
+[nonewithobject]
+say=... maaf, apakah kita masih membicarakan tentang %object% ?
+say=ini masih tentang %object% ?
+say=maaf belum paham, ini masih pembicaraan tentang %object% ?
+
 [none]
 say=... maaf jika saya belum banyak memahami kata2 yang ada
 say=... percakapan ini kami simpan dahulu, untuk perbendaharaan kata2 saya
@@ -48,8 +52,9 @@ say=Anda boleh panggil saya %AIName%
 say=Saya mesin AI, panggil saya %AIName%. \n\rUntuk hal yang lebih spesifik, silahkan hubungi support kami.
 
 [BisaApa]
-say=Saya adalah BOT. Mesin penjawab otomatis yang akan berkomunikasi singkat dengan Anda.
+say=Saya adalah BOT. saya coba sebisanya
 say=Saya masih belajar, masih belum bisa apa2
+say=Mungkin saat ini belum
 
 [SiapaAku]
 say=Anda pelanggan kami
@@ -72,6 +77,7 @@ say=Seandainya saja menjadi yang mudah untuk disampaikan :(
 say=saya masih muda sekali
 say=baru seumur jagung
 say=bingung menjawabnya
+say=belum seberapa sih
 
 [StatusAku]
 say=Sepertinya tidak relevan saya untuk menjawabnya
@@ -175,9 +181,13 @@ say=Hi %Name%, email anda (%Email%) telah kami simpan
 say=Hi %Name%, email anda (%Email%) telah kami simpan.
 
 [DeskripsiResponse]
-say=Informasi saya pelajari dulu
-say=Ok
-say=Terima kasih
+say=Informasi tentang %Key% akan saya pelajari dulu
+say=baiklah... saya coba memahami dulu tentang %Key%
+say=hal baru untuk saya.\nsaya akan simpan dulu %Key% di perbendaharaan saya.
+
+[HalBaru-sepertinyatidakterpakai]
+say=baiklah... saya coba memahami dulu tentang %word%
+say=hal baru untuk saya.\nsaya akan simpan dulu %word% di perbendaharaan saya.
 
 [Cari]
 say=Cari tentang apa yaa?
@@ -190,12 +200,15 @@ say=Maaf, sepertinya email anda tidak valid
 say=baiklah
 say=syukurlah ...
 say=senang mendengarnya
+say=terima kasih
 
 [ResponBuruk]
 say=hhmm..
 say=Semoga akan terus membaik hasilnya
 say=Sedih merasakannya
 say=Seandainya kamu bisa merasakan gerimisnya hati ini
+say=Sayang sekali
+say=Sayang sekali, bagaimana kalau diusahakan lagi
 
 [UngkapanBaik]
 say=hhmmm....
@@ -229,13 +242,55 @@ say=bagaimana?
 say=silahkan, dengan senang hati
 say=boleh   
 
+[TidakYakin]
+say=Saya berusaha menyampaikan hal yang saya tahu saja
+say=Saya tidak tahu harus mengatakan apa lagi
+say=Sungguh
+say=Sepertinya demikian
+say=Sepengetahuan saya begitu
+
+[TanyaSeandainya]
+say=saya coba pikir-pikir dulu
+say=saya kurang paham
+say=mmmmhh.... gimana yaa...
+say=sepertinya belum memungkinkan
+say=bagaimana kalau sebaliknya saja?
+say=agak sulit juga yaa...
+
+[KataTanyaSaya]
+say=apa?
+say=apa yaa?
+say=%Tanya% apanya?
+
+[EmailBuat]
+say=Maaf, saya belum bisa
+say=Maaf, coba hubungi technical support anda saja
+say=Mohon maaf, belum bisa
+say=Sayang sekali belum bisa membantu Anda
+
+[MakanBuat]
+say=Maaf, saya belum bisa
+say=Mohon maaf, belum bisa
+say=Sayang sekali belum bisa membantu Anda
+
+[MakanBeli]
+say=Maaf, saya belum bisa
+say=Mohon maaf, belum bisa
+say=Sayang sekali belum bisa membantu Anda
+say=Sebaiknya anda pesan melalui jasa layanan yang sudah ada.
+say=Maaf, belum bisa melayani pembelian makanan
+
+[PulsaBeli]
+say=Maaf, saya belum bisa
+say=Mohon maaf, belum bisa
+say=Sayang sekali belum bisa membantu Anda
+say=Sebaiknya anda pesan melalui jasa layanan yang sudah ada.
+say=Maaf, belum bisa melayani pembelian pulsa
+
 [LoremIpsum]
 say=seperti biasa: Lorem ipsum dolor sit amet, consectetur adipiscing elit. De quibus cupio scire quid sentias. Parvi enim primo ortu sic iacent, tamquam omnino sine animo sint. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Duo Reges: constructio interrete. Explanetur igitur. Sumenda potius quam expetenda. 
 say=jawaban standard: Lorem ipsum dolor sit amet, consectetur adipiscing elit. De quibus cupio scire quid sentias. Parvi enim primo ortu sic iacent, tamquam omnino sine animo sint. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Duo Reges: constructio interrete. Explanetur igitur. Sumenda potius quam expetenda. 
 say=anda sudah pasti tau jawabannya apa
-[HalBaru]
-say=baiklah... saya coba memahami dulu tentang %word%
-say=hal baru untuk saya.\nsaya akan simpan dulu %word% di perbendaharaan saya.
 
 [telolet]
 say=telotelotelotelooooooleeettt...
