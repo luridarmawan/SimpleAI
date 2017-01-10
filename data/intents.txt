@@ -246,7 +246,7 @@ say=@Tanya
 say=@Perintah
 
 [TandaBaca]
-say=@TandaBaca
+say=^@TandaBaca
 
 [Browse]
 action=url|post|http://local-echo.fastplaz.com/?var1=value

@@ -10,7 +10,6 @@ sexuality=kontol|ngentu|bawuk|ngentot
 
 [Greeting]
 hi=hi|hii|hai|hei|halo|hallo|halow|hallow|hellow|hola|hox|hy
-kabar=apa kabar|kabar
 salam=salam kenal|salam
 yo=yo|yoyoi
 
