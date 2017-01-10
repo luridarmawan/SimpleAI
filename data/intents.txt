@@ -245,6 +245,9 @@ say=@Tanya
 [PerintahSaja]
 say=@Perintah
 
+[NoRespon]
+say=^@NoRespon
+
 [TandaBaca]
 say=^@TandaBaca
 

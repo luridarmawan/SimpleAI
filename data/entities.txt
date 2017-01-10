@@ -50,7 +50,7 @@ ambil=ambil|ambilkan
 pergi=pergi
 
 [Respon]
-baik=baik|baiklah|okey|oke|okelah|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak
+baik=baik|baiklah|okey|oke|okelah|ok|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak
 buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong|sontoloyo|asem|terserah
 maklum=maklumi|maklum
 gemblung=gemblung|gokil
@@ -154,6 +154,9 @@ sudah=sdh|sudah|sdah
 sedang=sedang|sdg|lagi|lg
 akan=akan|mau|mo
 
+[NoRespon]
+responthx=sama-sama|sama sama|sama|sama2
+
 [TandaBaca]
 tanya=\?
 titik=.
@@ -161,5 +164,5 @@ koma=,
 seru=\!
 
 [Keraguan]
-kok=kok|koq|lho
+kok=kok|koq|lho|lah
 
