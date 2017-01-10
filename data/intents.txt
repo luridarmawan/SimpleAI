@@ -21,6 +21,8 @@ say=@Tanya:bagaimana @Sapaan:aku @MelakukanSesuatu:hubungi
 [Sanjungan]
 say=@Sapaan:kamu @apapun @Kencantikan:baik
 say=@Sapaan:kamu @Kencantikan:baik
+say=@Sapaan:kamu @apapun @Sifat:baik
+say=@Sapaan:kamu @Sifat:baik
 
 [SuruhanPositif]
 say=@MelakukanSesuatu:belajar @apapun rajin
@@ -144,6 +146,7 @@ say=@berapapun @Satuan
 [UngkapanBaik]
 say=@Sapaan @Sifat:baik
 say=@Sifat:baik
+say=asik @Logika:tidak
 
 [UngkapanBuruk]
 say=@Sapaan @Sifat:buruk
@@ -152,6 +155,7 @@ say=@Sifat:buruk
 [Waktu]
 say=@Tanya @Waktu
 say=@Waktu:-waktu @Tanya:berapa
+say=@Waktu:-waktu @Tanya:apa
 
 
 [TanyaTentangTokoh]
@@ -240,7 +244,7 @@ say=@Tanya:bisa @Tanya:apa
 say=@Tanya:bisa @apapun
 
 [KataTanyaSaja]
-say=@Tanya
+say=^@Tanya
 
 [PerintahSaja]
 say=@Perintah

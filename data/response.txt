@@ -4,10 +4,10 @@ firstsession=\n\nSepertinya kita belum pernah bertemu.
 secondsession=\n\n%Name% Senang bisa berjumpa lagi dengan anda.
 
 [WordCencor]
-say=Maaf, bisa diulang maksudnya ?
 say=Mungkin bisa digunakan alternatif kalimat yang lain.
 say=Maaf, sepertinya akan lebih baik jika menggunakan kata-kata yg lebih sopan
 say=Maaf jika pada kondisi tertentu, sepertinya saya tidak merespon Anda.
+say=Sayang sekali, mungkin bisa gunakan kata-kata yg lebih baik
 
 [Greeting]
 say=Hi, selamat %time_session% ...
@@ -59,6 +59,7 @@ say=Mungkin saat ini belum
 [SiapaAku]
 say=Anda pelanggan kami
 say=maaf jika saya belum mengenal anda dengan baik
+say=mungkin bisa diperkenalkan, Anda siapa?
 say=..........
 
 [KenapaDisimpan]
@@ -156,9 +157,9 @@ say=Kadang bersama-sama lebih menyenangkan
 
 [Kabar]
 say=Saya baik-baik saja
-say=Luar biasa
 say=Semangat sekali hari ini
 say=sehat
+say=Kabar baik di sini
 
 [Cuaca]
 say=Sepertinya menyenangkan
@@ -172,7 +173,8 @@ say=Mesti berposotif thingking
 
 [PerkenalanResponse]
 say=Hi %Name%, terima kasih
-say=Data %Name% telah kami simpan
+say=%Name%, nama yang menarik
+say=%Name%, terdengar familiar
 
 [PerkenalanEmailResponse]
 say=Hi %Name%, email anda (%Email%) telah kami simpan
