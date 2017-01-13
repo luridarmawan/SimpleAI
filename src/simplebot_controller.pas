@@ -16,13 +16,14 @@ unit simplebot_controller;
 interface
 
 uses
-  fpexprpars,
   {$ifdef AI_REDIS}
   simpleairedis_controller,
   {$else}
   simpleai_controller,
   {$endif}
   fastplaz_handler, logutil_lib, http_lib,
+  fpexprpars, // formula
+  dateutils,
   RegExpr, fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
 
 const
@@ -81,6 +82,7 @@ type
   TSimpleBotModule = class
   private
     FAskCountdown: integer;
+    FAskEmail: boolean;
     FChatID: string;
     FisAnswered: boolean;
     FOnError: TOnErrorCallback;
@@ -99,6 +101,7 @@ type
     function handlerProcessing(ActionName, Message: string): string;
     function defineHandlerDefault(): string;
     function mathHandlerDefault(): string;
+    function ErrorHandler( Message: string):string;
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function prepareQuestion: boolean;
@@ -135,6 +138,7 @@ type
     property Debug: boolean read getDebug write setDebug;
     property isDataLoaded: boolean read FDataLoaded;
     property isAnswer: boolean read FisAnswered;
+    property isAskEmail: boolean read FAskEmail write FAskEmail;
     property TelegramToken: string read FTelegramToken write FTelegramToken;
     function TelegramSend(ChatIDRef, ReplyToMessageID, Message: string): boolean;
 
@@ -168,6 +172,7 @@ begin
 
   FChatID := '';
   FAskCountdown := 0;
+  FAskEmail := False;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
 end;
@@ -318,10 +323,13 @@ begin
     keyName := 'Name';
     keyValue := SimpleAI.Parameters.Values['Name'];
     UserData['Name'] := keyValue;
-    s := UserData['Email'];
-    if s = '' then
+    if FAskEmail then
     begin
-      SetQuestions(_AI_ASK_EMAIL);
+      s := UserData['Email'];
+      if s = '' then
+      begin
+        SetQuestions(_AI_ASK_EMAIL);
+      end;
     end;
   end;
 
@@ -353,6 +361,34 @@ begin
   except
   end;
   mathParser.Free;
+end;
+
+function TSimpleBotModule.ErrorHandler(Message: string): string;
+var
+  d1: TDateTime;
+begin
+  Result := '';
+  LogUtil.Add(Text, _AL_LOG_LEARN);
+
+  if UserData[_AI_OBJECT] <> '' then
+  begin
+    d1 := StrToDateTime( UserData[_AI_OBJECT_DATE]);
+    if HoursBetween(d1, now) < 1 then
+    begin
+      Result := GetResponse('nonewithobject');
+      Exit;
+    end;
+  end;
+  Result := GetResponse('none');
+
+  if isWord(Message) then
+  begin
+    if isEmail(Message) then
+    begin
+      UserData['Email'] := Message;
+      Result := 'Data email telah kami simpan';
+    end;
+  end;
 end;
 
 function TSimpleBotModule.URL_Handler(const IntentName: string;
@@ -559,13 +595,12 @@ begin
     end;
 
 
+    SimpleAI.ResponseText.Text := ErrorHandler( Text);
     if (FOnError <> nil) and (not FisAnswered) then
     begin
-      SimpleAI.ResponseText.Text := FOnError(Text);
-    end
-    else
-    begin
-      LogUtil.Add(Text, _AL_LOG_LEARN);
+      s := FOnError(Text);
+      if s <> '' then
+        SimpleAI.ResponseText.Text := s;
     end;
   end;
 
@@ -609,6 +644,11 @@ begin
     Exit;
   end;
 
+  if askIntent = _AI_ASK_EMAIL then
+  begin
+    if not FAskEmail then
+      Exit;
+  end;
   EchoQuestions(askIntent);
 end;
 
