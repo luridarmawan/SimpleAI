@@ -7,6 +7,7 @@ gila=gila|gendeng|crazy|pea|kampret
 binatang=asu|anjing|babi
 lainnya=tai|taek|eek|pret|setan|kakeane|dancuk|jiancuk
 sexuality=kontol|ngentu|bawuk|ngentot
+wtf=what the fuck|fuck|wtf
 
 [Greeting]
 hi=hi|hii|hai|hei|halo|hallo|halow|hallow|hellow|hola|hox|hy
@@ -21,6 +22,19 @@ aku=aku|saya|gue|gwe|gw|akyu|ane|私
 kamu=kamu|kmu|mu|kamyu|kau|dikau|engkau|ngkau|anda|lu|loe|ente|sampean|samean
 dia=om|mbah|pak|mas|pakdhe|kak|kakak|mas|bu|ibu|dek
 kakak=kk
+
+[HalTerlarang]
+narkoba=ganja|inex|narkoba
+
+[Kondisi]
+baik=baik|sehat
+buruk=buruk|sakit|demam|capek|lelah
+
+[Pasangan]
+pasangan=jodoh|pasangan
+suami=suami|swami|laki|cowo
+istri=istri|bini|wife|cewe
+pacar=pacar
 
 [Abaikan]
 yuk=dong|yuk
@@ -40,20 +54,23 @@ mengapa=mengapa|ngapa|napa|kenapa
 berapa=berapa|brp|brapa|piro
 bagaimana=bagaimana|gimana|gmn|bgmn|bgm
 bisa=bisakah|bisa|boleh|bolehkan|bolehkan
+mau=mau|bersedia
+ngapain=ngapain
 
 [Perintah]
 cari=cariin|carikan|cari|temukan
 beli=belikan|beli|blikan|beliin|pesan|pesen|pesan|pesenin|pesanin
+jual=jual|jualin
 buat=mbuat|buatkan|buat|buwat|buatin
 hitung=hitung|hitungkan|hitungin
 ambil=ambil|ambilkan
 pergi=pergi
 
 [Respon]
-baik=baik|baiklah|okey|oke|okelah|ok|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak
-buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong|sontoloyo|asem|terserah
+baik=baik|baiklah|okey|okeh|oke|okelah|ok|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|makasih|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak|oiyah|tentu|thank|thx
+buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong|sontoloyo|asem|terserah|dasar
 maklum=maklumi|maklum
-gemblung=gemblung|gokil
+gemblung=gemblung|gokil|bego|parah|gandeng
 
 [Logika]
 ya=iyak|yak|yak|iyes|yes
@@ -66,7 +83,7 @@ minggu=minggu
 bulan=bulan|bln
 tahun=tahun|thn
 tanggal=tanggal|tgl
-waktu=pagi|siang|sore|malam|malem|morning|night
+waktu=pagi|siang|sore|petang|malam|malem|morning|night
 
 [Kondisi]
 jika=jika|kalau|kalaw|kalo|klo|apabila|bila
@@ -80,10 +97,11 @@ kerja=kerja|gawe
 
 [Aktivitas]
 laku=lakukan|jalani|perbuat
+belajar=belajar|blajar
 
 [PersonalStatus]
 nikah=nikah|menikah|merid|married|meried
-single=jomblo|single|gadis|gds|lajang|perjaka
+single=jomblo|single|gadis|gds|lajang|perjaka|homo|jablai
 
 [Umur]
 umur=umur|usia
@@ -145,14 +163,27 @@ jagoan123=ansori|encang|ihdi|oka|abi|ines
 dev=peter|bams|bambang|anne|deroh|ratu|yudi|joko
 devpascal=indra|tigor|derit|kofa|maskofa
 
+[Profesi]
+pembantu=pembantu
+karyawan=karyawan
+programmer=developer|programmer|tukang ketik
+prt=pembantu rumah tangga|prt|pembantu rmh tangga
+dokter=dokter
+swasta=swasta
+pns=pegawai negeri|pgw negeri|pegawai negri|pgw negri
+
 [MelakukanSesuatu]
 hubungi=menghubungi|hubungi|ngubungin|kontak
 belajar=belajar
 
 [Sedang]
-sudah=sdh|sudah|sdah
+sudah=sdh|sudah|sdah|udah
 sedang=sedang|sdg|lagi|lg
 akan=akan|mau|mo
+
+[Tolong]
+tolong=tolong|tulung|tolongin
+help=help
 
 [NoRespon]
 responthx=sama-sama|sama sama|sama|sama2

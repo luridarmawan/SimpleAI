@@ -49,7 +49,7 @@ say=coba hubungi nomor telpon atau email yang tercantum di halaman situs kami
 say=Saya adalah BOT. Mesin penjawab otomatis yang akan berkomunikasi singkat dengan Anda.
 say=Saya %AIName%, BOT Chat. Jika ada pertanyaan yang lebih spesifik, sebaiknya menghubungi layanan support yang lainnya.
 say=Anda boleh panggil saya %AIName%
-say=Saya mesin AI, panggil saya %AIName%. \n\rUntuk hal yang lebih spesifik, silahkan hubungi support kami.
+say=Saya mesin AI, panggil saya %AIName%. \n\nUntuk hal yang lebih spesifik, silahkan hubungi support kami.
 
 [BisaApa]
 say=Saya adalah BOT. saya coba sebisanya
@@ -267,6 +267,60 @@ say=agak sulit juga yaa...
 say=apa?
 say=apa yaa?
 say=%Tanya_value% apanya?
+say=Tentang apa?
+
+[MintaTolong]
+say=bagaimana?
+say=apa yang bisa saya bantu?
+say=ada yg bisa dibantu?
+say=bagaimana?
+
+[xxx]
+say=xxxxxx
+
+[Lahir]
+say=belum lama
+say=baru-baru saja siihh...
+say=kurang tau juga
+say=mungkin anda malah lebih tahu
+
+[NoEnglish]
+say=no i cannot
+say=of course, i cannot
+
+[CariJodoh]
+say=Yang bagaimana?
+say=MMmmm... Sebaiknya bukan dengan saya menyampaikannya
+say=Sebaiknya anda bergaul dengan manusia, bukan dengan bot seperti saya
+say=Sulit juga
+
+[Kencan]
+say=Apa bisa?
+say=Yakin?
+
+[HalTerlarang]
+say=Maaf, kami tidak membicarakan hal tersebut di sini
+say=Sebaiknya tidak
+
+[KondisiBaik]
+say=Syukurlah
+say=Selalu semangat
+say=Yang terbaik
+
+[KondisiBuruk]
+say=Mesti semangat
+say=Harus semangat selalu
+say=Harus jaga kondisi selalu
+
+[Menghibur]
+say=iya, terima kasih
+say=tetep semangat kok
+say=masih berusaha yang terbaik
+
+[TidakPunyaSesuatu]
+say=Sebaiknya segera dipunyai
+say=Sayang sekali
+say=Anda lebih tau kebutuhan anda sendiri
 
 [EmailBuat]
 say=Maaf, saya belum bisa
@@ -292,6 +346,9 @@ say=Mohon maaf, belum bisa
 say=Sayang sekali belum bisa membantu Anda
 say=Sebaiknya anda pesan melalui jasa layanan yang sudah ada.
 say=Maaf, belum bisa melayani pembelian pulsa
+
+[PembantuCari]
+say=cari pembantu yaa?
 
 [LoremIpsum]
 say=seperti biasa: Lorem ipsum dolor sit amet, consectetur adipiscing elit. De quibus cupio scire quid sentias. Parvi enim primo ortu sic iacent, tamquam omnino sine animo sint. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Duo Reges: constructio interrete. Explanetur igitur. Sumenda potius quam expetenda. 

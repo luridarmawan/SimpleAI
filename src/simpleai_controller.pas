@@ -149,9 +149,9 @@ begin
   if regex.Exec(Result) then
   begin
     s := regex.Match[1];
-    if FSimpleAILib.Parameters.Values[ s] <> '' then
+    if FSimpleAILib.Parameters.Values[s] <> '' then
       Result := SimpleAILib.Intent.Entities.preg_replace(
-        '%'+s+'%', FSimpleAILib.Parameters.Values[ s], Result, True);
+        '%' + s + '%', FSimpleAILib.Parameters.Values[s], Result, True);
   end;
   regex.Free;
 
@@ -353,7 +353,7 @@ begin
   txt := '';
   for i := 0 to FResponseText.Count - 1 do
   begin
-    txt := txt + '"' + FResponseText[i] + '"';
+    txt := txt + '"' + StringToJSONString(FResponseText[i]) + '"';
     if i < FResponseText.Count - 1 then
       txt := txt + ',';
   end;
@@ -362,7 +362,7 @@ begin
   json := json + '{';
   json := json + '"code" : 0,';
   json := json + '"request" : {';
-  json := json + '"text" : "' + StringToJSONString( FRequestText) + '"';
+  json := json + '"text" : "' + StringToJSONString(FRequestText) + '"';
   json := json + '},';
   json := json + '"response" : {';
   json := json + '"intents" : {';
@@ -370,8 +370,8 @@ begin
   json := json + '"name" : "' + IntentName + '",';
   if Debug then
   begin
-    json := json + '"key" : "' + SimpleAILib.Intent.IntentKey + '",';
-    json := json + '"pattern" : "' + StringToJSONString( FSimpleAILib.Pattern) + '",';
+    json := json + '"key" : "' + FSimpleAILib.Intent.IntentKey + '",';
+    json := json + '"pattern" : "' + StringToJSONString(FSimpleAILib.Pattern) + '",';
   end;
   json := json + '"parameters" : {';
 
@@ -379,7 +379,7 @@ begin
   for i := 0 to FSimpleAILib.Parameters.Count - 1 do
   begin
     v := FSimpleAILib.Parameters.ValueFromIndex[i];
-    v := StringToJSONString( v);
+    v := StringToJSONString(v);
     json := json + '"' + FSimpleAILib.Parameters.Names[i] + '" : "' + v + '"';
 
     if i < FSimpleAILib.Parameters.Count - 1 then
