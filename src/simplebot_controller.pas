@@ -101,7 +101,7 @@ type
     function handlerProcessing(ActionName, Message: string): string;
     function defineHandlerDefault(): string;
     function mathHandlerDefault(): string;
-    function ErrorHandler( Message: string):string;
+    function ErrorHandler(Message: string): string;
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function prepareQuestion: boolean;
@@ -323,6 +323,7 @@ begin
     keyName := 'Name';
     keyValue := SimpleAI.Parameters.Values['Name'];
     UserData['Name'] := keyValue;
+    SetQuestions( '');
     if FAskEmail then
     begin
       s := UserData['Email'];
@@ -372,7 +373,7 @@ begin
 
   if UserData[_AI_OBJECT] <> '' then
   begin
-    d1 := StrToDateTime( UserData[_AI_OBJECT_DATE]);
+    d1 := StrToDateTime(UserData[_AI_OBJECT_DATE]);
     if HoursBetween(d1, now) < 1 then
     begin
       Result := GetResponse('nonewithobject');
@@ -541,14 +542,17 @@ begin
       setSession(_AI_SESSION_LASTACTION, SimpleAI.Action);
       text_response := '';
       lst := Explode(SimpleAI.Action, _AI_ACTION_SEPARATOR);
+
       if lst[0] = 'define' then
       begin
         text_response := defineHandlerDefault();
       end;
+
       if lst[0] = _AI_MATH then
       begin
         text_response := mathHandlerDefault();
       end;
+
       text_response := text_response + handlerProcessing(lst[0], Message);
       lst.Free;
 
@@ -558,8 +562,8 @@ begin
 
     if SimpleAI.SimpleAILib.Intent.ObjectName <> '' then
     begin
-      UserData[ _AI_OBJECT] := SimpleAI.SimpleAILib.Intent.ObjectName;
-      UserData[ _AI_OBJECT_DATE] := DateTimeToStr( Now);
+      UserData[_AI_OBJECT] := SimpleAI.SimpleAILib.Intent.ObjectName;
+      UserData[_AI_OBJECT_DATE] := DateTimeToStr(Now);
     end;
 
     {
@@ -588,14 +592,13 @@ begin
             text_response := preg_replace('%(Email)%', Message, text_response, True);
           end;
           Answered;
-          text_response := StringReplacement(text_response);
           SimpleAI.ResponseText.Text := text_response;
         end;
       end;
     end;
 
 
-    SimpleAI.ResponseText.Text := ErrorHandler( Text);
+    SimpleAI.ResponseText.Text := ErrorHandler(Text);
     if (FOnError <> nil) and (not FisAnswered) then
     begin
       s := FOnError(Text);
@@ -604,6 +607,7 @@ begin
     end;
   end;
 
+  SimpleAI.ResponseText.Text := StringReplacement(SimpleAI.ResponseText.Text);
   prepareQuestion;
 
   text_response := SimpleAI.ResponseJson;
@@ -724,7 +728,7 @@ function TSimpleBotModule.GetResponse(IntentName: string; Action: string;
   EntitiesKey: string): string;
 begin
   Result := SimpleAI.GetResponse(IntentName, Action, EntitiesKey);
-  Result := StringReplacement( Result);
+  Result := StringReplacement(Result);
 end;
 
 function TSimpleBotModule.StringReplacement(Message: string): string;
