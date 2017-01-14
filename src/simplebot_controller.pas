@@ -65,6 +65,8 @@ const
   _AI_OBJECT = 'OBJECT';
   _AI_OBJECT_DATE = 'OBJECT_DATE';
 
+  REGEX_EQUATION = '^[cos|sin|tan|tangen|sqr|sqrt|log|ln|sec|cosec|arctan|abs|exp|frac|int|round|trunc|shl|shr|ifs|iff|ifd|ifi|0-9*+ ().,-]+$';
+
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
 
@@ -216,36 +218,36 @@ procedure TSimpleBotModule.LoadAIDataFromFile;
 var
   i: integer;
   s, basedir: string;
-  lst: TStrings;
+  jData : TJSONData;
 begin
   basedir := Config[_AI_CONFIG_BASEDIR];
 
   // load Entities
   s := Config[_AI_CONFIG_ENTITIES];
-  lst := Explode(s, ',');
-  for i := 0 to lst.Count - 1 do
+  jData := GetJSON( s);
+  for i := 0 to jData.Count -1 do
   begin
-    SimpleAI.AddEntitiesFromFile(basedir + lst[i]);
+    SimpleAI.AddEntitiesFromFile(basedir + jData.Items[i].AsString);
   end;
-  lst.Free;
+  jData.Free;
 
   // load Intents
   s := Config[_AI_CONFIG_INTENTS];
-  lst := Explode(s, ',');
-  for i := 0 to lst.Count - 1 do
+  jData := GetJSON( s);
+  for i := 0 to jData.Count -1 do
   begin
-    SimpleAI.AddIntentFromFile(basedir + lst[i]);
+    SimpleAI.AddIntentFromFile(basedir + jData.Items[i].AsString);
   end;
-  lst.Free;
+  jData.Free;
 
   // load Response
   s := Config[_AI_CONFIG_RESPONSE];
-  lst := Explode(s, ',');
-  for i := 0 to lst.Count - 1 do
+  jData := GetJSON( s);
+  for i := 0 to jData.Count -1 do
   begin
-    SimpleAI.AddResponFromFile(basedir + lst[i]);
+    SimpleAI.AddResponFromFile(basedir + jData.Items[i].AsString);
   end;
-  lst.Free;
+  jData.Free;
 
   FDataLoaded := True;
 end;
@@ -349,13 +351,16 @@ var
   resultValue: double;
 begin
   Result := SimpleAI.Parameters.Values['Formula_value'];
-  if Result = '' then
+  if not preg_match(REGEX_EQUATION, Result) then
+  begin
+    Result := '..... :( ';
     Exit;
-  if Pos('(', Result) > 0 then
-    Result := Result + ')';
+  end;
+
+  Result := '('+SimpleAI.Parameters.Values['Formula_value']+')';
   mathParser := TFPExpressionParser.Create(nil);
   try
-    mathParser.BuiltIns := [bcMath];
+    mathParser.BuiltIns := [bcMath, bcBoolean];
     mathParser.Expression := Result;
     resultValue := ArgToFloat(mathParser.Evaluate);
     Result := FloatToStr(resultValue);
@@ -369,7 +374,7 @@ var
   d1: TDateTime;
 begin
   Result := '';
-  LogUtil.Add(Text, _AL_LOG_LEARN);
+  LogUtil.Add(Message, _AL_LOG_LEARN);
 
   if UserData[_AI_OBJECT] <> '' then
   begin

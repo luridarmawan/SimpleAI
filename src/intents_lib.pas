@@ -20,6 +20,7 @@ const
   _SIMPLEAI_INTENT_ACTIONKEY = 'action';
   _SIMPLEAI_OBJECT = 'object';
   _SIMPLEAI_VARIABLE = 'var';
+  _SIMPLEAI_BOUNDARY = 'boundary';
   _AI_VARKEY = 'varkey';
 
 type
@@ -29,6 +30,7 @@ type
   TIntentsFAI = class
   private
     FAction: string;
+    FBoundary: boolean;
     FData: TMemIniFile;
     FDataAsList: TStringList;
     FDebug: boolean;
@@ -67,6 +69,7 @@ type
     property Entity: TEntitiesFAI read FEntities;
 
     property isLoaded: boolean read FisLoaded;
+    property isBoundary: boolean read FBoundary write FBoundary;
     property Parameters: TStrings read FParameters;
     property PatternString: string read FPattern;
     property Debug: boolean read FDebug write FDebug;
@@ -109,6 +112,7 @@ begin
   FIntentName := '';
   FIntentKey := '';
   FDebug := False;
+  FBoundary := True;
 end;
 
 destructor TIntentsFAI.Destroy;
@@ -150,6 +154,7 @@ begin
     intent_name := intent_list[i];
     FData.ReadSectionRaw(intent_name, item_list);
 
+    FBoundary := True;
     for j := 0 to item_list.Count - 1 do
     begin
       tmp := Explode(item_list[j], '=');
@@ -157,6 +162,12 @@ begin
         Continue;
       if tmp[0] = _SIMPLEAI_OBJECT then
         Continue;
+      if tmp[0] = _SIMPLEAI_BOUNDARY then
+      begin
+        if tmp[1] = 'false' then
+          FBoundary := False;
+        Continue;
+      end;
       if tmp[0] = _SIMPLEAI_VARIABLE then
         Continue;
       pattern := tmp[1];
@@ -202,8 +213,9 @@ begin
           Break;
       end;
 
-      if length( Text) > 1 then
-        pattern := pattern + '\b';
+      if FBoundary then
+        if length( Text) > 1 then
+          pattern := pattern + '\b';
 
       regex := TRegExpr.Create;
       regex.Expression := pattern;
