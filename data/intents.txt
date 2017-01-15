@@ -5,6 +5,9 @@ say=@Example
 [WordCencor]
 say=@WordCencor
 
+[Test1]
+say=test
+
 [ResponBaik]
 say=^@Respon:baik
 say=^@Respon:maklum
@@ -32,6 +35,13 @@ say=@Sapaan:kamu @Sifat:baik
 
 [xxxx]
 say=xxx
+
+[SuggestionResponse]
+action=suggestion
+say=(suggest|saran) @answer : @questions
+say=(suggest|saran) @answer: @questions
+
+
 
 [Lahir]
 object=lahir
@@ -114,6 +124,7 @@ say=namaku adalah @Name
 say=namaku @Name
 say=nama @Sapaan:aku @Name
 say=@Name nama @Sapaan:aku
+say=@Name namaku
 say=^nama @Name
 say:Name=^@Sapaan:aku @Name
 
@@ -147,6 +158,7 @@ say=@Umur
 [TokohSiapa]
 say=@Tanya:siapa @apapun @Figure
 say=@Tanya:siapa @Figure   
+say=@Figure @Tanya:siapa
 
 [SiapaAku]
 say=@Tanya:siapa @Sapaan:aku
@@ -229,8 +241,10 @@ say=loremipsum
 
 [Math]
 action=math
+boundary=false
 say=@Tanya:berapa @Formula
 say=@Perintah:hitung @Formula
+
 
 [TanyaSeandainya]
 say=@Tanya:bagaimana @Kondisi:jika @apapun
@@ -293,14 +307,14 @@ object=pulsa
 say=@Perintah:beli @Sapaan:aku pulsa
 say=@Perintah:beli pulsa
 
+[MintaTolong]
+say=@Tolong
+
 [BisaApa]
 say=bisa @Sapaan:kamu @Lakukan
 say=@Sapaan:kamu bisa @Tanya:apa
 say=@Tanya:bisa @Tanya:apa
 say=@Tanya:bisa @apapun
-
-[MintaTolong]
-say=@Tolong
 
 [KataTanyaSaja]
 say=^@Tanya

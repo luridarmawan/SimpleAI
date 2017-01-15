@@ -18,7 +18,7 @@ yo=yo|yoyoi
 salam=assalamualaikum|assalamu'alaikum
 
 [Sapaan]
-aku=aku|saya|gue|gwe|gw|akyu|ane|私
+aku=aku|saya|sy|gue|gwe|gw|akyu|ane|私
 kamu=kamu|kmu|mu|kamyu|kau|dikau|engkau|ngkau|anda|lu|loe|ente|sampean|samean
 dia=om|mbah|pak|mas|pakdhe|kak|kakak|mas|bu|ibu|dek
 kakak=kk
@@ -49,8 +49,8 @@ tunai=tunai
 [Tanya]
 tandatanya=\?
 siapa=siapa|syapa|sapa
-apa=apa|apakah
-mengapa=mengapa|ngapa|napa|kenapa
+apa=apa|apakah|pa
+mengapa=mengapa|ngapa|napa|kenapa|knp
 berapa=berapa|brp|brapa|piro
 bagaimana=bagaimana|gimana|gmn|bgmn|bgm
 bisa=bisakah|bisa|boleh|bolehkan|bolehkan
@@ -62,7 +62,7 @@ cari=cariin|carikan|cari|temukan
 beli=belikan|beli|blikan|beliin|pesan|pesen|pesan|pesenin|pesanin
 jual=jual|jualin
 buat=mbuat|buatkan|buat|buwat|buatin
-hitung=hitung|hitungkan|hitungin
+hitung=hitung|hitungkan|hitungin|itungin
 ambil=ambil|ambilkan
 pergi=pergi
 
@@ -70,7 +70,7 @@ pergi=pergi
 baik=baik|baiklah|okey|okeh|oke|okelah|ok|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|makasih|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak|oiyah|tentu|thank|thx
 buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong|sontoloyo|asem|terserah|dasar
 maklum=maklumi|maklum
-gemblung=gemblung|gokil|bego|parah|gandeng
+gemblung=gemblung|gokil|bego|parah|gandeng|songong|setres|stres|stress
 
 [Logika]
 ya=iyak|yak|yak|iyes|yes
@@ -141,7 +141,7 @@ juta=juta|jt
 milyar=milyar|milyr|miliar
 
 [Kencantikan]
-baik=ganteng|cantik|keren|hebat|powerful|top|pinter|pintar|cakep
+baik=ngganteng|ganteng|cantik|keren|hebat|powerful|top|pinter|pintar|cakep
 buruk=jelek|songong|gila|budeg|bodoh
 
 [Perasaan]
@@ -151,6 +151,9 @@ baik=suka|demen|seneng|kesengsem|trisna|love
 [Ekspresi]
 baik=haha|hehe|hihi|hoho|wkwk
 kaget=eehh|ehh|wow
+
+[Keraguan]
+kok=kok|koq|lhoo|lho|lah
 
 [Sifat]
 baik=baik|super|luar biasa|hebat|keren|cool|pinter|cerdas
@@ -193,7 +196,4 @@ tanya=\?
 titik=.
 koma=,
 seru=\!
-
-[Keraguan]
-kok=kok|koq|lho|lah
 
