@@ -21,6 +21,7 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
+  suggestion_controller,
   fastplaz_handler, logutil_lib, http_lib,
   fpexprpars, // formula
   dateutils,
@@ -83,6 +84,7 @@ type
 
   TSimpleBotModule = class
   private
+    Suggestion: TBotSuggestion;
     FAskCountdown: integer;
     FAskEmail: boolean;
     FChatID: string;
@@ -171,16 +173,20 @@ begin
   SimpleAI := TSimpleAI.Create;
   {$endif}
   LoadConfig('');
+  Suggestion:= TBotSuggestion.Create;
+  Suggestion.FileName := Config[_AI_CONFIG_BASEDIR] + 'suggestion.txt';
 
   FChatID := '';
   FAskCountdown := 0;
   FAskEmail := False;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
+  Handler['suggestion'] := @Suggestion.SuggestionHandler;
 end;
 
 destructor TSimpleBotModule.Destroy;
 begin
+  Suggestion.Free;
   ___HandlerCallbackMap.Free;
   if Assigned(SimpleAI) then
     SimpleAI.Free;
@@ -441,7 +447,7 @@ begin
     end;
   end;
 
-  httpClient.FormData['wow'] := 'keren';
+  httpClient.FormData['var1'] := 'value1';
   httpClient.URL := url + parameters;
 
   if method = 'get' then
