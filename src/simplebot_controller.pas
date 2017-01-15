@@ -497,6 +497,11 @@ var
 begin
   if _GET['_DEBUG'] <> '' then
     SimpleAI.Debug := True;
+  if Message = '' then
+  begin
+    Result := '{}';
+    Exit;
+  end;
 
   FisAnswered := False;
   Text := LowerCase(Message);
