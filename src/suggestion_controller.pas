@@ -14,6 +14,11 @@ unit suggestion_controller;
   (suggest|saran) @answer : @question
   (suggest|saran) @answer: @question
 
+
+  DATA FILE:
+  files/suggestion.txt
+
+  Better you can use your database server
 }
 
 {$mode objfpc}{$H+}

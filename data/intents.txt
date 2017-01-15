@@ -38,8 +38,8 @@ say=xxx
 
 [SuggestionResponse]
 action=suggestion
-say=(suggest|saran) @answer : @questions
-say=(suggest|saran) @answer: @questions
+say=(suggest|saran) @answer : @question
+say=(suggest|saran) @answer: @question
 
 
 
@@ -241,6 +241,7 @@ say=loremipsum
 
 [Math]
 action=math
+object=berhitung
 boundary=false
 say=@Tanya:berapa @Formula
 say=@Perintah:hitung @Formula
