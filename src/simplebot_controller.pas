@@ -761,7 +761,7 @@ begin
   if regex.Exec(Message) then
   begin
     s := UserData[regex.Match[1]];
-    if s <> '' then
+    //if s <> '' then
       Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
         '%(.*)%', s, Message, True);
   end;
