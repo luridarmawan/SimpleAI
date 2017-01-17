@@ -91,9 +91,7 @@ type
     FisAnswered: boolean;
     FOnError: TOnErrorCallback;
     FDataLoaded: boolean;
-    FTelegramToken: string;
     Text: string;
-    HTTP: THTTPLib;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
     function getUserData(const KeyName: string): string;
@@ -143,8 +141,7 @@ type
     property isDataLoaded: boolean read FDataLoaded;
     property isAnswer: boolean read FisAnswered;
     property isAskEmail: boolean read FAskEmail write FAskEmail;
-    property TelegramToken: string read FTelegramToken write FTelegramToken;
-    function TelegramSend(ChatIDRef, ReplyToMessageID, Message: string): boolean;
+    function TelegramSend(Token, ChatIDRef, ReplyToMessageID, Message: string): boolean;
 
     property UserData[const KeyName: string]: string read getUserData write setUserData;
     property Handler[const TagName: string]: THandlerCallback
@@ -166,7 +163,6 @@ begin
   ___HandlerCallbackMap := THandlerCallbackMap.Create;
 
   FDataLoaded := False;
-  HTTP := THTTPLib.Create;
   {$ifdef AI_REDIS}
   SimpleAI := TSimpleAIRedis.Create;
   {$else}
@@ -190,12 +186,11 @@ begin
   ___HandlerCallbackMap.Free;
   if Assigned(SimpleAI) then
     SimpleAI.Free;
-  HTTP.Free;
 end;
 
 procedure TSimpleBotModule.LoadConfig(DataName: string);
 begin
-  FTelegramToken := Config[_TELEGRAM_CONFIG_TOKEN];
+  //FTelegramToken := Config[_TELEGRAM_CONFIG_TOKEN];
 
   try
     SimpleAI.Debug := Config[_AI_CONFIG_DEBUG];
@@ -768,14 +763,14 @@ begin
   regex.Free;
 end;
 
-function TSimpleBotModule.TelegramSend(ChatIDRef, ReplyToMessageID,
+function TSimpleBotModule.TelegramSend(Token, ChatIDRef, ReplyToMessageID,
   Message: string): boolean;
 var
   httpClient: THTTPLib;
   httpResponse: IHTTPResponse;
 begin
   Result := False;
-  if FTelegramToken = '' then
+  if Token = '' then
     Exit;
   //if ((ChatIDRef = '') or (ChatIDRef = '0')) then
   //  Exit;
@@ -784,7 +779,7 @@ begin
   Message := StringReplace(Message, '\r', ' ', [rfReplaceAll]);
 
   httpClient := THTTPLib.Create;
-  httpClient.URL := _TELEGRAM_API_URL + FTelegramToken + '/sendMessage' +
+  httpClient.URL := _TELEGRAM_API_URL + Token + '/sendMessage' +
     '?chat_id=' + ChatIDRef + '&reply_to_message_id=' + ReplyToMessageID +
     '&text=' + Message;
 
