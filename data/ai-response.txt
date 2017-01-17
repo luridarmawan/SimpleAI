@@ -1,3 +1,6 @@
+[Test1]
+say=hai %Name%
+say=wow
 
 [Introduction]
 aboutme=\nPerkenalkan, saya adalah robot penjawab pesan otomatis.\nSaya akan berusaha membantu anda.\nMohon Maaf jika ada yang kurang bisa saya pahami nanti.

@@ -38,8 +38,8 @@ say=xxx
 
 [SuggestionResponse]
 action=suggestion
-say=(suggest|saran) @answer : @question
-say=(suggest|saran) @answer: @question
+say=(suggest|saran|teach) @answer : @question
+say=(suggest|saran|teach) @answer: @question
 
 
 
@@ -275,8 +275,12 @@ say=om telolet om
 say=omteloletom
 say=telolet
 
-
-
+[DomainWhois]
+action=domain_whois
+say=whois domain @domain @option
+say=whois domain @domain
+say=whois @domain @option
+say=whois @domain
 
 [Cari]
 action=cari

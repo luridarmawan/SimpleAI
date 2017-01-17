@@ -24,7 +24,7 @@ dia=om|mbah|pak|mas|pakdhe|kak|kakak|mas|bu|ibu|dek
 kakak=kk
 
 [HalTerlarang]
-narkoba=ganja|inex|narkoba
+narkoba=ganja|inex|narkoba|morfin
 
 [Kondisi]
 baik=baik|sehat
@@ -50,12 +50,13 @@ tunai=tunai
 tandatanya=\?
 siapa=siapa|syapa|sapa
 apa=apa|apakah|pa
-mengapa=mengapa|ngapa|napa|kenapa|knp
+mengapa=mengapa|ngapa|napa|kenapa|knp|why
 berapa=berapa|brp|brapa|piro
-bagaimana=bagaimana|gimana|gmn|bgmn|bgm
+bagaimana=bagaimana|gimana|gmn|bgmn|bgm|how
 bisa=bisakah|bisa|boleh|bolehkan|bolehkan
 mau=mau|bersedia
 ngapain=ngapain
+kapan=kapan|kpn
 
 [Perintah]
 cari=cariin|carikan|cari|temukan
@@ -68,7 +69,7 @@ pergi=pergi
 
 [Respon]
 baik=baik|baiklah|okey|okeh|oke|okelah|ok|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|makasih|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak|oiyah|tentu|thank|thx|cakep
-buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong|sontoloyo|asem|terserah|dasar
+buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong|sontoloyo|asem|terserah|dasar|iyalah
 maklum=maklumi|maklum
 gemblung=gemblung|gokil|bego|parah|gandeng|songong|setres|stres|stress
 
@@ -153,7 +154,7 @@ baik=haha|hehe|hihi|hoho|wkwk
 kaget=eehh|ehh|wow
 
 [Keraguan]
-kok=kok|koq|lhoo|lho|lah
+kok=kok|koq|lhoo|lho|lah|oya|ohya
 
 [Sifat]
 baik=baik|super|luar biasa|hebat|keren|cool|pinter|cerdas
@@ -165,13 +166,14 @@ pahlawan=pattimura|diponegoro|kartini
 jagoan123=ansori|encang|ihdi|oka|abi|ines
 dev=peter|bams|bambang|anne|deroh|ratu|yudi|joko
 devpascal=indra|tigor|derit|kofa|maskofa
+CafeStartup=temmy|gisela|gisel|bontot
 
 [Profesi]
 pembantu=pembantu
 karyawan=karyawan
 programmer=developer|programmer|tukang ketik
 prt=pembantu rumah tangga|prt|pembantu rmh tangga
-dokter=dokter
+dokter=dokter|dok
 swasta=swasta
 pns=pegawai negeri|pgw negeri|pegawai negri|pgw negri
 
