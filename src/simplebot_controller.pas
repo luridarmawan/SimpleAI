@@ -190,7 +190,6 @@ end;
 
 procedure TSimpleBotModule.LoadConfig(DataName: string);
 begin
-  //FTelegramToken := Config[_TELEGRAM_CONFIG_TOKEN];
 
   try
     SimpleAI.Debug := Config[_AI_CONFIG_DEBUG];
@@ -775,8 +774,8 @@ begin
   //if ((ChatIDRef = '') or (ChatIDRef = '0')) then
   //  Exit;
 
-  Message := StringReplace(Message, '\n', ' ', [rfReplaceAll]);
-  Message := StringReplace(Message, '\r', ' ', [rfReplaceAll]);
+  Message := StringReplace(Message, '\n', #10, [rfReplaceAll]);
+  Message := UrlEncode( Message);
 
   httpClient := THTTPLib.Create;
   httpClient.URL := _TELEGRAM_API_URL + Token + '/sendMessage' +
