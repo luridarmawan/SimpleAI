@@ -66,7 +66,8 @@ const
   _AI_OBJECT = 'OBJECT';
   _AI_OBJECT_DATE = 'OBJECT_DATE';
 
-  REGEX_EQUATION = '^[cos|sin|tan|tangen|sqr|sqrt|log|ln|sec|cosec|arctan|abs|exp|frac|int|round|trunc|shl|shr|ifs|iff|ifd|ifi|0-9*+ ().,-]+$';
+  REGEX_EQUATION =
+    '^[cos|sin|tan|tangen|sqr|sqrt|log|ln|sec|cosec|arctan|abs|exp|frac|int|round|trunc|shl|shr|ifs|iff|ifd|ifi|0-9*+ ().,-]+$';
 
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
@@ -106,6 +107,7 @@ type
     function ErrorHandler(Message: string): string;
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
+    function jadwalSholatHandler(const IntentName: string; Params: TStrings): string;
     function prepareQuestion: boolean;
     function echoQuestions(IntentName: string; Key: string = ''): string;
 
@@ -155,7 +157,9 @@ var
 
 implementation
 
-uses json_lib, common;
+uses
+  jadwalsholat_controller,
+  json_lib, common;
 
 constructor TSimpleBotModule.Create;
 begin
@@ -169,7 +173,7 @@ begin
   SimpleAI := TSimpleAI.Create;
   {$endif}
   LoadConfig('');
-  Suggestion:= TBotSuggestion.Create;
+  Suggestion := TBotSuggestion.Create;
   Suggestion.FileName := Config[_AI_CONFIG_BASEDIR] + 'suggestion.txt';
 
   FChatID := '';
@@ -178,6 +182,7 @@ begin
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
+  Handler['jadwal_sholat'] := @jadwalSholatHandler;
 end;
 
 destructor TSimpleBotModule.Destroy;
@@ -218,14 +223,14 @@ procedure TSimpleBotModule.LoadAIDataFromFile;
 var
   i: integer;
   s, basedir: string;
-  jData : TJSONData;
+  jData: TJSONData;
 begin
   basedir := Config[_AI_CONFIG_BASEDIR];
 
   // load Entities
   s := Config[_AI_CONFIG_ENTITIES];
-  jData := GetJSON( s);
-  for i := 0 to jData.Count -1 do
+  jData := GetJSON(s);
+  for i := 0 to jData.Count - 1 do
   begin
     SimpleAI.AddEntitiesFromFile(basedir + jData.Items[i].AsString);
   end;
@@ -233,8 +238,8 @@ begin
 
   // load Intents
   s := Config[_AI_CONFIG_INTENTS];
-  jData := GetJSON( s);
-  for i := 0 to jData.Count -1 do
+  jData := GetJSON(s);
+  for i := 0 to jData.Count - 1 do
   begin
     SimpleAI.AddIntentFromFile(basedir + jData.Items[i].AsString);
   end;
@@ -242,8 +247,8 @@ begin
 
   // load Response
   s := Config[_AI_CONFIG_RESPONSE];
-  jData := GetJSON( s);
-  for i := 0 to jData.Count -1 do
+  jData := GetJSON(s);
+  for i := 0 to jData.Count - 1 do
   begin
     SimpleAI.AddResponFromFile(basedir + jData.Items[i].AsString);
   end;
@@ -325,7 +330,7 @@ begin
     keyName := 'Name';
     keyValue := SimpleAI.Parameters.Values['Name'];
     UserData['Name'] := keyValue;
-    SetQuestions( '');
+    SetQuestions('');
     if FAskEmail then
     begin
       s := UserData['Email'];
@@ -357,7 +362,7 @@ begin
     Exit;
   end;
 
-  Result := '('+SimpleAI.Parameters.Values['Formula_value']+')';
+  Result := '(' + SimpleAI.Parameters.Values['Formula_value'] + ')';
   mathParser := TFPExpressionParser.Create(nil);
   try
     mathParser.BuiltIns := [bcMath, bcBoolean];
@@ -453,6 +458,16 @@ begin
     Result := httpResponse.ResultText;
 
   httpClient.Free;
+end;
+
+function TSimpleBotModule.jadwalSholatHandler(const IntentName: string;
+  Params: TStrings): string;
+begin
+  with TJadwalSholatController.Create do
+  begin
+    Result := Find(Params.Values['kota_value'], s2i(FormatDateTime('d', now)));
+    Free;
+  end;
 end;
 
 procedure TSimpleBotModule.SetSession(Key, Value: string);
@@ -756,8 +771,8 @@ begin
   begin
     s := UserData[regex.Match[1]];
     //if s <> '' then
-      Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
-        '%(.*)%', s, Message, True);
+    Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
+      '%(.*)%', s, Message, True);
   end;
   regex.Free;
 end;
@@ -775,7 +790,7 @@ begin
   //  Exit;
 
   Message := StringReplace(Message, '\n', #10, [rfReplaceAll]);
-  Message := UrlEncode( Message);
+  Message := UrlEncode(Message);
 
   httpClient := THTTPLib.Create;
   httpClient.URL := _TELEGRAM_API_URL + Token + '/sendMessage' +
