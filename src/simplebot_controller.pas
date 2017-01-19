@@ -21,7 +21,7 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
-  suggestion_controller,
+  suggestion_controller, domainwhois_controller, jadwalsholat_controller,
   fastplaz_handler, logutil_lib, http_lib,
   fpexprpars, // formula
   dateutils,
@@ -108,6 +108,7 @@ type
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function jadwalSholatHandler(const IntentName: string; Params: TStrings): string;
+    function domainWhoisHandler(const IntentName: string; Params: TStrings): string;
     function prepareQuestion: boolean;
     function echoQuestions(IntentName: string; Key: string = ''): string;
 
@@ -158,7 +159,6 @@ var
 implementation
 
 uses
-  jadwalsholat_controller,
   json_lib, common;
 
 constructor TSimpleBotModule.Create;
@@ -183,6 +183,7 @@ begin
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
   Handler['jadwal_sholat'] := @jadwalSholatHandler;
+  Handler['domain_whois'] := @domainWhoisHandler;
 end;
 
 destructor TSimpleBotModule.Destroy;
@@ -468,6 +469,17 @@ begin
     Result := Find(Params.Values['kota_value'], s2i(FormatDateTime('d', now)));
     Free;
   end;
+end;
+
+function TSimpleBotModule.domainWhoisHandler(const IntentName: string;
+  Params: TStrings): string;
+var
+  domainWhois: TDomainWhoisController;
+begin
+  Result := 'yeee';
+  domainWhois := TDomainWhoisController.Create;
+  Result := domainWhois.Find( Params.Values['domain_value'], Params.Values['option_value']);
+  domainWhois.Free;
 end;
 
 procedure TSimpleBotModule.SetSession(Key, Value: string);

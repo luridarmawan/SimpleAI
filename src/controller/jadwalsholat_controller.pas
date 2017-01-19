@@ -28,7 +28,7 @@ const
   _JADWALSHOLAT_LAMPUMIMPI_URL =
     'http://lampumimpi.com/jadwal_sholat/kota/%city/hari/%day';
 
-// contoh:
+// example:
 //   http://lampumimpi.com/jadwal_sholat/kota/bandung/hari/19
 // result:
 //   {"code":200,"success":true,"message":"Jadwal sholat kota bandung.","data":[{"hari":"19","shubuh":"04:26","dzuhur":"12:04","ashar":"15:28","magrib":"18:18","isya":"19:33"}]}

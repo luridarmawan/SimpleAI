@@ -12,7 +12,7 @@
       </SearchPaths>
     </CompilerOptions>
     <Description Value="SimpleBOT package"/>
-    <Files Count="3">
+    <Files Count="4">
       <Item1>
         <Filename Value="src/simplebot_controller.pas"/>
         <UnitName Value="simplebot_controller"/>
@@ -25,21 +25,28 @@
         <Filename Value="src/suggestion_controller.pas"/>
         <UnitName Value="suggestion_controller"/>
       </Item3>
+      <Item4>
+        <Filename Value="src/controller/domainwhois_controller.pas"/>
+        <UnitName Value="domainwhois_controller"/>
+      </Item4>
     </Files>
     <i18n>
       <EnableI18N Value="True"/>
       <OutDir Value="locale"/>
     </i18n>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="4">
       <Item1>
-        <PackageName Value="fastplaz_runtime"/>
+        <PackageName Value="fastplaz_integration"/>
       </Item1>
       <Item2>
-        <PackageName Value="simpleai_package"/>
+        <PackageName Value="fastplaz_runtime"/>
       </Item2>
       <Item3>
-        <PackageName Value="FCL"/>
+        <PackageName Value="simpleai_package"/>
       </Item3>
+      <Item4>
+        <PackageName Value="FCL"/>
+      </Item4>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
