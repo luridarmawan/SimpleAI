@@ -54,12 +54,12 @@ var
   json: TJSONUtil;
   jsonData: TJSONData;
 begin
-  return := '[{}]';
+  return := '';
 
   with THTTPLib.Create do
   begin
-    URL := StringReplace(_JADWALSHOLAT_LAMPUMIMPI_URL, '%city', CityName,
-      [rfReplaceAll]);
+    s := UrlEncode(LowerCase(CityName), False);
+    URL := StringReplace(_JADWALSHOLAT_LAMPUMIMPI_URL, '%city', s, [rfReplaceAll]);
     URL := StringReplace(url, '%day', i2s(Day), [rfReplaceAll]);
 
     AddHeader('Cache-Control', 'no-cache');
@@ -72,7 +72,7 @@ begin
         if jsonData.GetPath('code').AsString = '200' then
         begin
           s := jsonData.GetPath('data').AsJSON;
-          s := Copy(s, 2, length(s) - 2);
+          s := Copy(s, 2, length(s) - 2); // force jsonarray to jsonstring
         end;
 
         json := TJSONUtil.Create;
