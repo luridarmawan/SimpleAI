@@ -85,6 +85,7 @@ type
 
   TSimpleBotModule = class
   private
+    FAskName: boolean;
     Suggestion: TBotSuggestion;
     FAskCountdown: integer;
     FAskEmail: boolean;
@@ -143,7 +144,8 @@ type
     property Debug: boolean read getDebug write setDebug;
     property isDataLoaded: boolean read FDataLoaded;
     property isAnswer: boolean read FisAnswered;
-    property isAskEmail: boolean read FAskEmail write FAskEmail;
+    property AskName: boolean read FAskName write FAskName;
+    property AskEmail: boolean read FAskEmail write FAskEmail;
     function TelegramSend(Token, ChatIDRef, ReplyToMessageID, Message: string): boolean;
 
     property UserData[const KeyName: string]: string read getUserData write setUserData;
@@ -178,6 +180,7 @@ begin
 
   FChatID := '';
   FAskCountdown := 0;
+  FAskName := False;
   FAskEmail := False;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
@@ -541,8 +544,9 @@ begin
     //SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_VISITED, '1');
     setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
-    if UserData['Name'] = '' then
-      SetQuestions(_AI_ASK_NAME);
+    if FAskName then
+      if UserData['Name'] = '' then
+        SetQuestions(_AI_ASK_NAME);
   end;
 
   s := getSession(_AI_SESSION_LASTVISIT);
