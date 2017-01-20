@@ -24,10 +24,13 @@ dia=om|mbah|pak|mas|pakdhe|kak|kakak|mas|bu|ibu|dek
 kakak=kk
 
 [HalTerlarang]
-narkoba=ganja|inex|narkoba|morfin
+narkoba=ganja|inex|narkoba|morfin|candu
+miras=bir|wiski|vodka
+mabuk=mabuk|mabok
+sex=kentu|ngentot|ml|sex|homo|lesbian|lesbi
 
-[Kondisi]
-baik=baik|sehat
+[Keadaan]
+baik=baik|sehat|alhamdulillah
 buruk=buruk|sakit|demam|capek|lelah
 
 [Pasangan]

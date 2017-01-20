@@ -33,6 +33,15 @@ say=@Sapaan:kamu @Kencantikan:baik
 say=@Sapaan:kamu @apapun @Sifat:baik
 say=@Sapaan:kamu @Sifat:baik
 
+[Mengeluh]
+say=(kok|koq) gitu
+say=@Tanya:bagaimana sih
+say=capek (ahh|deh)
+
+[TelegramBotStart]
+action=telegram_menu
+say=/start
+
 [xxxx]
 say=xxx
 
@@ -41,7 +50,11 @@ action=suggestion
 say=(suggest|saran|teach) @answer : @question
 say=(suggest|saran|teach) @answer: @question
 
-
+[SholatJadwal]
+action=jadwal_sholat
+say=(jadwal|jadual) sholat (untuk|utk|kota) @kota
+say=(jadwal|jadual) sholat @kota
+say=(jadwal|jadual) sholat
 
 [Lahir]
 object=lahir
@@ -58,6 +71,10 @@ object=jodoh
 say=@Perintah:cari @Pasangan
 say=@Pasangan:pasangan
 
+[CariJodohKriteria]
+object=jodoh
+say=yang @Kencantikan
+
 [Kencan]
 say=@Sapaan:aku kencan
 say=kencan
@@ -68,13 +85,15 @@ say=jalan2
 say=@Perintah @HalTerlarang
 say=@HalTerlarang
 
-[KondisiBaik]
-say=@Sapaan:kamu @Kondisi:baik
-say=@Kondisi:baik
+[KeadaanBaik]
+say=@Sapaan:kamu @Keadaan:baik
+say=@Keadaan:baik
 
-[KondisiBuruk]
-say=@Sapaan:kamu @Kondisi:buruk
-say=@Kondisi:buruk
+[KeadaanBuruk]
+say=@Sapaan:kamu @Keadaan:buruk
+say=@Keadaan:buruk
+say=@Keadaan:buruk @apapun
+
 
 [Menghibur]
 say=jangan sedih
@@ -266,9 +285,6 @@ say=@Key=@Value
 [KenapaDisimpan]
 say=@Tanya:mengapa kok disimpan
 say=@Tanya:mengapa @apapun
-
-[KeadaanNegatif]
-say=@Keadaan:buruk @apapun
 
 [telolet]
 say=om telolet om

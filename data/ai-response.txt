@@ -140,6 +140,10 @@ say=Kerendehan hati sungguh amat sangat dihargai
 say=Demikian juga dengan kamu
 say=Harapan saya bisa memberikan yang selalu lebih baik
 
+[Mengeluh]
+say=Maaf
+say=Hanya berusaha memberikan yang terbaik
+
 [SuruhanPositif]
 say=Saya akan coba melakukan dengan lebih baik
 say=Terima kasih, mohon bimbingannya
@@ -235,12 +239,6 @@ say=dicoba untuk berusaha lebih baik lagi
 say=terbaik yang bisa dilakukan
 say=terus berusaha yang terbaik
 
-[KeadaanNegatif]
-say=jaga diri baik2
-say=jaga kesehatanmu
-say=semangat yaa
-say=mesti semangat
-
 [InginTahu]
 say=mmm.. boleh tau apa itu %word% ?
 say=%word% ... apa itu?
@@ -281,6 +279,9 @@ say=apa yang bisa saya bantu?
 say=ada yg bisa dibantu?
 say=bagaimana?
 
+[TelegramBotStart]
+say=Hi, Selamat %time_session%.\nSelamat datang di layanan ChatBot kami.\nApa kabar?
+
 [xxx]
 say=xxxxxx
 
@@ -304,6 +305,11 @@ say=MMmmm... Sebaiknya bukan dengan saya menyampaikannya
 say=Sebaiknya anda bergaul dengan manusia, bukan dengan bot seperti saya
 say=Sulit juga
 
+[CariJodohKriteria]
+say=Sepertinya ada
+say=Ada sihh... tapi susah juga sepertinya
+say=Bukannya banyak di sekitar Anda ?
+
 [Kencan]
 say=Apa bisa?
 say=Yakin?
@@ -312,15 +318,21 @@ say=Yakin?
 say=Maaf, kami tidak membicarakan hal tersebut di sini
 say=Sebaiknya tidak
 
-[KondisiBaik]
+[KeadaanBaik]
 say=Syukurlah
 say=Selalu semangat
-say=Yang terbaik
+say=Semangat selalu
 
-[KondisiBuruk]
+[KeadaanBuruk]
 say=Mesti semangat
 say=Harus semangat selalu
 say=Harus jaga kondisi selalu
+say=Jaga kesehatan
+say=jaga diri baik2
+say=jaga kesehatanmu
+say=semangat yaa
+say=mesti semangat
+
 
 [Menghibur]
 say=iya, terima kasih
