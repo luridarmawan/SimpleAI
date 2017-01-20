@@ -25,6 +25,8 @@ type
 implementation
 
 const
+  _JADWALSHOLAT_DEFAULT_CITY = 'jakarta';
+  _JADWALSHOLAT_MSG_ERROR = 'maaf... \ngagal mendapatkan informasi jadwal sholat';
   _JADWALSHOLAT_LAMPUMIMPI_URL =
     'http://lampumimpi.com/jadwal_sholat/kota/%city/hari/%day';
 
@@ -40,12 +42,10 @@ var
 
 constructor TJadwalSholatController.Create;
 begin
-
 end;
 
 destructor TJadwalSholatController.Destroy;
 begin
-
 end;
 
 function TJadwalSholatController.Find(CityName: string; Day: integer): string;
@@ -59,6 +59,8 @@ begin
   with THTTPLib.Create do
   begin
     s := UrlEncode(LowerCase(CityName), False);
+    if s = '' then
+      s := _JADWALSHOLAT_DEFAULT_CITY;
     URL := StringReplace(_JADWALSHOLAT_LAMPUMIMPI_URL, '%city', s, [rfReplaceAll]);
     URL := StringReplace(url, '%day', i2s(Day), [rfReplaceAll]);
 
@@ -95,6 +97,10 @@ begin
         end;
       end;
       jsonData.Free;
+    end
+    else
+    begin
+      return := _JADWALSHOLAT_MSG_ERROR;
     end;
     Free;
   end;
