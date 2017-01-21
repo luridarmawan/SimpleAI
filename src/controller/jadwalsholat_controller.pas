@@ -6,7 +6,7 @@ interface
 
 uses
   common, http_lib, fpjson, json_lib,
-  Classes, SysUtils;
+  dateutils, Classes, SysUtils;
 
 type
 
@@ -14,10 +14,13 @@ type
 
   TJadwalSholatController = class
   private
+    FCache: boolean;
+    function getJadwalSholatData(CityName: string; Day: integer): string;
   public
     constructor Create;
     destructor Destroy;
 
+    property Cache: boolean read FCache write FCache;
     function Find(CityName: string; Day: integer): string;
   end;
 
@@ -29,6 +32,8 @@ const
   _JADWALSHOLAT_MSG_ERROR = 'maaf... \ngagal mendapatkan informasi jadwal sholat';
   _JADWALSHOLAT_LAMPUMIMPI_URL =
     'http://lampumimpi.com/jadwal_sholat/kota/%city/hari/%day';
+  _JADWALSHOLAT_CACHE_DIR = 'ztemp/cache/jadwalsholat/';
+  _JADWALSHOLAT_CACHE__EXTENSION = '.txt';
 
 // example:
 //   http://lampumimpi.com/jadwal_sholat/kota/bandung/hari/19
@@ -42,70 +47,115 @@ var
 
 constructor TJadwalSholatController.Create;
 begin
+  FCache := True;
 end;
 
 destructor TJadwalSholatController.Destroy;
 begin
 end;
 
-function TJadwalSholatController.Find(CityName: string; Day: integer): string;
+function TJadwalSholatController.getJadwalSholatData(CityName: string;
+  Day: integer): string;
 var
   s, return: string;
   json: TJSONUtil;
   jsonData: TJSONData;
+  i: integer;
+  httpClient: THTTPLib;
 begin
-  return := '';
+  Result := '';
 
-  with THTTPLib.Create do
-  begin
-    s := UrlEncode(LowerCase(CityName), False);
-    if s = '' then
-      s := _JADWALSHOLAT_DEFAULT_CITY;
-    URL := StringReplace(_JADWALSHOLAT_LAMPUMIMPI_URL, '%city', s, [rfReplaceAll]);
-    URL := StringReplace(url, '%day', i2s(Day), [rfReplaceAll]);
+  httpClient := THTTPLib.Create;
+  s := UrlEncode(LowerCase(CityName), False);
+  if s = '' then
+    s := _JADWALSHOLAT_DEFAULT_CITY;
+  httpClient.URL := StringReplace(_JADWALSHOLAT_LAMPUMIMPI_URL, '%city', s,
+    [rfReplaceAll]);
+  httpClient.URL := StringReplace(httpClient.URL, '%day', i2s(Day), [rfReplaceAll]);
 
-    AddHeader('Cache-Control', 'no-cache');
-    Response := Get;
+  Response := httpClient.Get;
+  if Response.ResultCode <> 200 then
+    Exit;
 
-    if Response.ResultCode = 200 then
+  try
+    jsonData := GetJSON(Response.ResultText);
+    if jsonData.GetPath('code').AsString = '200' then
     begin
-      try
-        jsonData := GetJSON(Response.ResultText);
-        if jsonData.GetPath('code').AsString = '200' then
-        begin
-          s := jsonData.GetPath('data').AsJSON;
-          s := Copy(s, 2, length(s) - 2); // force jsonarray to jsonstring
-        end;
-
-        json := TJSONUtil.Create;
-        json.LoadFromJsonString(s);
-
-        s := jsonData.GetPath('message').AsString;
-        s := s + '\nshubuh: ' + json['shubuh'];
-        s := s + '\ndzuhur: ' + json['dzuhur'];
-        s := s + '\nashar: ' + json['ashar'];
-        s := s + '\nmagrib: ' + json['magrib'];
-        s := s + '\nisya: ' + json['isya'];
-
-        json.Free;
-
-        return := s;
-      except
-        on E: Exception do
-        begin
-          return := e.Message;
-        end;
-      end;
-      jsonData.Free;
-    end
-    else
-    begin
-      return := _JADWALSHOLAT_MSG_ERROR;
+      Result := Response.ResultText;
     end;
-    Free;
+    jsonData.Free;
+  except
+    on E: Exception do
+    begin
+    end;
   end;
 
-  Result := return;
+  httpClient.Free;
+end;
+
+function TJadwalSholatController.Find(CityName: string; Day: integer): string;
+var
+  cacheFile, s: string;
+  json: TJSONUtil;
+  jsonData: TJSONData;
+  forceGetJadwal: boolean;
+  i: integer;
+  cacheData: TStringList;
+begin
+  Result := '';
+  cacheData := TStringList.Create;
+
+  if CityName = '' then
+    CityName := _JADWALSHOLAT_DEFAULT_CITY;
+  cacheFile := _JADWALSHOLAT_CACHE_DIR + CityName + '-' + i2s(Day) +
+    _JADWALSHOLAT_CACHE__EXTENSION;
+  forceGetJadwal := False;
+  if FileExists(cacheFile) then
+  begin
+    i := HoursBetween(FileDateToDateTime(FileAge(cacheFile)), now);
+    if i = 0 then
+      cacheData.LoadFromFile(cacheFile)
+    else
+      forceGetJadwal := True;
+  end
+  else
+    forceGetJadwal := True;
+
+  if forceGetJadwal then
+  begin
+    cacheData.Text := getJadwalSholatData(CityName, Day);
+    if cacheData.Text = '' then
+    begin
+      Result := _JADWALSHOLAT_MSG_ERROR;
+      Exit;
+    end;
+    if FCache then
+      cacheData.SaveToFile(cacheFile);
+  end;
+
+  try
+    jsonData := GetJSON(cacheData.Text);
+    s := jsonData.GetPath('data').AsJSON;
+    s := Copy(s, 2, length(s) - 2); // force jsonarray to jsonstring
+
+    json := TJSONUtil.Create;
+    json.LoadFromJsonString(s);
+    s := jsonData.GetPath('message').AsString;
+    s := s + '\nshubuh: ' + json['shubuh'];
+    s := s + '\ndzuhur: ' + json['dzuhur'];
+    s := s + '\nashar: ' + json['ashar'];
+    s := s + '\nmagrib: ' + json['magrib'];
+    s := s + '\nisya: ' + json['isya'];
+    json.Free;
+
+    Result := s;
+  except
+    on E: Exception do
+    begin
+      Result := _JADWALSHOLAT_MSG_ERROR; //e.Message;
+    end;
+  end;
+
 end;
 
 end.

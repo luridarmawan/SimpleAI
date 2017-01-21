@@ -78,7 +78,7 @@ begin
         Result := 'Informasi whois domain ' + DomainName + ' tidak ditemukan';
         Exit;
       end;
-      if not FCache then
+      if FCache then
         Whois.Data.SaveToFile(cacheFile);
     end;
 
