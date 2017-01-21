@@ -28,6 +28,7 @@ uses
   RegExpr, fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
 
 const
+  _AI_BOTNAME_DEFAULT = 'bot';
   _AI_CONFIG_NAME = 'ai/default/name';
   _AI_CONFIG_BASEDIR = 'ai/default/basedir';
   _AI_CONFIG_ENTITIES = 'ai/default/entities';
@@ -86,6 +87,7 @@ type
   TSimpleBotModule = class
   private
     FAskName: boolean;
+    FBotName: string;
     Suggestion: TBotSuggestion;
     FAskCountdown: integer;
     FAskEmail: boolean;
@@ -117,6 +119,7 @@ type
     function Example_Handler(const IntentName: string; Params: TStrings): string;
 
     function isAnswerOld(): boolean;
+    function isMentioned:boolean;
   public
     {$ifdef AI_REDIS}
     SimpleAI: TSimpleAIRedis;
@@ -138,6 +141,7 @@ type
     procedure SetSession(Key, Value: string);
     function GetSession(Key: string): string;
 
+    property BotName: string read FBotName write FBotName;
     property ChatID: string read FChatID write FChatID;
     property AskCountdown: integer read FAskCountdown;
 
@@ -175,6 +179,7 @@ begin
   SimpleAI := TSimpleAI.Create;
   {$endif}
   LoadConfig('');
+  FBotName := _AI_BOTNAME_DEFAULT;
   Suggestion := TBotSuggestion.Create;
   Suggestion.FileName := Config[_AI_CONFIG_BASEDIR] + 'suggestion.txt';
 
@@ -763,6 +768,13 @@ begin
   end;
 
   Result := True;
+end;
+
+function TSimpleBotModule.isMentioned: boolean;
+begin
+  Result := False;
+  if pos( '@'+FBotName, Text) > 0 then
+    Result := True;
 end;
 
 function TSimpleBotModule.GetResponse(IntentName: string; Action: string;
