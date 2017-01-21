@@ -12,7 +12,7 @@
       </SearchPaths>
     </CompilerOptions>
     <Description Value="SimpleBOT package"/>
-    <Files Count="4">
+    <Files Count="5">
       <Item1>
         <Filename Value="src/simplebot_controller.pas"/>
         <UnitName Value="simplebot_controller"/>
@@ -29,6 +29,10 @@
         <Filename Value="src/controller/domainwhois_controller.pas"/>
         <UnitName Value="domainwhois_controller"/>
       </Item4>
+      <Item5>
+        <Filename Value="src/controller/kamus_controller.pas"/>
+        <UnitName Value="kamus_controller"/>
+      </Item5>
     </Files>
     <i18n>
       <EnableI18N Value="True"/>

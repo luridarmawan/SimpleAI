@@ -39,7 +39,7 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
-  suggestion_controller, domainwhois_controller, jadwalsholat_controller,
+  suggestion_controller, domainwhois_controller, jadwalsholat_controller, kamus_controller,
   fastplaz_handler, logutil_lib, http_lib,
   fpexprpars, // formula
   dateutils,
@@ -130,6 +130,7 @@ type
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function jadwalSholatHandler(const IntentName: string; Params: TStrings): string;
     function domainWhoisHandler(const IntentName: string; Params: TStrings): string;
+    function kamusWhoisHandler(const IntentName: string; Params: TStrings): string;
     function prepareQuestion: boolean;
     function echoQuestions(IntentName: string; Key: string = ''): string;
 
@@ -210,6 +211,7 @@ begin
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
   Handler['jadwal_sholat'] := @jadwalSholatHandler;
   Handler['domain_whois'] := @domainWhoisHandler;
+  Handler['kamus'] := @kamusWhoisHandler;
 end;
 
 destructor TSimpleBotModule.Destroy;
@@ -502,10 +504,22 @@ function TSimpleBotModule.domainWhoisHandler(const IntentName: string;
 var
   domainWhois: TDomainWhoisController;
 begin
-  Result := 'yeee';
+  Result := '..';
   domainWhois := TDomainWhoisController.Create;
   Result := domainWhois.Find( Params.Values['domain_value'], Params.Values['option_value']);
   domainWhois.Free;
+end;
+
+function TSimpleBotModule.kamusWhoisHandler(const IntentName: string;
+  Params: TStrings): string;
+var
+  kamus: TKamusController;
+begin
+  Result := '...';
+  kamus := TKamusController.Create;
+  kamus.Token:= Config['ibacor/token'];
+  Result := kamus.Find( Params.Values['word_value']);
+  kamus.Free;
 end;
 
 procedure TSimpleBotModule.SetSession(Key, Value: string);
