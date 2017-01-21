@@ -516,9 +516,12 @@ var
   kamus: TKamusController;
 begin
   Result := '...';
-  kamus := TKamusController.Create;
-  kamus.Token:= Config['ibacor/token'];
-  Result := kamus.Find( Params.Values['word_value']);
+  try
+    kamus := TKamusController.Create;
+    kamus.Token:= Config['ibacor/token'];
+    Result := kamus.Find( Params.Values['word_value']);
+  except
+  end;
   kamus.Free;
 end;
 
