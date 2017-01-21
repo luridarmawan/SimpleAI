@@ -5,6 +5,24 @@ This file is part of the SimpleBOT package.
 For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 }
+{
+  Default Bot Name : "bot"
+
+  [x] USAGE
+
+  Text := 'hi, apa kabar';
+  .
+  .
+  SimpleBOT := TSimpleBotModule.Create;
+  SimpleBOT.OnError := @OnErrorHandler;  // Your Custom Message
+  SimpleBOT.Handler['your_defined_action'] := @yourDefinedActionHandler;
+  TextResponse := SimpleBOT.Exec(Text);
+  .
+  .
+  SimpleBOT.Free;
+
+
+}
 unit simplebot_controller;
 
 {$mode objfpc}{$H+}
