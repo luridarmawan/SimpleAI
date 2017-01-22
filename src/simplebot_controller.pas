@@ -85,9 +85,6 @@ const
   _AI_OBJECT = 'OBJECT';
   _AI_OBJECT_DATE = 'OBJECT_DATE';
 
-  REGEX_EQUATION =
-    '^[cos|sin|tan|tangen|sqr|sqrt|log|ln|sec|cosec|arctan|abs|exp|frac|int|round|trunc|shl|shr|ifs|iff|ifd|ifi|0-9*+ ().,-/]+$';
-
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
 
@@ -185,6 +182,10 @@ implementation
 
 uses
   json_lib, common;
+
+const
+  REGEX_EQUATION =
+    '^[cos|sin|tan|tangen|sqr|sqrt|log|ln|sec|cosec|arctan|abs|exp|frac|int|round|trunc|shl|shr|ifs|iff|ifd|ifi|0-9*+ ().,-/:]+$';
 
 constructor TSimpleBotModule.Create;
 begin
@@ -391,7 +392,8 @@ begin
     Exit;
   end;
 
-  Result := '(' + SimpleAI.Parameters.Values['Formula_value'] + ')';
+  Result := StringReplace( Result, ':', '/', [rfReplaceAll]);
+  Result := '(' + Result + ')';
   mathParser := TFPExpressionParser.Create(nil);
   try
     mathParser.BuiltIns := [bcMath, bcBoolean];
