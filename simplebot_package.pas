@@ -8,7 +8,8 @@ interface
 
 uses
   simplebot_controller, simpleairedis_controller, suggestion_controller, 
-  domainwhois_controller, kamus_controller, LazarusPackageIntf;
+  domainwhois_controller, kamus_controller, carik_controller, 
+  LazarusPackageIntf;
 
 implementation
 

@@ -42,6 +42,12 @@ say=capek (ahh|deh)
 action=telegram_menu
 say=/start
 
+[Kamus]
+action=kamus
+say=@word artinya
+say=(artinya|arti|maksud|maksudnya) @word itu
+say=(artinya|arti|maksud|maksudnya) @word
+
 [xxxx]
 say=xxx
 
@@ -49,6 +55,18 @@ say=xxx
 action=suggestion
 say=(suggest|saran|teach) @answer : @question
 say=(suggest|saran|teach) @answer: @question
+
+[CarikStart]
+action=carik_rekam
+say=(rekam|catat) (kulwap|obrolan|diskusi|rapat)
+say=(rekam|rekaman|notulen) (mulai|dimulai|start)
+say=(mulai|start) (rekam|rekaman|notulen)
+
+[CarikStop]
+action=carik_stop
+say=(rekaman|rekam|notulen) (dihentikan|stop|berhenti)
+say=(dihentikan|stop|berhenti|hentikan) (rekaman|rekam|notulen)
+
 
 [SholatJadwal]
 action=jadwal_sholat
@@ -127,8 +145,9 @@ say=how are u
 say=how r you
 say=@Waktu:waktu
 
-[Salam]
-say=@Salam
+[SalamMuslim]
+say=@SalamMuslim
+say=@SalamArabic
 
 [Perpisahan]
 say=selamat tinggal

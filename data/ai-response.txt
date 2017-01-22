@@ -20,10 +20,10 @@ say=Hi, salam jumpa ...
 say=Hai juga. Kabar baik di sini, semoga kabar baik juga di sana
 say=Selamat %time_session% ...
 
-[Salam]
-say=Waalaikumsalam
-say=Waalaikumsalam wr wb
-say=Waalaikumsalam Warahmatullahi Wabarakatuh
+[SalamMuslim]
+say=Wa alaikumsalam
+say=Wa alaikumsalam wr wb
+say=Wa alaikumsalam Warahmatullahi Wabarakatuh
 
 [Perpisahan]
 say=Sampai ketemu lagi
@@ -181,6 +181,7 @@ say=Mesti berposotif thingking
 
 [PerkenalanResponse]
 say=Hi %Name%, terima kasih
+say=%Name%, sepertinya nama yang familiar
 say=%Name%, nama yang menarik
 say=%Name%, terdengar familiar
 
@@ -288,6 +289,15 @@ say=xxxxxx
 [SuggestionResponse]
 say=sarannya kami simpan, terima kasih.
 say=Terima kasih masukannya
+
+[CarikStart]
+say=tunggu sebentar ...
+say=... bentar yaa ...
+
+[CarikStop]
+say=Oke, siippp...
+say=Yak
+say=Siap 
 
 [Lahir]
 say=belum lama

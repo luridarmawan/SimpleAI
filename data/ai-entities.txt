@@ -14,8 +14,12 @@ hi=hi|hii|hai|hei|halo|hallo|halow|hallow|hellow|hola|hox|hy
 salam=salam kenal|salam
 yo=yo|yoyoi
 
-[Salam]
-salam=assalamualaikum|assalamu'alaikum
+[SalamMuslim]
+salam=assalamualaikum|assalamu'alaikum|assalamualaykum|assalamu'alaykum|assalamu alaikum
+salamlengkap=assalamu alaikum wa rahmatullah|assalamu'alaikum wa rahmatullah
+
+[SalamArabic]
+salam1=ﷵ
 
 [Sapaan]
 aku=aku|saya|sy|gue|gwe|gw|akyu|ane|私
@@ -74,11 +78,11 @@ pergi=pergi
 baik=baik|baiklah|okey|okeh|oke|okelah|ok|sip|sipp|senang|seneng|yoi|terima kasih|terima ksh|makasih|trm ksh|thx|thanks|silahkan|selow|woles|slow|iya|ya|yak|oiyah|tentu|thank|thx|cakep
 buruk=mbuh|tauah|tauk|ga tau|ngga tau|entahlah|gaje|gajelas|karepmu|auah|au ah|ga asik|gak asik|gak asyik|goblok|sombong|sontoloyo|asem|terserah|dasar|iyalah
 maklum=maklumi|maklum
-gemblung=gemblung|gokil|bego|parah|gandeng|songong|setres|stres|stress
+gemblung=gemblung|gokil|bego|parah|gandeng|songong|setres|stres|stress|ngeyel
 
 [Logika]
 ya=iyak|yak|yak|iyes|yes
-tidak=tidak|tdk|nggak|gak|ga
+tidak=tidak|tdk|nggak|gak|ga|enggak
 
 [Waktu]
 jam=jam
@@ -157,7 +161,7 @@ baik=haha|hehe|hihi|hoho|wkwk
 kaget=eehh|ehh|wow
 
 [Keraguan]
-kok=kok|koq|lhoo|lho|lah|oya|ohya
+kok=kok|koq|lhoo|lho|lah|oya|ohya|masa sih|masa
 
 [Sifat]
 baik=baik|super|luar biasa|hebat|keren|cool|pinter|cerdas

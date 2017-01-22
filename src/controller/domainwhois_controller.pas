@@ -8,10 +8,6 @@ uses
   whois_integration, dateutils, common, RegExpr, fpjson,
   Classes, SysUtils;
 
-const
-  _WHOIS_CACHE_PATH = 'ztemp/cache/domains/';
-  _WHOIS_CACHE_EXTENSION = '.txt';
-
 type
 
   { TDomainWhoisController }
@@ -29,6 +25,10 @@ type
   end;
 
 implementation
+
+const
+  _WHOIS_CACHE_PATH = 'ztemp/cache/domains/';
+  _WHOIS_CACHE_EXTENSION = '.txt';
 
 { TDomainWhoisController }
 
