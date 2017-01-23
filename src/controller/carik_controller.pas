@@ -27,8 +27,10 @@ type
     FPath: string;
     FReady: boolean;
     FData: TIniFile;
+    FRecordNumber: integer;
     function getIsRecording: boolean;
     function SaveToFile(Text: string): boolean;
+    function getDirPath(IndexRecording: integer): string;
     procedure setGroupName(AValue: string);
     procedure setPath(AValue: string);
   public
@@ -43,6 +45,7 @@ type
     property Path: string read FPath write setPath;
     property GroupName: string read FGroupName write setGroupName;
     property Recording: boolean read getIsRecording;
+    property RecordNumber: integer read FRecordNumber;
   end;
 
 
@@ -50,15 +53,17 @@ implementation
 
 const
   _CARIK_PATH_DEFAULT = 'files/carik/';
-  _CARIK_DATA_FILE = '0-carik.dat';
-  _CARI_FILE_EXTENSION = '.html';
+  _CARIK_DATA_FILE = 'carik.dat';
+  _CARIK_FILE_EXTENSION = '.html';
   _CARIK_INTENT_START = 'CarikStart';
   _CARIK_INTENT_STOP = 'CarikStop';
   _CARIK_CONFIG_PATH = 'carik/path';
   _CARIK_RECORDING = 'recording';
   _CARIK_COUNT = 'count';
+  _CARIK_DIR_PREFIX = 'group-';
 
   _CARIK_MSG_START = 'Ok, saya mulai mencatat ...';
+  _CARIK_MSG_RECORDNUMBER = 'ini rekaman ke #%d';
   _CARIK_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
 
   _CARIK_HTML_STYLE = '<style>span.message {padding:0 0 0 5px;}</style>';
@@ -78,10 +83,11 @@ end;
 function TCarikController.SaveToFile(Text: string): boolean;
 var
   i: integer;
-  fileName: string;
+  fileName, dir: string;
 begin
   i := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
-  fileName := FPath + FGroupName + '_' + i2s(i) + _CARI_FILE_EXTENSION;
+  dir := getDirPath(i);
+  fileName := dir + 'index' + _CARIK_FILE_EXTENSION;
 
   AssignFile(DataFile, fileName);
   { $I+}
@@ -94,6 +100,12 @@ begin
     CloseFile(DataFile);
   except
   end;
+end;
+
+function TCarikController.getDirPath(IndexRecording: integer): string;
+begin
+  Result := FPath + _CARIK_DIR_PREFIX + FGroupName + '-' + i2s(IndexRecording) +
+    DirectorySeparator;
 end;
 
 procedure TCarikController.setGroupName(AValue: string);
@@ -140,7 +152,7 @@ begin
   begin
     if Start then
     begin
-      Result := _CARIK_MSG_START;
+      Result := _CARIK_MSG_START + format(_CARIK_MSG_RECORDNUMBER, [FRecordNumber]);
     end
     else
     begin
@@ -152,17 +164,37 @@ end;
 function TCarikController.Start: boolean;
 var
   i: integer;
-  fileName: string;
+  fileName, dir: string;
 begin
   Result := False;
   if not FReady then
     Exit;
 
+  i := FData.ReadInteger(FGroupName, _CARIK_RECORDING, 0);
+  FRecordNumber := i;
+  if i = 1 then
+  begin
+    Result := True;
+    Exit;
+  end;
+
   i := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0) + 1;
+  FRecordNumber := i;
   FData.WriteString(FGroupName, _CARIK_RECORDING, '1');
   FData.WriteInteger(FGroupName, _CARIK_COUNT, i);
 
-  fileName := FPath + FGroupName + '_' + i2s(i) + _CARI_FILE_EXTENSION;
+  dir := getDirPath(i);
+  try
+    if not DirectoryExists(dir) then
+    begin
+      mkdir(dir);
+      mkdir(dir + 'files');
+      mkdir(dir + 'photos');
+    end;
+  except
+  end;
+
+  fileName := dir + 'index' + _CARIK_FILE_EXTENSION;
   if not FileExists(fileName) then
   begin
     SaveToFile(_CARIK_HTML_STYLE + '<h1>' + FGroupName + '</h1><table>');
@@ -206,6 +238,10 @@ begin
   msg := msg + Caption;
   if photo <> '' then
   begin
+    //todo: getfile
+
+    //https://api.telegram.org/bot<bot_token>/getFile
+
     photo := format(_CARIK_HTML_PHOTO, [photo]);
     msg := photo + #13#10'<br>' + msg;
   end;
