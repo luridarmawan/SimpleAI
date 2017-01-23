@@ -152,7 +152,8 @@ begin
   begin
     if Start then
     begin
-      Result := _CARIK_MSG_START + format(_CARIK_MSG_RECORDNUMBER, [FRecordNumber]);
+      //Result := _CARIK_MSG_START + format(_CARIK_MSG_RECORDNUMBER, [FRecordNumber]);
+      Result := 'Ok, mulai';
     end
     else
     begin
@@ -220,9 +221,9 @@ begin
   html := TStringList.Create;
   try
     jsonData := GetJSON(Message);
+    userName := jsonData.GetPath('message.from.username').AsString;
   except
   end;
-  userName := jsonData.GetPath('message.from.username').AsString;
 
   try
     msg := jsonData.GetPath('message.text').AsString;
