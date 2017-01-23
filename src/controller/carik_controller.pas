@@ -63,7 +63,7 @@ const
   _CARIK_DIR_PREFIX = 'group-';
 
   _CARIK_MSG_START = 'Ok, saya mulai mencatat ...';
-  _CARIK_MSG_RECORDNUMBER = 'ini rekaman ke #%d';
+  _CARIK_MSG_RECORDNUMBER = 'ini notulen ke %d';
   _CARIK_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
 
   _CARIK_HTML_STYLE = '<style>span.message {padding:0 0 0 5px;}</style>';
@@ -152,8 +152,7 @@ begin
   begin
     if Start then
     begin
-      //Result := _CARIK_MSG_START + format(_CARIK_MSG_RECORDNUMBER, [FRecordNumber]);
-      Result := 'Ok, mulai';
+      Result := _CARIK_MSG_START + format(_CARIK_MSG_RECORDNUMBER, [FRecordNumber]);
     end
     else
     begin

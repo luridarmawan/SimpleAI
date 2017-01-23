@@ -166,7 +166,7 @@ type
     property isAnswer: boolean read FisAnswered;
     property AskName: boolean read FAskName write FAskName;
     property AskEmail: boolean read FAskEmail write FAskEmail;
-    function TelegramSend(Token, ChatIDRef, ReplyToMessageID, Message: string): boolean;
+    procedure TelegramSend(Token, ChatIDRef, ReplyToMessageID, Message: string);
 
     property UserData[const KeyName: string]: string read getUserData write setUserData;
     property Handler[const TagName: string]: THandlerCallback
@@ -842,13 +842,12 @@ begin
   regex.Free;
 end;
 
-function TSimpleBotModule.TelegramSend(Token, ChatIDRef, ReplyToMessageID,
-  Message: string): boolean;
+procedure TSimpleBotModule.TelegramSend(Token, ChatIDRef, ReplyToMessageID,
+  Message: string);
 var
   httpClient: THTTPLib;
   httpResponse: IHTTPResponse;
 begin
-  Result := False;
   if Token = '' then
     Exit;
   //if ((ChatIDRef = '') or (ChatIDRef = '0')) then
@@ -860,12 +859,15 @@ begin
   httpClient := THTTPLib.Create;
   httpClient.URL := _TELEGRAM_API_URL + Token + '/sendMessage' +
     '?chat_id=' + ChatIDRef + '&reply_to_message_id=' + ReplyToMessageID +
-    '&text=' + Message;
+    '&text=' + trim(Message);
 
-  httpResponse := httpClient.Get();
+  try
+    httpResponse := httpClient.Get();
+    //if httpResponse.ResultCode = 200 then
+  except
+  end;
 
-  if httpResponse.ResultCode = 200 then
-    Result := True;
+  echo( httpClient.URL);
   httpClient.Free;
 end;
 
