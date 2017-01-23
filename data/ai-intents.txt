@@ -44,9 +44,9 @@ say=/start
 
 [Kamus]
 action=kamus
-say=@word artinya
-say=(artinya|arti|maksud|maksudnya) @word itu
-say=(artinya|arti|maksud|maksudnya) @word
+say=@word (artinya|maksudnya)
+say=(artinya|arti|maksud|maksudnya|kamus) @word itu
+say=(artinya|arti|maksud|maksudnya|kamus) @word
 
 [xxxx]
 say=xxx
@@ -58,14 +58,14 @@ say=(suggest|saran|teach) @answer: @question
 
 [CarikStart]
 action=carik_rekam
-say=(rekam|catat) (kulwap|obrolan|diskusi|rapat)
+say=(rekam|catat|mulai) (kulwap|obrolan|diskusi|rapat|rekaman|catatan|catat)
 say=(rekam|rekaman|notulen) (mulai|dimulai|start)
-say=(mulai|start) (rekam|rekaman|notulen)
+say=(mulai|start) (rekam|rekaman|notulen|catatan)
 
 [CarikStop]
 action=carik_stop
-say=(rekaman|rekam|notulen) (dihentikan|stop|berhenti)
-say=(dihentikan|stop|berhenti|hentikan) (rekaman|rekam|notulen)
+say=(rekaman|rekam|notulen|catatan) (dihentikan|stop|berhenti)
+say=(dihentikan|stop|berhenti|hentikan) (rekaman|rekam|notulen|catatan)
 
 
 [SholatJadwal]
