@@ -12,7 +12,7 @@ unit carik_controller;
 interface
 
 uses
-  fastplaz_handler, common,
+  fastplaz_handler, common, telegram_integration,
   IniFiles, fpjson,
   Classes, SysUtils;
 
@@ -23,6 +23,7 @@ type
   TCarikController = class
   private
     DataFile: TextFile;
+    Telegram: TTelegramIntegration;
     FGroupName: string;
     FPath: string;
     FReady: boolean;
@@ -32,6 +33,7 @@ type
     function getIsRecording: boolean;
     function SaveToFile(Text: string): boolean;
     function getDirPath(IndexRecording: integer): string;
+    function downloadFile(FileID: string): string;
     procedure setGroupName(AValue: string);
     procedure setPath(AValue: string);
   public
@@ -109,6 +111,25 @@ begin
     DirectorySeparator;
 end;
 
+function TCarikController.downloadFile(FileID: string): string;
+var
+  filePath, targetFile: string;
+begin
+  Result := '';
+  Telegram := TTelegramIntegration.Create;
+  Telegram.Token := Config['telegram/token'];
+  if Telegram.Token = '' then
+    Exit;
+
+  filePath := Telegram.GetFile(FileID);
+  targetFile := getDirPath(FRecordNumber) + filePath + '.jpg';
+  if Telegram.DownloadFile(filePath, targetFile) then
+  begin
+    Result := filePath + '.jpg';
+  end;
+  Telegram.Free;
+end;
+
 procedure TCarikController.setGroupName(AValue: string);
 begin
   if FGroupName = AValue then
@@ -156,7 +177,7 @@ begin
   if admin = '' then
     Exit;
 
-  if pos( FUserName, admin) = 0 then
+  if pos(FUserName, admin) = 0 then
     Exit;
 
   if Start then
@@ -204,7 +225,7 @@ begin
     begin
       mkdir(dir);
       mkdir(dir + 'files');
-      mkdir(dir + 'photos');
+      mkdir(dir + 'photo');
     end;
   except
   end;
@@ -253,10 +274,8 @@ begin
   if photo <> '' then
   begin
     //todo: getfile
-
-    //https://api.telegram.org/bot<bot_token>/getFile
-
-    photo := format(_CARIK_HTML_PHOTO, [photo]);
+    s := downloadFile(photo);
+    photo := format(_CARIK_HTML_PHOTO, [s]);
     msg := photo + #13#10'<br>' + msg;
   end;
 
