@@ -28,6 +28,7 @@ type
     FReady: boolean;
     FData: TIniFile;
     FRecordNumber: integer;
+    FUserName: string;
     function getIsRecording: boolean;
     function SaveToFile(Text: string): boolean;
     function getDirPath(IndexRecording: integer): string;
@@ -36,13 +37,15 @@ type
   public
     constructor Create;
     destructor Destroy;
-    function CarikHandler(const IntentName: string; Params: TStrings): string;
+    function CarikStartHandler(const IntentName: string; Params: TStrings): string;
+    function CarikStopHandler(const IntentName: string; Params: TStrings): string;
     function Start: boolean;
     function Stop: boolean;
     procedure RecordTelegramMessage(Message: string);
 
     property Ready: boolean read FReady;
     property Path: string read FPath write setPath;
+    property UserName: string read FUserName write FUserName;
     property GroupName: string read FGroupName write setGroupName;
     property Recording: boolean read getIsRecording;
     property RecordNumber: integer read FRecordNumber;
@@ -55,8 +58,6 @@ const
   _CARIK_PATH_DEFAULT = 'files/carik/';
   _CARIK_DATA_FILE = 'carik.dat';
   _CARIK_FILE_EXTENSION = '.html';
-  _CARIK_INTENT_START = 'CarikStart';
-  _CARIK_INTENT_STOP = 'CarikStop';
   _CARIK_CONFIG_PATH = 'carik/path';
   _CARIK_RECORDING = 'recording';
   _CARIK_COUNT = 'count';
@@ -142,23 +143,37 @@ begin
   FData.Free;
 end;
 
-function TCarikController.CarikHandler(const IntentName: string;
+function TCarikController.CarikStartHandler(const IntentName: string;
+  Params: TStrings): string;
+var
+  s, admin: string;
+begin
+  Result := _CARIK_MSG_CANNOT_START;
+  if FGroupName = '' then
+    Exit;
+  s := 'carik/groups/' + FGroupName + '/admin';
+  admin := Config[s];
+  if admin = '' then
+    Exit;
+
+  if pos( FUserName, admin) = 0 then
+    Exit;
+
+  if Start then
+  begin
+    Result := _CARIK_MSG_START + format(_CARIK_MSG_RECORDNUMBER, [FRecordNumber]);
+  end
+  else
+  begin
+    Result := _CARIK_MSG_CANNOT_START;
+  end;
+end;
+
+function TCarikController.CarikStopHandler(const IntentName: string;
   Params: TStrings): string;
 begin
   Result := '';
-  if IntentName = _CARIK_INTENT_STOP then
-    Stop;
-  if IntentName = _CARIK_INTENT_START then
-  begin
-    if Start then
-    begin
-      Result := _CARIK_MSG_START + format(_CARIK_MSG_RECORDNUMBER, [FRecordNumber]);
-    end
-    else
-    begin
-      Result := _CARIK_MSG_CANNOT_START;
-    end;
-  end;
+  Stop;
 end;
 
 function TCarikController.Start: boolean;
@@ -171,7 +186,7 @@ begin
     Exit;
 
   i := FData.ReadInteger(FGroupName, _CARIK_RECORDING, 0);
-  FRecordNumber := i;
+  FRecordNumber := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
   if i = 1 then
   begin
     Result := True;
@@ -215,12 +230,11 @@ var
   i: integer;
   html: TStringList;
   jsonData: TJSONData;
-  userName, msg, Caption, photo: string;
+  msg, Caption, photo: string;
 begin
   html := TStringList.Create;
   try
     jsonData := GetJSON(Message);
-    userName := jsonData.GetPath('message.from.username').AsString;
   except
   end;
 
@@ -250,7 +264,7 @@ begin
   html.Add('<td>&nbsp;</td>');
   html.Add('<td>');
   s := FormatDateTime('d-mm-y H:n:s', now);
-  html.Add(Format(_CARIK_HTML_USERNAME, [userName, s]));
+  html.Add(Format(_CARIK_HTML_USERNAME, [FUserName, s]));
 
   html.Add(Format(_CARIK_HTML_MESSAGE, [msg]));
 

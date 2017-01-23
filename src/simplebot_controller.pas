@@ -699,6 +699,7 @@ begin
   if SimpleAI.Debug then
   begin
     json['response/user/name'] := UserData['Name'];
+    json['response/user/fullname'] := UserData['FullName'];
     json['response/user/email'] := UserData['Email'];
     json['response/object/name'] := UserData[_AI_OBJECT];
     text_response := json.AsJSONFormated;
