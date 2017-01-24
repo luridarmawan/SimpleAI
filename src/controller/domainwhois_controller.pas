@@ -59,7 +59,10 @@ begin
 
   Whois := TWhoisIntegration.Create;
   if not Whois.LoadServerList then
+  begin
+    Result := 'cannot load server list'; //debug
     Exit;
+  end;
   try
     forceWhois := False;
     if FileExists(cacheFile) then
@@ -73,6 +76,7 @@ begin
     else
       forceWhois := True;
 
+    forceWhois := True;
     if forceWhois then
     begin
       if not Whois.Find(DomainName) then
