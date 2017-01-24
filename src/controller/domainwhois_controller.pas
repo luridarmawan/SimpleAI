@@ -58,6 +58,8 @@ begin
   cacheFile := _WHOIS_CACHE_PATH + domainName + _WHOIS_CACHE_EXTENSION;
 
   Whois := TWhoisIntegration.Create;
+  if not Whois.LoadServerList then
+    Exit;
   try
     forceWhois := False;
     if FileExists(cacheFile) then
