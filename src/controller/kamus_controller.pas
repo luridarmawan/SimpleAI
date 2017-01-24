@@ -12,7 +12,7 @@ unit kamus_controller;
 interface
 
 uses
-  kamusibacor_integration,
+  kamusibacor_integration, kamuskemdikbud_integration,
   common, http_lib, fpjson, json_lib,
   dateutils, Classes, SysUtils;
 
@@ -24,7 +24,10 @@ type
   private
     FCache: boolean;
     FToken: string;
-    function getDataKamus(Text: string): string;
+    function getDataKamusIbacor(Text: string): string;
+    function getDataKamusKemdikbud(Text: string): string;
+    function findKemdikbud(Text: string): string;
+    function findIbacor(Text: string): string;
   public
     constructor Create;
     destructor Destroy;
@@ -60,18 +63,63 @@ begin
 
 end;
 
-function TKamusController.getDataKamus(Text: string): string;
+function TKamusController.getDataKamusIbacor(Text: string): string;
 var
-  kamus: TKamusIntegration;
+  kamus: TKamusIbacorIntegration;
 begin
   Result := '';
-  kamus := TKamusIntegration.Create;
+  kamus := TKamusIbacorIntegration.Create;
   kamus.Token := FToken;
   Result := kamus.Find(Text);
   kamus.Free;
 end;
 
+function TKamusController.getDataKamusKemdikbud(Text: string): string;
+var
+  kamus: TKamusIntegration;
+begin
+  Result := '';
+  kamus := TKamusIntegration.Create;
+  Result := kamus.Find(Text);
+  kamus.Free;
+end;
+
 function TKamusController.Find(Text: string): string;
+begin
+  Result := findKemdikbud( Text);
+  Result := 'tentang: ' + Text + ':\n' + Result;
+end;
+
+function TKamusController.findKemdikbud(Text: string): string;
+var
+  forceGetKamus: boolean;
+  cacheFile: string;
+  cacheData: TStringList;
+begin
+  Result := '';
+  cacheData := TStringList.Create;
+  forceGetKamus := False;
+  cacheFile := _KAMUS_CACHE_DIR + Text + _KAMUS_CACHE_EXTENSION;
+
+  forceGetKamus := True;
+  if forceGetKamus then
+  begin
+    cacheData.Text := getDataKamusKemdikbud(Text);
+    if cacheData.Text = '' then
+    begin
+      Result := _KAMUS_MSG_ERROR;
+      cacheData.Free ;
+      Exit;
+    end;
+    if FCache then
+      cacheData.SaveToFile(cacheFile);
+  end;
+
+  Result := cacheData.Text;
+  cacheData.Free;
+end;
+
+function TKamusController.findIbacor(Text: string): string;
 var
   s, cacheFile: string;
   cacheData: TStringList;
@@ -105,10 +153,11 @@ begin
 
   if forceGetKamus then
   begin
-    cacheData.Text := getDataKamus(Text);
+    cacheData.Text := getDataKamusIbacor(Text);
     if cacheData.Text = '' then
     begin
       Result := _KAMUS_MSG_ERROR;
+      cacheData.Free;
       Exit;
     end;
     if FCache then
