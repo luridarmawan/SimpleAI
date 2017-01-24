@@ -41,6 +41,7 @@ const
   _KAMUS_CACHE_DIR = 'ztemp/cache/kamus/';
   _KAMUS_CACHE_EXTENSION = '.txt';
   _KAMUS_MSG_ERROR = 'Maaf, saat ini data belum bisa saya temukan';
+  _KAMUS_MSG_ERROR_TOKEN = 'Maaf, belum bisa akses ke database kamus';
   _KAMUS_MAX_RESULT = 2;
 
 var
@@ -83,7 +84,10 @@ begin
   if Text = '' then
     Exit;
   if FToken = '' then
+  begin
+    Result := _KAMUS_MSG_ERROR_TOKEN;
     Exit;
+  end;
   cacheData := TStringList.Create;
 
   forceGetKamus := False;
