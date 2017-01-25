@@ -79,31 +79,31 @@ type
 implementation
 
 const
-  _CARIK_PATH_DEFAULT = 'files/carik/';
-  _CARIK_DATA_FILE = 'carik.dat';
-  _CARIK_FILE_EXTENSION = '.html';
-  _CARIK_CONFIG_PATH = 'carik/path';
-  _CARIK_CONFIG_GROUPS = 'carik/groups/';
-  _CARIK_RECORDING = 'recording';
-  _CARIK_COUNT = 'count';
-  _CARIK_DIR_PREFIX = 'group-';
+  _NOTULEN_CONFIG_GROUPS = 'carik/groups/';
+  _NOTULEN_CONFIG_PATH = 'carik/path';
+  _NOTULEN_PATH_DEFAULT = 'files/carik/';
+  _NOTULEN_DATA_FILE = 'carik.dat';
+  _NOTULEN_FILE_EXTENSION = '.html';
+  _NOTULEN_RECORDING = 'recording';
+  _NOTULEN_COUNT = 'count';
+  _NOTULEN_DIR_PREFIX = 'group-';
 
-  _CARIK_MSG_START = 'Ok, saya mulai mencatat ...';
-  _CARIK_MSG_RECORDNUMBER = 'ini notulen ke %d';
-  _CARIK_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
+  _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ...';
+  _NOTULEN_MSG_RECORDNUMBER = 'ini notulen ke %d';
+  _NOTULEN_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
 
-  _CARIK_HTML_STYLE =
+  _NOTULEN_HTML_STYLE =
     '<style>body{font-family:Tahoma,"Lucida Grande","Trebuchet MS"}span.username{border-bottom:1px solid #c2d1f0;font-size:small;display:block;background:#e6f5ff;padding:2px 2px 2px 5px}span.message{padding:0 0 0 10px}table{min-width:300px}table,td,th{border:1px solid #00134d}td{border:0;border-bottom:1px solid #668cff}img{min-width:90%}</style>';
-  _CARIK_HTML_USERNAME = '<span class="username">%s, %s</span>';
-  _CARIK_HTML_MESSAGE = '<span class="message">%s</span>';
-  _CARIK_HTML_PHOTO = '<img src="%s">';
+  _NOTULEN_HTML_USERNAME = '<span class="username">%s, %s</span>';
+  _NOTULEN_HTML_MESSAGE = '<span class="message">%s</span>';
+  _NOTULEN_HTML_PHOTO = '<img src="%s">';
 
 { TNotulenController }
 
 function TNotulenController.getIsRecording: boolean;
 begin
   Result := False;
-  if FData.ReadString(FGroupName, _CARIK_RECORDING, '0') = '1' then
+  if FData.ReadString(FGroupName, _NOTULEN_RECORDING, '0') = '1' then
     Result := True;
 end;
 
@@ -112,9 +112,9 @@ var
   i: integer;
   fileName, dir: string;
 begin
-  i := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
+  i := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
   dir := getDirPath(i);
-  fileName := dir + 'index' + _CARIK_FILE_EXTENSION;
+  fileName := dir + 'index' + _NOTULEN_FILE_EXTENSION;
 
   AssignFile(DataFile, fileName);
   { $I+}
@@ -134,7 +134,7 @@ var
   i: integer;
   fileName, dir: string;
 begin
-  i := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
+  i := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
   dir := getDirPath(i);
   fileName := dir + LowerCase(FGroupName) + '.csv';
 
@@ -153,8 +153,8 @@ end;
 
 function TNotulenController.getDirPath(IndexRecording: integer): string;
 begin
-  Result := FPath + _CARIK_DIR_PREFIX + FGroupName + '-' + i2s(IndexRecording) +
-    DirectorySeparator;
+  Result := FPath + _NOTULEN_DIR_PREFIX + FGroupName + '-' +
+    i2s(IndexRecording) + DirectorySeparator;
 end;
 
 function TNotulenController.downloadFile(FileID: string): string;
@@ -167,7 +167,7 @@ begin
   if Telegram.Token = '' then
     Exit;
 
-  FRecordNumber := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
+  FRecordNumber := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
 
   filePath := Telegram.GetFile(FileID);
   targetFile := getDirPath(FRecordNumber) + filePath;
@@ -201,11 +201,11 @@ var
   fileData: string;
 begin
   FReady := False;
-  Path := Config[_CARIK_CONFIG_PATH];
+  Path := Config[_NOTULEN_CONFIG_PATH];
   if Path = '' then
-    Path := _CARIK_PATH_DEFAULT;
+    Path := _NOTULEN_PATH_DEFAULT;
 
-  fileData := FPath + _CARIK_DATA_FILE;
+  fileData := FPath + _NOTULEN_DATA_FILE;
   FData := TIniFile.Create(fileData);
 end;
 
@@ -219,7 +219,7 @@ function TNotulenController.StartHandler(const IntentName: string;
 var
   s, admin: string;
 begin
-  Result := _CARIK_MSG_CANNOT_START;
+  Result := _NOTULEN_MSG_CANNOT_START;
   if FGroupName = '' then
     Exit;
   s := 'carik/groups/' + FGroupName + '/admin';
@@ -232,11 +232,11 @@ begin
 
   if Start then
   begin
-    Result := _CARIK_MSG_START + format(_CARIK_MSG_RECORDNUMBER, [FRecordNumber]);
+    Result := _NOTULEN_MSG_START + format(_NOTULEN_MSG_RECORDNUMBER, [FRecordNumber]);
   end
   else
   begin
-    Result := _CARIK_MSG_CANNOT_START;
+    Result := _NOTULEN_MSG_CANNOT_START;
   end;
 end;
 
@@ -256,15 +256,15 @@ begin
   if not FReady then
     Exit;
 
-  i := FData.ReadInteger(FGroupName, _CARIK_RECORDING, 0);
-  FRecordNumber := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
+  i := FData.ReadInteger(FGroupName, _NOTULEN_RECORDING, 0);
+  FRecordNumber := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
   if i = 1 then
   begin
     Result := True;
     Exit;
   end;
 
-  s := _CARIK_CONFIG_GROUPS + FGroupName + '/admin';
+  s := _NOTULEN_CONFIG_GROUPS + FGroupName + '/admin';
   s := Config[s];
   if s <> '' then
   begin
@@ -274,10 +274,10 @@ begin
     LogUtil.Add(FUserName + ' is permitted', 'notulen');
   end;
 
-  i := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0) + 1;
+  i := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0) + 1;
   FRecordNumber := i;
-  FData.WriteString(FGroupName, _CARIK_RECORDING, '1');
-  FData.WriteInteger(FGroupName, _CARIK_COUNT, i);
+  FData.WriteString(FGroupName, _NOTULEN_RECORDING, '1');
+  FData.WriteInteger(FGroupName, _NOTULEN_COUNT, i);
 
   dir := getDirPath(i);
   try
@@ -291,10 +291,10 @@ begin
   end;
 
   // save index.html
-  fileName := dir + 'index' + _CARIK_FILE_EXTENSION;
+  fileName := dir + 'index' + _NOTULEN_FILE_EXTENSION;
   if not FileExists(fileName) then
   begin
-    SaveToFile(_CARIK_HTML_STYLE + '<h1>' + FGroupName + ' #' +
+    SaveToFile(_NOTULEN_HTML_STYLE + '<h1>' + FGroupName + ' #' +
       i2s(FRecordNumber) + '</h1><table>');
   end;
 
@@ -304,7 +304,7 @@ end;
 function TNotulenController.Stop: boolean;
 begin
   Result := False;
-  FData.WriteString(FGroupName, _CARIK_RECORDING, '0');
+  FData.WriteString(FGroupName, _NOTULEN_RECORDING, '0');
 end;
 
 procedure TNotulenController.RecordTelegramMessage(Message: string);
@@ -336,7 +336,7 @@ begin
   begin
     //todo: getfile
     s := downloadFile(photo);
-    photo := format(_CARIK_HTML_PHOTO, [s]);
+    photo := format(_NOTULEN_HTML_PHOTO, [s]);
     msg := photo + #13#10'<br>' + msg;
   end;
   csv := StringReplace(msg, #13#10, #13, [rfReplaceAll]);
@@ -348,9 +348,9 @@ begin
   html.Add('<td>');
   s := FormatDateTime('d-mm-y H:n:s', now);
   csv := s + '|' + FUserName + '|' + csv;
-  html.Add(Format(_CARIK_HTML_USERNAME, [FUserName, s]));
+  html.Add(Format(_NOTULEN_HTML_USERNAME, [FUserName, s]));
 
-  html.Add(Format(_CARIK_HTML_MESSAGE, [msg]));
+  html.Add(Format(_NOTULEN_HTML_MESSAGE, [msg]));
 
   html.Add('<td>');
   html.Add('</tr>');
