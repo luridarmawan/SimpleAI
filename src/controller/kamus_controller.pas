@@ -84,8 +84,11 @@ begin
 end;
 
 function TKamusController.Find(Text: string): string;
+var
+  lst : TStrings;
 begin
-  Result := findKemdikbud( Text);
+  lst := Explode( Text, ' ');
+  Result := findKemdikbud( lst.ValueFromIndex[0]);
   Result := 'tentang: ' + Text + ':\n' + Result;
 end;
 

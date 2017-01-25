@@ -12,7 +12,7 @@ unit carik_controller;
 interface
 
 uses
-  fastplaz_handler, common, telegram_integration,
+  common, fastplaz_handler, telegram_integration,
   IniFiles, fpjson,
   Classes, SysUtils;
 

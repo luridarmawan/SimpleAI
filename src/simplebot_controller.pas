@@ -868,7 +868,6 @@ begin
   except
   end;
 
-  echo( httpClient.URL);
   httpClient.Free;
 end;
 
