@@ -9,6 +9,22 @@ unit notulen_controller;
 {
   Chat Recorder
 
+
+  Carik := TNotulenController.Create;
+  Carik.UserName := 'usernamethatsendmessage';
+  Carik.GroupName := 'thisgroupname';
+  .
+  .
+  Carik.Start;
+  .
+  .
+  .
+  if Carik.Recording then
+    Carik.RecordTelegramMessage(Request.Content);
+
+  .
+  .
+  Carik.Free;
 }
 
 {$mode objfpc}{$H+}
@@ -43,8 +59,8 @@ type
   public
     constructor Create;
     destructor Destroy;
-    function CarikStartHandler(const IntentName: string; Params: TStrings): string;
-    function CarikStopHandler(const IntentName: string; Params: TStrings): string;
+    function StartHandler(const IntentName: string; Params: TStrings): string;
+    function StopHandler(const IntentName: string; Params: TStrings): string;
     function Start: boolean;
     function Stop: boolean;
     procedure RecordTelegramMessage(Message: string);
@@ -168,7 +184,7 @@ begin
   FData.Free;
 end;
 
-function TNotulenController.CarikStartHandler(const IntentName: string;
+function TNotulenController.StartHandler(const IntentName: string;
   Params: TStrings): string;
 var
   s, admin: string;
@@ -194,7 +210,7 @@ begin
   end;
 end;
 
-function TNotulenController.CarikStopHandler(const IntentName: string;
+function TNotulenController.StopHandler(const IntentName: string;
   Params: TStrings): string;
 begin
   Result := '';
