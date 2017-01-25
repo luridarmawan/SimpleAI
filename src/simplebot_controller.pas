@@ -855,20 +855,25 @@ begin
   //  Exit;
 
   Message := StringReplace(Message, '\n', #10, [rfReplaceAll]);
-  Message := UrlEncode(Message);
-
-  httpClient := THTTPLib.Create;
-  httpClient.URL := _TELEGRAM_API_URL + Token + '/sendMessage' +
-    '?chat_id=' + ChatIDRef + '&reply_to_message_id=' + ReplyToMessageID +
-    '&text=' + trim(Message);
+  //Message := UrlEncode(Message);
 
   try
-    httpResponse := httpClient.Get();
-    //if httpResponse.ResultCode = 200 then
-  except
+    httpClient := THTTPLib.Create;
+    httpClient.URL := _TELEGRAM_API_URL + Token + '/sendMessage' +
+      '?chat_id=' + ChatIDRef + '&reply_to_message_id=' + ReplyToMessageID +
+      '&text=' + trim(Message);
+
+    try
+      httpResponse := httpClient.Get();
+      //if httpResponse.ResultCode = 200 then
+    except
+    end;
+
+  finally
+    httpClient.Free;
   end;
 
-  httpClient.Free;
+
 end;
 
 
