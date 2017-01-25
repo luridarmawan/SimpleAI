@@ -5,7 +5,11 @@ This file is part of the SimpleBOT package.
 For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 }
-unit carik_controller;
+unit notulen_controller;
+{
+  Chat Recorder
+
+}
 
 {$mode objfpc}{$H+}
 
@@ -18,9 +22,9 @@ uses
 
 type
 
-  { TCarikController }
+  { TNotulenController }
 
-  TCarikController = class
+  TNotulenController = class
   private
     DataFile: TextFile;
     Telegram: TTelegramIntegration;
@@ -74,16 +78,16 @@ const
   _CARIK_HTML_MESSAGE = '<br><span class="message">%s</span>';
   _CARIK_HTML_PHOTO = '<img src="%s">';
 
-{ TCarikController }
+{ TNotulenController }
 
-function TCarikController.getIsRecording: boolean;
+function TNotulenController.getIsRecording: boolean;
 begin
   Result := False;
   if FData.ReadString(FGroupName, _CARIK_RECORDING, '0') = '1' then
     Result := True;
 end;
 
-function TCarikController.SaveToFile(Text: string): boolean;
+function TNotulenController.SaveToFile(Text: string): boolean;
 var
   i: integer;
   fileName, dir: string;
@@ -105,13 +109,13 @@ begin
   end;
 end;
 
-function TCarikController.getDirPath(IndexRecording: integer): string;
+function TNotulenController.getDirPath(IndexRecording: integer): string;
 begin
   Result := FPath + _CARIK_DIR_PREFIX + FGroupName + '-' + i2s(IndexRecording) +
     DirectorySeparator;
 end;
 
-function TCarikController.downloadFile(FileID: string): string;
+function TNotulenController.downloadFile(FileID: string): string;
 var
   filePath, targetFile: string;
 begin
@@ -130,7 +134,7 @@ begin
   Telegram.Free;
 end;
 
-procedure TCarikController.setGroupName(AValue: string);
+procedure TNotulenController.setGroupName(AValue: string);
 begin
   if FGroupName = AValue then
     Exit;
@@ -138,7 +142,7 @@ begin
   FGroupName := StringReplace(FGroupName, ' ', '', [rfReplaceAll]);
 end;
 
-procedure TCarikController.setPath(AValue: string);
+procedure TNotulenController.setPath(AValue: string);
 begin
   if FPath = AValue then
     Exit;
@@ -146,7 +150,7 @@ begin
   FReady := DirectoryIsWritable(AValue);
 end;
 
-constructor TCarikController.Create;
+constructor TNotulenController.Create;
 var
   fileData: string;
 begin
@@ -159,12 +163,12 @@ begin
   FData := TIniFile.Create(fileData);
 end;
 
-destructor TCarikController.Destroy;
+destructor TNotulenController.Destroy;
 begin
   FData.Free;
 end;
 
-function TCarikController.CarikStartHandler(const IntentName: string;
+function TNotulenController.CarikStartHandler(const IntentName: string;
   Params: TStrings): string;
 var
   s, admin: string;
@@ -190,14 +194,14 @@ begin
   end;
 end;
 
-function TCarikController.CarikStopHandler(const IntentName: string;
+function TNotulenController.CarikStopHandler(const IntentName: string;
   Params: TStrings): string;
 begin
   Result := '';
   Stop;
 end;
 
-function TCarikController.Start: boolean;
+function TNotulenController.Start: boolean;
 var
   i: integer;
   fileName, dir: string;
@@ -239,13 +243,13 @@ begin
   Result := True;
 end;
 
-function TCarikController.Stop: boolean;
+function TNotulenController.Stop: boolean;
 begin
   Result := False;
   FData.WriteString(FGroupName, _CARIK_RECORDING, '0');
 end;
 
-procedure TCarikController.RecordTelegramMessage(Message: string);
+procedure TNotulenController.RecordTelegramMessage(Message: string);
 var
   s: string;
   i: integer;
