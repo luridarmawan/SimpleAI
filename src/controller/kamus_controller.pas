@@ -89,12 +89,13 @@ var
 begin
   lst := Explode( Text, ' ');
   Result := findKemdikbud( lst.ValueFromIndex[0]);
-  Result := 'tentang ' + Text + ':\n' + Result;
+  Result := '*tentang ' + Text + ':*\n' + Result;
 end;
 
 function TKamusController.findKemdikbud(Text: string): string;
 var
   forceGetKamus: boolean;
+  i: integer;
   cacheFile: string;
   cacheData: TStringList;
 begin
@@ -103,7 +104,18 @@ begin
   forceGetKamus := False;
   cacheFile := _KAMUS_CACHE_DIR + Text + _KAMUS_CACHE_EXTENSION;
 
-  forceGetKamus := True;
+  forceGetKamus := False;
+  if FileExists(cacheFile) then
+  begin
+    i := HoursBetween(FileDateToDateTime(FileAge(cacheFile)), now);
+    if i = 0 then
+      cacheData.LoadFromFile(cacheFile)
+    else
+      forceGetKamus := True;
+  end
+  else
+    forceGetKamus := True;
+
   if forceGetKamus then
   begin
     cacheData.Text := getDataKamusKemdikbud(Text);
