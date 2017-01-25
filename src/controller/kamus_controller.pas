@@ -64,24 +64,23 @@ begin
 end;
 
 function TKamusController.getDataKamusIbacor(Text: string): string;
-var
-  kamus: TKamusIbacorIntegration;
 begin
   Result := '';
-  kamus := TKamusIbacorIntegration.Create;
-  kamus.Token := FToken;
-  Result := kamus.Find(Text);
-  kamus.Free;
+  with TKamusIbacorIntegration.Create do
+  begin
+    Result := Find(Text);
+    Free;
+  end;
 end;
 
 function TKamusController.getDataKamusKemdikbud(Text: string): string;
-var
-  kamus: TKamusIntegration;
 begin
   Result := '';
-  kamus := TKamusIntegration.Create;
-  Result := kamus.Find(Text);
-  kamus.Free;
+  with TKamusIntegration.Create do
+  begin
+    Result := Find(Text);
+    Free;
+  end;
 end;
 
 function TKamusController.Find(Text: string): string;
