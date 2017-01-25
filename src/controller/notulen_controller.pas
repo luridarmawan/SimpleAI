@@ -6,6 +6,7 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 }
 unit notulen_controller;
+
 {
   Chat Recorder
 
@@ -52,6 +53,7 @@ type
     FUserName: string;
     function getIsRecording: boolean;
     function SaveToFile(Text: string): boolean;
+    function SaveToFileCSV(Text: string): boolean;
     function getDirPath(IndexRecording: integer): string;
     function downloadFile(FileID: string): string;
     procedure setGroupName(AValue: string);
@@ -111,6 +113,28 @@ begin
   i := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
   dir := getDirPath(i);
   fileName := dir + 'index' + _CARIK_FILE_EXTENSION;
+
+  AssignFile(DataFile, fileName);
+  { $I+}
+  try
+    if not FileExists(fileName) then
+      Rewrite(DataFile)
+    else
+      Append(DataFile);
+    WriteLn(DataFile, Text);
+    CloseFile(DataFile);
+  except
+  end;
+end;
+
+function TNotulenController.SaveToFileCSV(Text: string): boolean;
+var
+  i: integer;
+  fileName, dir: string;
+begin
+  i := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
+  dir := getDirPath(i);
+  fileName := dir + LowerCase(FGroupName) + '.csv';
 
   AssignFile(DataFile, fileName);
   { $I+}
@@ -250,6 +274,7 @@ begin
   except
   end;
 
+  // save index.html
   fileName := dir + 'index' + _CARIK_FILE_EXTENSION;
   if not FileExists(fileName) then
   begin
@@ -268,10 +293,9 @@ end;
 procedure TNotulenController.RecordTelegramMessage(Message: string);
 var
   s: string;
-  i: integer;
   html: TStringList;
   jsonData: TJSONData;
-  msg, Caption, photo: string;
+  csv, msg, Caption, photo: string;
 begin
   html := TStringList.Create;
   try
@@ -298,11 +322,14 @@ begin
     photo := format(_CARIK_HTML_PHOTO, [s]);
     msg := photo + #13#10'<br>' + msg;
   end;
+  csv := StringReplace( msg, #13#10, #13, [rfReplaceAll]);
+  csv := StringReplace( csv, #13, '\n', [rfReplaceAll]);
 
   html.Add('<tr>');
   html.Add('<td>&nbsp;</td>');
   html.Add('<td>');
   s := FormatDateTime('d-mm-y H:n:s', now);
+  csv := s + '|' + FUserName + '|' + csv;
   html.Add(Format(_CARIK_HTML_USERNAME, [FUserName, s]));
 
   html.Add(Format(_CARIK_HTML_MESSAGE, [msg]));
@@ -311,6 +338,7 @@ begin
   html.Add('</tr>');
 
   SaveToFile(html.Text);
+  SaveToFileCSV( csv);
   html.Free;
 end;
 
