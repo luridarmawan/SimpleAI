@@ -855,7 +855,7 @@ begin
   //  Exit;
 
   Message := StringReplace(Message, '\n', #10, [rfReplaceAll]);
-  //Message := UrlEncode(Message);
+  Message := UrlEncode(Message);
 
   try
     httpClient := THTTPLib.Create;

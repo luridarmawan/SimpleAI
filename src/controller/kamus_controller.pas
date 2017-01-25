@@ -89,7 +89,7 @@ var
 begin
   lst := Explode( Text, ' ');
   Result := findKemdikbud( lst.ValueFromIndex[0]);
-  Result := 'tentang: ' + Text + ':\n' + Result;
+  Result := 'tentang ' + Text + ':\n' + Result;
 end;
 
 function TKamusController.findKemdikbud(Text: string): string;
