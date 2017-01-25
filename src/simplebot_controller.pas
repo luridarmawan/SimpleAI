@@ -39,7 +39,8 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
-  suggestion_controller, domainwhois_controller, jadwalsholat_controller, kamus_controller,
+  suggestion_controller, domainwhois_controller, jadwalsholat_controller,
+  kamus_controller,
   fastplaz_handler, logutil_lib, http_lib,
   fpexprpars, // formula
   dateutils,
@@ -135,7 +136,7 @@ type
     function Example_Handler(const IntentName: string; Params: TStrings): string;
 
     function isAnswerOld(): boolean;
-    function isMentioned:boolean;
+    function isMentioned: boolean;
   public
     {$ifdef AI_REDIS}
     SimpleAI: TSimpleAIRedis;
@@ -392,7 +393,7 @@ begin
     Exit;
   end;
 
-  Result := StringReplace( Result, ':', '/', [rfReplaceAll]);
+  Result := StringReplace(Result, ':', '/', [rfReplaceAll]);
   Result := '(' + Result + ')';
   mathParser := TFPExpressionParser.Create(nil);
   try
@@ -508,7 +509,8 @@ var
 begin
   Result := '..';
   domainWhois := TDomainWhoisController.Create;
-  Result := domainWhois.Find( Params.Values['domain_value'], Params.Values['option_value']);
+  Result := domainWhois.Find(Params.Values['domain_value'],
+    Params.Values['option_value']);
   domainWhois.Free;
 end;
 
@@ -520,8 +522,8 @@ begin
   Result := '...';
   try
     kamus := TKamusController.Create;
-    kamus.Token:= Config['ibacor/token'];
-    Result := kamus.Find( Params.Values['word_value']);
+    kamus.Token := Config['ibacor/token'];
+    Result := kamus.Find(Params.Values['word_value']);
   except
   end;
   kamus.Free;
@@ -811,7 +813,7 @@ end;
 function TSimpleBotModule.isMentioned: boolean;
 begin
   Result := False;
-  if pos( '@'+FBotName, Text) > 0 then
+  if pos('@' + FBotName, Text) > 0 then
     Result := True;
 end;
 
@@ -861,7 +863,7 @@ begin
     httpClient := THTTPLib.Create;
     httpClient.URL := _TELEGRAM_API_URL + Token + '/sendMessage' +
       '?chat_id=' + ChatIDRef + '&reply_to_message_id=' + ReplyToMessageID +
-      '&text=' + trim(Message);
+      '&parse_mode=Markdown' + '&text=' + trim(Message);
 
     try
       httpResponse := httpClient.Get();
@@ -872,7 +874,6 @@ begin
   finally
     httpClient.Free;
   end;
-
 
 end;
 

@@ -33,7 +33,7 @@ unit notulen_controller;
 interface
 
 uses
-  common, fastplaz_handler, telegram_integration,
+  common, fastplaz_handler, telegram_integration, logutil_lib,
   IniFiles, fpjson,
   Classes, SysUtils;
 
@@ -83,6 +83,7 @@ const
   _CARIK_DATA_FILE = 'carik.dat';
   _CARIK_FILE_EXTENSION = '.html';
   _CARIK_CONFIG_PATH = 'carik/path';
+  _CARIK_CONFIG_GROUPS = 'carik/groups/';
   _CARIK_RECORDING = 'recording';
   _CARIK_COUNT = 'count';
   _CARIK_DIR_PREFIX = 'group-';
@@ -91,9 +92,10 @@ const
   _CARIK_MSG_RECORDNUMBER = 'ini notulen ke %d';
   _CARIK_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
 
-  _CARIK_HTML_STYLE = '<style>span.message {padding:0 0 0 5px;}</style>';
+  _CARIK_HTML_STYLE =
+    '<style>body{font-family:Tahoma,"Lucida Grande","Trebuchet MS"}span.username{border-bottom:1px solid #c2d1f0;font-size:small;display:block;background:#e6f5ff;padding:2px 2px 2px 5px}span.message{padding:0 0 0 10px}table{min-width:300px}table,td,th{border:1px solid #00134d}td{border:0;border-bottom:1px solid #668cff}img{min-width:90%}</style>';
   _CARIK_HTML_USERNAME = '<span class="username">%s, %s</span>';
-  _CARIK_HTML_MESSAGE = '<br><span class="message">%s</span>';
+  _CARIK_HTML_MESSAGE = '<span class="message">%s</span>';
   _CARIK_HTML_PHOTO = '<img src="%s">';
 
 { TNotulenController }
@@ -165,11 +167,13 @@ begin
   if Telegram.Token = '' then
     Exit;
 
+  FRecordNumber := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0);
+
   filePath := Telegram.GetFile(FileID);
-  targetFile := getDirPath(FRecordNumber) + filePath + '.jpg';
+  targetFile := getDirPath(FRecordNumber) + filePath;
   if Telegram.DownloadFile(filePath, targetFile) then
   begin
-    Result := filePath + '.jpg';
+    Result := filePath;
   end;
   Telegram.Free;
 end;
@@ -180,6 +184,8 @@ begin
     Exit;
   FGroupName := AValue;
   FGroupName := StringReplace(FGroupName, ' ', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, '(', '-', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, ')', '-', [rfReplaceAll]);
 end;
 
 procedure TNotulenController.setPath(AValue: string);
@@ -244,7 +250,7 @@ end;
 function TNotulenController.Start: boolean;
 var
   i: integer;
-  fileName, dir: string;
+  s, fileName, dir: string;
 begin
   Result := False;
   if not FReady then
@@ -256,6 +262,16 @@ begin
   begin
     Result := True;
     Exit;
+  end;
+
+  s := _CARIK_CONFIG_GROUPS + FGroupName + '/admin';
+  s := Config[s];
+  if s <> '' then
+  begin
+    LogUtil.Add(FUserName + ' is in ' + s, 'notulen');
+    if Pos(FUserName, s) = 0 then
+      Exit;
+    LogUtil.Add(FUserName + ' is permitted', 'notulen');
   end;
 
   i := FData.ReadInteger(FGroupName, _CARIK_COUNT, 0) + 1;
@@ -278,7 +294,8 @@ begin
   fileName := dir + 'index' + _CARIK_FILE_EXTENSION;
   if not FileExists(fileName) then
   begin
-    SaveToFile(_CARIK_HTML_STYLE + '<h1>' + FGroupName + '</h1><table>');
+    SaveToFile(_CARIK_HTML_STYLE + '<h1>' + FGroupName + ' #' +
+      i2s(FRecordNumber) + '</h1><table>');
   end;
 
   Result := True;
@@ -322,8 +339,9 @@ begin
     photo := format(_CARIK_HTML_PHOTO, [s]);
     msg := photo + #13#10'<br>' + msg;
   end;
-  csv := StringReplace( msg, #13#10, #13, [rfReplaceAll]);
-  csv := StringReplace( csv, #13, '\n', [rfReplaceAll]);
+  csv := StringReplace(msg, #13#10, #13, [rfReplaceAll]);
+  csv := StringReplace(csv, #13, '\n', [rfReplaceAll]);
+  csv := StringReplace(csv, '<br>', '\n', [rfReplaceAll]);
 
   html.Add('<tr>');
   html.Add('<td>&nbsp;</td>');
@@ -338,7 +356,7 @@ begin
   html.Add('</tr>');
 
   SaveToFile(html.Text);
-  SaveToFileCSV( csv);
+  SaveToFileCSV(csv);
   html.Free;
 end;
 
