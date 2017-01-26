@@ -90,6 +90,7 @@ begin
   lst := Explode( Text, ' ');
   Result := findKemdikbud( lst.ValueFromIndex[0]);
   Result := '*tentang ' + Text + ':*\n' + Result;
+  lst.Free;
 end;
 
 function TKamusController.findKemdikbud(Text: string): string;

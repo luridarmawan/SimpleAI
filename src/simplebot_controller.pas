@@ -128,7 +128,7 @@ type
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function jadwalSholatHandler(const IntentName: string; Params: TStrings): string;
     function domainWhoisHandler(const IntentName: string; Params: TStrings): string;
-    function kamusWhoisHandler(const IntentName: string; Params: TStrings): string;
+    function kamusHandler(const IntentName: string; Params: TStrings): string;
     function prepareQuestion: boolean;
     function echoQuestions(IntentName: string; Key: string = ''): string;
 
@@ -213,7 +213,7 @@ begin
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
   Handler['jadwal_sholat'] := @jadwalSholatHandler;
   Handler['domain_whois'] := @domainWhoisHandler;
-  Handler['kamus'] := @kamusWhoisHandler;
+  Handler['kamus'] := @kamusHandler;
 end;
 
 destructor TSimpleBotModule.Destroy;
@@ -514,7 +514,7 @@ begin
   domainWhois.Free;
 end;
 
-function TSimpleBotModule.kamusWhoisHandler(const IntentName: string;
+function TSimpleBotModule.kamusHandler(const IntentName: string;
   Params: TStrings): string;
 var
   kamus: TKamusController;

@@ -13,6 +13,7 @@ wtf=what the fuck|fuck|wtf
 hi=hi|hii|hai|hei|halo|hallo|halow|hallow|hellow|hola|hox|hy
 salam=salam kenal|salam
 yo=yo|yoyoi
+jawa=kulonuwun|nuwun
 
 [SalamMuslim]
 salam=assalamualaikum|assalamu'alaikum|assalamualaykum|assalamu'alaykum|assalamu alaikum

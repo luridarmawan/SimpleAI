@@ -44,6 +44,7 @@ say=/start
 
 [Kamus]
 action=kamus
+object=kamus
 say=@word (artinya|maksudnya)
 say=(artinya|arti|maksud|maksudnya|kamus) @word itu
 say=(artinya|arti|maksud|maksudnya|kamus) @word
@@ -57,19 +58,27 @@ say=(suggest|saran|teach) @answer : @question
 say=(suggest|saran|teach) @answer: @question
 
 [CarikStart]
-action=carik_rekam
-say=(rekam|catat|mulai) (kulwap|obrolan|diskusi|rapat|rekaman|catatan|catat)
-say=(rekam|rekaman|notulen) (mulai|dimulai|start)
-say=(mulai|start) (rekam|rekaman|notulen|catatan)
+action=carik_start
+say=mulai (catat|catet)
+say=(rekam|catat|catet|mulai|start) (kulwap|obrolan|diskusi|rapat|rekaman|rekam|catatan|catat|notulen)
+say=(kulwap|obrolan|diskusi|rapat|rekaman|rekam|catatan|catat|notulen) (mulai|dimulai|start|dicatat|dicatet)
+say=(mulai|start) (kulwap|obrolan|diskusi|rapat|rekaman|rekam|catatan|catat|notulen)
 
 [CarikStop]
 action=carik_stop
-say=(rekaman|rekam|notulen|catatan) (dihentikan|stop|berhenti)
-say=(dihentikan|stop|berhenti|hentikan) (rekaman|rekam|notulen|catatan)
+say=(kulwap|obrolan|diskusi|rapat|rekaman|rekam|catatan|catat|notulen) (dihentikan|stop|berhenti)
+say=(dihentikan|stop|berhenti|hentikan) (kulwap|obrolan|diskusi|rapat|rekaman|rekam|catatan|catat|notulen)
+
+[CarikSend]
+action=carik_send
+say=kirimkan rekaman ke @email
+say=rekaman kirim ke @email
 
 
 [SholatJadwal]
 action=jadwal_sholat
+say=jadwalsholat @kota
+say=jadwalsholat
 say=(jadwal|jadual) sholat (untuk|utk|kota) @kota
 say=(jadwal|jadual) sholat @kota
 say=(jadwal|jadual) sholat
