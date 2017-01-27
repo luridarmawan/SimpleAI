@@ -66,6 +66,7 @@ type
     function StartHandler(const IntentName: string; Params: TStrings): string;
     function StopHandler(const IntentName: string; Params: TStrings): string;
     function CheckHandler(const IntentName: string; Params: TStrings): string;
+    function TopicHandler(const IntentName: string; Params: TStrings): string;
     function Start: boolean;
     function Stop: boolean;
     procedure RecordTelegramMessage(Message: string);
@@ -231,18 +232,18 @@ end;
 function TNotulenController.StartHandler(const IntentName: string;
   Params: TStrings): string;
 var
-  s, admin: string;
+  s, _admin: string;
 begin
   Result := _NOTULEN_MSG_CANNOT_START;
   LogUtil.Add('-prepare:' + FGroupName, 'carik');
   if FGroupName = '' then
     Exit;
   s := 'carik/groups/' + FGroupName + '/admin';
-  admin := Config[s];
-  if admin = '' then
+  _admin := Config[s];
+  if _admin = '' then
     Exit;
 
-  if pos(FUserName, admin) = 0 then
+  if pos(FUserName, _admin) = 0 then
     Exit;
 
   LogUtil.Add('starting ... ', 'carik');
@@ -259,20 +260,34 @@ end;
 
 function TNotulenController.StopHandler(const IntentName: string;
   Params: TStrings): string;
+var
+  s, _admin: string;
 begin
   Result := '';
+  s := 'carik/groups/' + FGroupName + '/admin';
+  _admin := Config[s];
+  if _admin = '' then
+    Exit;
+  if pos(FUserName, _admin) = 0 then
+    Exit;
   Stop;
+  Result := '... catetan sudah dihentikan.';
 end;
 
 function TNotulenController.CheckHandler(const IntentName: string;
   Params: TStrings): string;
 var
   i, _recordStatus, _recordNumber: integer;
-  s, _recordName, _groupName, _groupTopic: string;
+  s, _admin, _recordName, _groupName, _groupTopic: string;
   lst: TStringList;
 begin
   Result := _NOTULEN_MSG_SECRET;
-  if FUserName <> _NOTULEN_SUPERADMIN then
+
+  s := 'carik/groups/' + FGroupName + '/admin';
+  _admin := Config[s];
+  if _admin = '' then
+    Exit;
+  if pos(FUserName, _admin) = 0 then
     Exit;
 
   lst := TStringList.Create;
@@ -306,6 +321,27 @@ begin
 
   Result := s;
   lst.Free;
+end;
+
+function TNotulenController.TopicHandler(const IntentName: string;
+  Params: TStrings): string;
+var
+  s, _admin, _topic: string;
+begin
+  Result := '';
+
+  s := 'carik/groups/' + FGroupName + '/admin';
+  _admin := Config[s];
+  if _admin = '' then
+    Exit;
+  if pos(FUserName, _admin) = 0 then
+    Exit;
+
+  _topic := Params.Values['topic_value'];
+  _topic := StringReplace( _topic, '"', '', [rfReplaceAll]);
+  FData.WriteString(FGroupName, _NOTULEN_TOPIC, _topic);
+
+  Result := 'Baik, topik saat ini *"' + _topic + '"*';
 end;
 
 function TNotulenController.Start: boolean;
@@ -379,6 +415,7 @@ begin
   Result := False;
   FData.WriteString(FGroupName, _NOTULEN_RECORDING, '0');
   FData.WriteString(FGroupName, _NOTULEN_TOPIC, '');
+  Result := True;
 end;
 
 procedure TNotulenController.RecordTelegramMessage(Message: string);

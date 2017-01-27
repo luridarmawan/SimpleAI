@@ -104,6 +104,7 @@ type
   private
     FAskName: boolean;
     FBotName: string;
+    FFirstSessionResponse: boolean;
     FSecondSessionResponse: boolean;
     Suggestion: TBotSuggestion;
     FAskCountdown: integer;
@@ -162,6 +163,7 @@ type
     property BotName: string read FBotName write FBotName;
     property ChatID: string read FChatID write FChatID;
     property AskCountdown: integer read FAskCountdown;
+    property FirstSessionResponse: boolean read FFirstSessionResponse write FFirstSessionResponse;
     property SecondSessionResponse: boolean read FSecondSessionResponse write FSecondSessionResponse;
 
     property Debug: boolean read getDebug write setDebug;
@@ -211,6 +213,7 @@ begin
   FAskName := False;
   FAskEmail := False;
   FSecondSessionResponse := False;
+  FFirstSessionResponse := False;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
