@@ -180,8 +180,7 @@ end;
 
 procedure TNotulenController.setGroupName(AValue: string);
 begin
-  if FGroupName = AValue then
-    Exit;
+  FGroupName := AValue;
   //FGroupName:= SafeText( AValue);
   FGroupName := StringReplace(FGroupName, ' ', '', [rfReplaceAll]);
   FGroupName := StringReplace(FGroupName, '(', '', [rfReplaceAll]);
@@ -222,6 +221,7 @@ var
   s, admin: string;
 begin
   Result := _NOTULEN_MSG_CANNOT_START;
+  LogUtil.Add('-prepare:' + FGroupName, 'carik');
   if FGroupName = '' then
     Exit;
   s := 'carik/groups/' + FGroupName + '/admin';
@@ -232,8 +232,10 @@ begin
   if pos(FUserName, admin) = 0 then
     Exit;
 
+  LogUtil.Add('starting ... ', 'carik');
   if Start then
   begin
+    LogUtil.Add('== '+FGroupName+' recorded', 'carik');
     Result := _NOTULEN_MSG_START + format(_NOTULEN_MSG_RECORDNUMBER, [FRecordNumber]);
   end
   else
@@ -270,10 +272,10 @@ begin
   s := Config[s];
   if s <> '' then
   begin
-    LogUtil.Add(FUserName + ' is in ' + s, 'notulen');
+    LogUtil.Add('-' + FUserName + ' is in ' + s, 'notulen');
     if Pos(FUserName, s) = 0 then
       Exit;
-    LogUtil.Add(FUserName + ' is permitted', 'notulen');
+    LogUtil.Add('-' + FUserName + ' is permitted', 'notulen');
   end;
 
   i := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0) + 1;
@@ -290,6 +292,10 @@ begin
       mkdir(dir + 'photo');
     end;
   except
+    on E: Exception do
+    begin
+      LogUtil.Add('== start: ' + e.Message, 'carik');
+    end;
   end;
 
   // save index.html

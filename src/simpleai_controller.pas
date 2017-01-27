@@ -12,7 +12,7 @@ unit simpleai_controller;
 interface
 
 uses
-  simpleai_lib, Dos, RegExpr, fpjson,
+  simpleai_lib, dateutils, Dos, RegExpr, fpjson,
   IniFiles, Classes, SysUtils;
 
 const
@@ -116,9 +116,10 @@ end;
 
 function TSimpleAI.StringReplacement(Text: string): string;
 var
-  s, t: string;
+  s, t, range: string;
   y, m, d: word;
   regex: TRegExpr;
+  dateTimePosition: TDateTime;
 begin
   Result := Text;
   Result := FSimpleAILib.Intent.Entities.preg_replace(
@@ -126,18 +127,48 @@ begin
   Result := FSimpleAILib.Intent.Entities.preg_replace(
     '%(AIName)%', AIName, Result, False);
 
+  dateTimePosition := now;
+
+  //if in range
+  range := FSimpleAILib.Parameters.Values['range_value'];
+  if range = 'sekarang' then
+    range := '';
+  if (range <> '') then
+  begin
+    case range of
+      'kemaren lusa',
+      'kemarin lusa':
+      begin
+        dateTimePosition := IncDay(Now, -2);
+      end;
+      'kemaren',
+      'kemarin':
+      begin
+        dateTimePosition := IncDay(Now, -1);
+      end;
+      'bsk',
+      'besok':
+      begin
+        dateTimePosition := IncDay(Now, 1);
+      end;
+      'lusa':
+      begin
+        dateTimePosition := IncDay(Now, 2);
+      end;
+    end;
+  end;
   // waktu
   if FSimpleAILib.Intent.Entities.preg_match('%(time)%', Result) then
   begin
-    DecodeDate(Date, y, m, d);
+    DecodeDate(dateTimePosition, y, m, d);
     s := Parameters.Values['Waktu'];
     t := '';
     case s of
-      'jam': t := FormatDateTime('hh:nn', Now) + ' ' + getTimeSession;
-      'hari': t := NamaHari[DayOfWeek(Now)];
+      'jam': t := FormatDateTime('hh:nn', dateTimePosition) + ' ' + getTimeSession;
+      'hari': t := NamaHari[DayOfWeek(dateTimePosition)];
       'bulan': t := NamaBulan[m];
       'tahun': t := IntToStr(y);
-      'tanggal': t := FormatDateTime('dd/mm/yyyy', Now)
+      'tanggal': t := FormatDateTime('dd/mm/yyyy', dateTimePosition)
     end;
     t := s + ' ' + t;
     Result := FSimpleAILib.Intent.Entities.preg_replace(
