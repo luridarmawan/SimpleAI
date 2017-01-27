@@ -104,6 +104,7 @@ type
   private
     FAskName: boolean;
     FBotName: string;
+    FSecondSessionResponse: boolean;
     Suggestion: TBotSuggestion;
     FAskCountdown: integer;
     FAskEmail: boolean;
@@ -161,6 +162,7 @@ type
     property BotName: string read FBotName write FBotName;
     property ChatID: string read FChatID write FChatID;
     property AskCountdown: integer read FAskCountdown;
+    property SecondSessionResponse: boolean read FSecondSessionResponse write FSecondSessionResponse;
 
     property Debug: boolean read getDebug write setDebug;
     property isDataLoaded: boolean read FDataLoaded;
@@ -208,6 +210,7 @@ begin
   FAskCountdown := 0;
   FAskName := False;
   FAskEmail := False;
+  FSecondSessionResponse := False;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
@@ -598,11 +601,14 @@ begin
   lastvisit_length := (_GetTickCount - lastvisit_time) div 3600000; // jam
   if lastvisit_length > 1 then
   begin
-    s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
-      _AI_RESPONSE_SECONDSESSION);
-    s := StringReplacement(s);
-    if s <> '' then
-      SimpleAI.ResponseText.Add(s);
+    if FSecondSessionResponse then
+    begin
+      s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
+        _AI_RESPONSE_SECONDSESSION);
+      s := StringReplacement(s);
+      if s <> '' then
+        SimpleAI.ResponseText.Add(s);
+    end;
     setSession(_AI_SESSION_MESSAGECOUNT, '0');
     UserData[_AI_OBJECT] := '';
     UserData[_AI_OBJECT_DATE] := '';
