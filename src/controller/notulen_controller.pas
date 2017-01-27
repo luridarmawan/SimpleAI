@@ -182,7 +182,12 @@ procedure TNotulenController.setGroupName(AValue: string);
 begin
   if FGroupName = AValue then
     Exit;
-  FGroupName:= SafeText( AValue);
+  //FGroupName:= SafeText( AValue);
+  FGroupName := StringReplace(FGroupName, ' ', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, '(', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, ')', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, '@', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, '-', '', [rfReplaceAll]);
 end;
 
 procedure TNotulenController.setPath(AValue: string);
