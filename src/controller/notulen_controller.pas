@@ -334,7 +334,7 @@ begin
   end;
 
   try
-    photo := jsonData.GetPath('message.photo[0].file_id').AsString;
+    photo := jsonData.GetPath('message.photo[3].file_id').AsString;
     Caption := jsonData.GetPath('message.caption').AsString;
   except
   end;
