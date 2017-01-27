@@ -338,10 +338,10 @@ begin
     Exit;
 
   _topic := Params.Values['topic_value'];
-  _topic := StringReplace( _topic, '"', '', [rfReplaceAll]);
+  _topic := StringReplace(_topic, '"', '', [rfReplaceAll]);
   FData.WriteString(FGroupName, _NOTULEN_TOPIC, _topic);
 
-  Result := 'Baik, topik saat ini *"' + _topic + '"*';
+  Result := 'Baik, topik saat ini *"' + ucwords(_topic) + '"*';
 end;
 
 function TNotulenController.Start: boolean;
