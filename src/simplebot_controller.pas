@@ -340,8 +340,9 @@ end;
 function TSimpleBotModule.defineHandlerDefault: string; // for name & email
 var
   s, keyName, keyValue: string;
+  lst: TStrings;
 begin
-  Result := '--';
+  Result := '';
   keyName := 'Key';
   keyValue := SimpleAI.Parameters.Values['Key_value'];
 
@@ -366,16 +367,26 @@ begin
   begin
     keyName := 'Name';
     keyValue := SimpleAI.Parameters.Values['Name'];
-    UserData['Name'] := keyValue;
-    SetQuestions('');
-    if FAskEmail then
+    lst := Explode( keyValue, ' ');
+    if lst.Count > 2 then
     begin
-      s := UserData['Email'];
-      if s = '' then
+      lst.Free;
+      Exit;
+    end
+    else
+    begin
+      UserData['Name'] := keyValue;
+      SetQuestions('');
+      if FAskEmail then
       begin
-        SetQuestions(_AI_ASK_EMAIL);
+        s := UserData['Email'];
+        if s = '' then
+        begin
+          SetQuestions(_AI_ASK_EMAIL);
+        end;
       end;
     end;
+    lst.Free;
   end;
 
   Result := GetResponse(SimpleAI.IntentName + 'Response', '', '');
