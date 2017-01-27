@@ -39,7 +39,7 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
-  suggestion_controller, domainwhois_controller, jadwalsholat_controller,
+  suggestion_controller, domainwhois_controller, jadwalsholat_controller, resiibacor_integration,
   kamus_controller,
   fastplaz_handler, logutil_lib, http_lib,
   fpexprpars, // formula
