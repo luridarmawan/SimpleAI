@@ -97,6 +97,9 @@ const
   _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ...';
   _NOTULEN_MSG_RECORDNUMBER = 'ini notulen ke %d';
   _NOTULEN_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
+  _NOTULEN_MSG_SECRET = 'rahasia ...';
+  _NOTULEN_MSG_NORECORDING = 'saat ini tidak ada yang dicatat di sini.';
+  _NOTULEN_MSG_RECORDING = 'Sekarang sedang mencatat diskusi:';
 
   _NOTULEN_HTML_STYLE =
     '<style>body{font-family:Tahoma,"Lucida Grande","Trebuchet MS"}span.username{border-bottom:1px solid #c2d1f0;font-size:small;display:block;background:#e6f5ff;padding:2px 2px 2px 5px}span.message{padding:0 0 0 10px}table{min-width:300px}table,td,th{border:1px solid #00134d}td{border:0;border-bottom:1px solid #668cff}</style>';
@@ -268,7 +271,7 @@ var
   s, _recordName, _groupName, _groupTopic: string;
   lst: TStringList;
 begin
-  Result := 'rahasia ..';
+  Result := _NOTULEN_MSG_SECRET;
   if FUserName <> _NOTULEN_SUPERADMIN then
     Exit;
 
@@ -297,9 +300,9 @@ begin
     end;
   end;
   if s = '' then
-    s := 'saat ini tidak ada yang dinotulen.'
+    s := _NOTULEN_MSG_NORECORDING
   else
-    s := 'Sekarang sedang mencatat diskusi:' + s;
+    s := _NOTULEN_MSG_RECORDING + s;
 
   Result := s;
   lst.Free;
