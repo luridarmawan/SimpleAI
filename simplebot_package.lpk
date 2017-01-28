@@ -12,7 +12,7 @@
       </SearchPaths>
     </CompilerOptions>
     <Description Value="SimpleBOT package"/>
-    <Files Count="6">
+    <Files Count="7">
       <Item1>
         <Filename Value="src/simplebot_controller.pas"/>
         <UnitName Value="simplebot_controller"/>
@@ -37,6 +37,10 @@
         <Filename Value="src/controller/notulen_controller.pas"/>
         <UnitName Value="notulen_controller"/>
       </Item6>
+      <Item7>
+        <Filename Value="src/controller/movie_controller.pas"/>
+        <UnitName Value="movie_controller"/>
+      </Item7>
     </Files>
     <i18n>
       <EnableI18N Value="True"/>

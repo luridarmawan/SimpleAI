@@ -81,6 +81,7 @@ begin
   httpClient.URL := StringReplace(httpClient.URL, '%day', i2s(Day), [rfReplaceAll]);
 
   Response := httpClient.Get;
+  httpClient.Free;
   if Response.ResultCode <> 200 then
     Exit;
 
@@ -97,7 +98,6 @@ begin
     end;
   end;
 
-  httpClient.Free;
 end;
 
 function TJadwalSholatController.Find(CityName: string; Day: integer): string;
