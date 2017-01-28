@@ -95,7 +95,7 @@ const
   _NOTULEN_TOPIC = 'topic';
   _NOTULEN_DIR_PREFIX = 'group-';
 
-  _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ...';
+  _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ... ✍ ...';
   _NOTULEN_MSG_RECORDNUMBER = 'ini notulen ke %d';
   _NOTULEN_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
   _NOTULEN_MSG_SECRET = 'rahasia ...';
