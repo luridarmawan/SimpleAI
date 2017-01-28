@@ -96,7 +96,7 @@ const
   _NOTULEN_DIR_PREFIX = 'group-';
 
   _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ... ✍ ...';
-  _NOTULEN_MSG_RECORDNUMBER = 'ini notulen ke %d';
+  _NOTULEN_MSG_RECORDNUMBER = '\nini notulen ke %d';
   _NOTULEN_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
   _NOTULEN_MSG_SECRET = 'rahasia ...';
   _NOTULEN_MSG_NORECORDING = 'saat ini tidak ada yang dicatat di sini.';
@@ -286,7 +286,7 @@ begin
   s := 'carik/groups/' + FGroupName + '/admin';
   _admin := Config[s];
   if _admin = '' then
-    Exit;
+    _admin := _NOTULEN_SUPERADMIN;
   if pos(FUserName, _admin) = 0 then
     Exit;
 
