@@ -70,6 +70,9 @@ type
     function Start: boolean;
     function Stop: boolean;
     procedure RecordTelegramMessage(Message: string);
+    function EnableBot: boolean;
+    function DisableBot: boolean;
+    function IsDisabled: boolean;
 
     property Ready: boolean read FReady;
     property Path: string read FPath write setPath;
@@ -90,6 +93,7 @@ const
   _NOTULEN_DATA_FILE = 'carik.dat';
   _NOTULEN_FILE_EXTENSION = '.html';
   _NOTULEN_NAME = 'name';
+  _NOTULEN_DISABLE = 'disable';
   _NOTULEN_RECORDING = 'recording';
   _NOTULEN_COUNT = 'count';
   _NOTULEN_TOPIC = 'topic';
@@ -487,6 +491,45 @@ begin
   SaveToFile(html.Text);
   SaveToFileCSV(csv);
   html.Free;
+end;
+
+function TNotulenController.EnableBot: boolean;
+var
+  s, _admin: string;
+begin
+  Result := False;
+  if FGroupName = '' then
+    Exit;
+  s := 'carik/groups/' + FGroupName + '/admin';
+  _admin := Config[s];
+  if _admin = '' then
+    _admin := _NOTULEN_SUPERADMIN;
+
+  FData.WriteString(FGroupName, _NOTULEN_DISABLE, '0');
+  Result := True;
+end;
+
+function TNotulenController.DisableBot: boolean;
+var
+  s, _admin: string;
+begin
+  Result := False;
+  if FGroupName = '' then
+    Exit;
+  s := 'carik/groups/' + FGroupName + '/admin';
+  _admin := Config[s];
+  if _admin = '' then
+    _admin := _NOTULEN_SUPERADMIN;
+
+  FData.WriteString(FGroupName, _NOTULEN_DISABLE, '1');
+  Result := True;
+end;
+
+function TNotulenController.IsDisabled: boolean;
+begin
+  Result := False;
+  if FData.ReadString(FGroupName, _NOTULEN_DISABLE, '0') = '1' then
+    Result := True;
 end;
 
 end.
