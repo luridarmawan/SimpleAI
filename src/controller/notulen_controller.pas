@@ -107,8 +107,11 @@ const
   _NOTULEN_HTML_USERNAME = '<span class="username">%s, %s</span>';
   _NOTULEN_HTML_MESSAGE = '<span class="message">%s</span>';
   _NOTULEN_HTML_PHOTO = '<img src="%s">';
+  _NOTULEN_HTML_VIDEO = '<video controls><source src="%s" type="video/mp4"></video>';
 
   _NOTULEN_SUPERADMIN = 'luridarmawan';
+
+  _NOTULEN_MIME_VIDEO = 'video/mp4';
 
 { TNotulenController }
 
@@ -165,8 +168,8 @@ end;
 
 function TNotulenController.getDirPath(IndexRecording: integer): string;
 begin
-  Result := FPath + _NOTULEN_DIR_PREFIX + FGroupName + '-' +
-    i2s(IndexRecording) + DirectorySeparator;
+  Result := FPath + FGroupName + DirectorySeparator + FGroupName +
+    '-' + i2s(IndexRecording) + DirectorySeparator;
 end;
 
 function TNotulenController.downloadFile(FileID: string): string;
@@ -381,9 +384,10 @@ begin
   try
     if not DirectoryExists(dir) then
     begin
-      mkdir(dir);
-      mkdir(dir + 'files');
-      mkdir(dir + 'photo');
+      ForceDirectories(dir);
+      ForceDirectories(dir + 'files');
+      ForceDirectories(dir + 'photo');
+      ForceDirectories(dir + 'document');
     end;
   except
     on E: Exception do
@@ -423,7 +427,7 @@ var
   s: string;
   html: TStringList;
   jsonData: TJSONData;
-  csv, msg, Caption, photo: string;
+  csv, msg, Caption, photo, _doc, _mime: string;
 begin
   html := TStringList.Create;
   try
@@ -436,8 +440,17 @@ begin
   except
   end;
 
+  // photo
   try
     photo := jsonData.GetPath('message.photo[2].file_id').AsString;
+    Caption := jsonData.GetPath('message.caption').AsString;
+  except
+  end;
+
+  // document
+  try
+    _doc := jsonData.GetPath('message.document.file_id').AsString;
+    _mime := jsonData.GetPath('message.document.mime_type').AsString;
     Caption := jsonData.GetPath('message.caption').AsString;
   except
   end;
@@ -445,9 +458,14 @@ begin
   msg := msg + Caption;
   if photo <> '' then
   begin
-    //todo: getfile
     s := downloadFile(photo);
     photo := format(_NOTULEN_HTML_PHOTO, [s]);
+    msg := photo + #13#10'<br>' + msg;
+  end;
+  if _doc <> '' then
+  begin
+    s := downloadFile(_doc);
+    photo := format(_NOTULEN_HTML_VIDEO, [s]);
     msg := photo + #13#10'<br>' + msg;
   end;
   csv := StringReplace(msg, #13#10, #13, [rfReplaceAll]);
