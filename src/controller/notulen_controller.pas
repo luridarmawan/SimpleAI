@@ -241,7 +241,7 @@ begin
   s := 'carik/groups/' + FGroupName + '/admin';
   _admin := Config[s];
   if _admin = '' then
-    Exit;
+    _admin := _NOTULEN_SUPERADMIN;
 
   if pos(FUserName, _admin) = 0 then
     Exit;
@@ -267,7 +267,7 @@ begin
   s := 'carik/groups/' + FGroupName + '/admin';
   _admin := Config[s];
   if _admin = '' then
-    Exit;
+    _admin := _NOTULEN_SUPERADMIN;
   if pos(FUserName, _admin) = 0 then
     Exit;
   Stop;
@@ -333,7 +333,7 @@ begin
   s := 'carik/groups/' + FGroupName + '/admin';
   _admin := Config[s];
   if _admin = '' then
-    Exit;
+    _admin := _NOTULEN_SUPERADMIN;
   if pos(FUserName, _admin) = 0 then
     Exit;
 
