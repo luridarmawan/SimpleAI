@@ -12,6 +12,7 @@ unit intents_lib;
 interface
 
 uses
+  common,
   entities_lib,
   RegExpr, IniFiles, Classes, SysUtils;
 
@@ -217,54 +218,58 @@ begin
         if length( Text) > 1 then
           pattern := pattern + '\b';
 
-      regex := TRegExpr.Create;
-      regex.Expression := pattern;
-      if regex.Exec(Text) then
-      begin
-        FIntentName := intent_name;
-        FAction := FData.ReadString(FIntentName, _SIMPLEAI_INTENT_ACTIONKEY, '');
-        FObjectName := FData.ReadString(FIntentName, _SIMPLEAI_OBJECT, '');
-
-        key_used := '';
-        match_index := 1;
-        repeat
-          if FParameters.Count > 0 then
-            section_name := FParameters.Names[match_index - 1];
-          s := regex.Match[match_index];
-          key_used := FEntities.GetKey(section_name, s);
-          if key_used = '' then
-            key_used := s;
-          if FParameters.Count > 0 then
-            FParameters.Values[section_name] := key_used;
-
-          //FParameters.Values[ '_'+section_name + '_value'] := regex.Match[ match_index];
-          if trim(section_name) <> '' then
-            FParameters.Values[section_name + '_value'] := regex.Match[match_index];
-          Inc(match_index);
-        until regex.Match[match_index] = '';
-
-        if FDebug then
-          FParameters.Values['pattern'] := pattern;
-
-        FIntentKey := tmp[0];
-        k := pos(':', FIntentKey);
-        if k > 0 then
+      try
+        regex := TRegExpr.Create;
+        regex.Expression := pattern;
+        if regex.Exec(Text) then
         begin
-          FIntentKeySpecific := copy(FIntentKey, k + 1);
-          FParameters.Add(_AI_VARKEY + '=' + FIntentKeySpecific);
-        end;
+          FIntentName := intent_name;
+          FAction := FData.ReadString(FIntentName, _SIMPLEAI_INTENT_ACTIONKEY, '');
+          FObjectName := FData.ReadString(FIntentName, _SIMPLEAI_OBJECT, '');
 
-        regex.Free;
-        tmp.Free;
-        pattern_str.Free;
-        item_list.Free;
-        intent_list.Free;
-        Result := True;
-        Exit;
-      end
-      else
-      begin
-        FPattern := '';
+          key_used := '';
+          match_index := 1;
+          repeat
+            if FParameters.Count > 0 then
+              section_name := FParameters.Names[match_index - 1];
+            s := regex.Match[match_index];
+            key_used := FEntities.GetKey(section_name, s);
+            if key_used = '' then
+              key_used := s;
+            if FParameters.Count > 0 then
+              FParameters.Values[section_name] := key_used;
+
+            //FParameters.Values[ '_'+section_name + '_value'] := regex.Match[ match_index];
+            if trim(section_name) <> '' then
+              FParameters.Values[section_name + '_value'] := regex.Match[match_index];
+            Inc(match_index);
+          until regex.Match[match_index] = '';
+
+          if FDebug then
+            FParameters.Values['pattern'] := pattern;
+
+          FIntentKey := tmp[0];
+          k := pos(':', FIntentKey);
+          if k > 0 then
+          begin
+            FIntentKeySpecific := copy(FIntentKey, k + 1);
+            FParameters.Add(_AI_VARKEY + '=' + FIntentKeySpecific);
+          end;
+
+          regex.Free;
+          tmp.Free;
+          pattern_str.Free;
+          item_list.Free;
+          intent_list.Free;
+          Result := True;
+          Exit;
+        end
+        else
+        begin
+          FPattern := '';
+        end;
+      //
+      except
       end;
 
       FParameters.Clear;
