@@ -12,6 +12,7 @@ unit simpleai_controller;
 interface
 
 uses
+  common,
   simpleai_lib, dateutils, Dos, RegExpr, fpjson,
   IniFiles, Classes, SysUtils;
 
@@ -50,6 +51,9 @@ type
     function getPatternString: string;
 
     procedure setDebug(AValue: boolean);
+    function isCommand(Msg: string): boolean;
+    function execCommand(Msg: string): string;
+    function openFile( FileName:string): string;
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
@@ -85,6 +89,9 @@ type
   end;
 
 implementation
+
+const
+  _BASEDIR = 'files/';
 
 var
   NamaHari: TWeekNameArray = ('Minggu', 'Senin', 'Selasa', 'Rabu',
@@ -191,6 +198,54 @@ end;
 procedure TSimpleAI.setDebug(AValue: boolean);
 begin
   FSimpleAILib.Intent.Debug := AValue;
+end;
+
+function TSimpleAI.isCommand(Msg: string): boolean;
+var
+  lst: TStrings;
+begin
+  Result := False;
+  lst := Explode(Msg, ':');
+
+  //todo: is valid command
+
+  if lst.Count > 1 then
+    Result := True;
+  lst.Free;
+end;
+
+function TSimpleAI.execCommand(Msg: string): string;
+var
+  s: string;
+  lst: TStrings;
+begin
+  Result := Msg;
+  lst := Explode(Msg, ':');
+  case lst[0] of
+    'file':
+    begin
+      s := trim(_BASEDIR + lst[1]);
+      Result := openFile( s);
+    end;
+  end;
+
+  lst.Free;
+end;
+
+function TSimpleAI.openFile(FileName: string): string;
+var
+  _note : TStringList;
+begin
+  Result := 'file/data tidak ditemukan';
+  if FileExists( FileName) then
+  begin
+    _note := TStringList.Create;
+    _note.LoadFromFile(FileName);
+    Result := _note.Text;
+    Result := StringReplace( Result, #13, '\n', [rfReplaceAll]);
+    Result := StringReplace( Result, #10, '\n', [rfReplaceAll]);
+    _note.Free;
+  end;
 end;
 
 function TSimpleAI.getTimeSession: string;
@@ -300,6 +355,12 @@ begin
   if FSimpleAILib.Intent.Entities.preg_match('%(.*)%', FResponseText.Text) then
   begin
     FResponseText.Text := StringReplacement(FResponseText.Text);
+  end;
+
+  // is Command
+  if isCommand(FResponseText.Text) then
+  begin
+    FResponseText.Text := execCommand(FResponseText.Text);
   end;
 end;
 
