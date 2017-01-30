@@ -39,7 +39,8 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
-  suggestion_controller, domainwhois_controller, jadwalsholat_controller, resiibacor_integration,
+  suggestion_controller, domainwhois_controller, jadwalsholat_controller,
+  resiibacor_integration,
   kamus_controller,
   fastplaz_handler, logutil_lib, http_lib,
   fpexprpars, // formula
@@ -77,6 +78,7 @@ type
     Text: string;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
+    function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
 
     procedure LoadConfig(DataName: string);
@@ -87,6 +89,7 @@ type
     function defineHandlerDefault(): string;
     function mathHandlerDefault(): string;
     function ErrorHandler(Message: string): string;
+    procedure setTrimMessage(AValue: boolean);
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
     function jadwalSholatHandler(const IntentName: string; Params: TStrings): string;
@@ -124,8 +127,10 @@ type
     property BotName: string read FBotName write FBotName;
     property ChatID: string read FChatID write FChatID;
     property AskCountdown: integer read FAskCountdown;
-    property FirstSessionResponse: boolean read FFirstSessionResponse write FFirstSessionResponse;
-    property SecondSessionResponse: boolean read FSecondSessionResponse write FSecondSessionResponse;
+    property FirstSessionResponse: boolean read FFirstSessionResponse
+      write FFirstSessionResponse;
+    property SecondSessionResponse: boolean
+      read FSecondSessionResponse write FSecondSessionResponse;
 
     property Debug: boolean read getDebug write setDebug;
     property isDataLoaded: boolean read FDataLoaded;
@@ -138,6 +143,7 @@ type
     property Handler[const TagName: string]: THandlerCallback
       read getHandler write setHandler;
     property OnError: TOnErrorCallback read FOnError write FOnError;
+    property TrimMessage: boolean read getTrimMessage write setTrimMessage;
 
   end;
 
@@ -314,6 +320,11 @@ begin
   Result := ___HandlerCallbackMap[TagName];
 end;
 
+function TSimpleBotModule.getTrimMessage: boolean;
+begin
+  Result := SimpleAI.TrimMessage;
+end;
+
 procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
 begin
   SetSession(_AI_SESSION_USER + KeyName, AValue);
@@ -367,7 +378,7 @@ begin
   begin
     keyName := 'Name';
     keyValue := SimpleAI.Parameters.Values['Name'];
-    lst := Explode( keyValue, ' ');
+    lst := Explode(keyValue, ' ');
     if lst.Count > 2 then
     begin
       lst.Free;
@@ -449,6 +460,11 @@ begin
       Result := 'Data email telah kami simpan';
     end;
   end;
+end;
+
+procedure TSimpleBotModule.setTrimMessage(AValue: boolean);
+begin
+  SimpleAI.TrimMessage := AValue;
 end;
 
 function TSimpleBotModule.URL_Handler(const IntentName: string;

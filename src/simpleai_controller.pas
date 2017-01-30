@@ -37,6 +37,7 @@ type
     FResponseData: TMemIniFile;
     FResponseDataAsList: TStringList;
     FSuffixText: string;
+    FTrimMessage: boolean;
     FVarName: string;
 
     function getResponseJson: string;
@@ -52,7 +53,7 @@ type
     procedure setDebug(AValue: boolean);
     function isCommand(Msg: string): boolean;
     function execCommand(Msg: string): string;
-    function openFile( FileName:string): string;
+    function openFile(FileName: string): string;
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
@@ -85,6 +86,7 @@ type
     property Debug: boolean read getDebug write setDebug;
     property Pattern: string read getPatternString;
     property Msg: string read FMsg;
+    property TrimMessage: boolean read FTrimMessage write FTrimMessage;
   end;
 
 implementation
@@ -227,7 +229,7 @@ begin
     _AI_CMD_OPENFILE:
     begin
       s := trim(_BASEDIR + lst[1]);
-      Result := openFile( s);
+      Result := openFile(s);
       if Result = '' then
         Result := Msg;
     end;
@@ -238,16 +240,16 @@ end;
 
 function TSimpleAI.openFile(FileName: string): string;
 var
-  _note : TStringList;
+  _note: TStringList;
 begin
   Result := '';
-  if FileExists( FileName) then
+  if FileExists(FileName) then
   begin
     _note := TStringList.Create;
     _note.LoadFromFile(FileName);
     Result := _note.Text;
-    Result := StringReplace( Result, #13, '\n', [rfReplaceAll]);
-    Result := StringReplace( Result, #10, '\n', [rfReplaceAll]);
+    Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
+    Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
     _note.Free;
   end;
 end;
@@ -286,6 +288,7 @@ begin
   FSimpleAILib := TSimpleAILib.Create;
   FResponseText := TStringList.Create;
   FMsg := '';
+  FTrimMessage := False;
 end;
 
 destructor TSimpleAI.Destroy;
@@ -341,11 +344,18 @@ begin
   Result := False;
   if Text = '' then
     Exit;
+
+  if FTrimMessage then
+  begin
+    Text := ReplaceAll(Text, ['''', '"'], '');
+  end;
+
   Result := FSimpleAILib.Exec(Text);
   if not AutoResponse then
     Exit;
 
-  FRequestText := Text;        // TODO: remove tanda baca, disertai opsi remove atau tidak
+  FRequestText := Text;
+
   if Result then
   begin
     FResponseText.Add(GetResponse(IntentName, Action, ''));
