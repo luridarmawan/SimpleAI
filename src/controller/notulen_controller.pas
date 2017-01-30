@@ -33,7 +33,7 @@ unit notulen_controller;
 interface
 
 uses
-  common, fastplaz_handler, telegram_integration, logutil_lib,
+  common, fastplaz_handler, telegram_integration, logutil_lib, mailer_lib,
   IniFiles, fpjson,
   Classes, SysUtils;
 
@@ -69,12 +69,16 @@ type
     function StopHandler(const IntentName: string; Params: TStrings): string;
     function CheckHandler(const IntentName: string; Params: TStrings): string;
     function TopicHandler(const IntentName: string; Params: TStrings): string;
+    function SendHandler(const IntentName: string; Params: TStrings): string;
     function Start: boolean;
     function Stop: boolean;
+    function Send: boolean;
     procedure RecordTelegramMessage(Message: string);
     function EnableBot: boolean;
     function DisableBot: boolean;
     function IsDisabled: boolean;
+    function IsImageRecognitionDisabled: boolean;
+    procedure ImageRecognitionCounting;
 
     property Ready: boolean read FReady;
     property Path: string read FPath write setPath;
@@ -102,10 +106,13 @@ const
   _NOTULEN_COUNT = 'count';
   _NOTULEN_TOPIC = 'topic';
   _NOTULEN_DIR_PREFIX = 'group-';
+  _NOTULEN_IMAGERECOGNITION_COUNTING = 'image_recognition';
+  _NOTULEN_IMAGERECOGNITION_DISABLED = 'image_recognition_disabled';
 
   _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ... ✍ ...';
   _NOTULEN_MSG_RECORDNUMBER = '\nini notulen ke %d';
   _NOTULEN_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
+  _NOTULEN_MSG_NOTPERMITTED = 'Sepertinya anda belum masuk sebagai admin';
   _NOTULEN_MSG_SECRET = 'rahasia ...';
   _NOTULEN_MSG_NORECORDING = 'saat ini tidak ada yang dicatat di sini.';
   _NOTULEN_MSG_RECORDING = 'Sekarang sedang mencatat diskusi:';
@@ -206,7 +213,7 @@ begin
 
   FRecordNumber := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
 
-  filePath := Telegram.GetFile(FileID);
+  filePath := Telegram.GetFileURL(FileID);
   targetFile := getDirPath(FRecordNumber) + filePath;
   if Telegram.DownloadFile(filePath, targetFile) then
   begin
@@ -348,6 +355,21 @@ begin
   Result := 'Baik, topik saat ini *"' + ucwords(_topic) + '"*';
 end;
 
+function TNotulenController.SendHandler(const IntentName: string;
+  Params: TStrings): string;
+begin
+  Result := _NOTULEN_MSG_NOTPERMITTED;
+  if FGroupName = '' then
+    Exit;
+  if not IsPermitted then
+    Exit;
+
+  if Send then
+  begin
+    Result := 'terkirim ...';
+  end;
+end;
+
 function TNotulenController.Start: boolean;
 var
   i: integer;
@@ -401,7 +423,7 @@ begin
   fileName := dir + 'index' + _NOTULEN_FILE_EXTENSION;
   if not FileExists(fileName) then
   begin
-    _topic := FData.ReadString(FGroupName, _NOTULEN_TOPIC,'');
+    _topic := FData.ReadString(FGroupName, _NOTULEN_TOPIC, '');
     if _topic = '' then
       _topic := '%topic%';
     s := _NOTULEN_HTML_STYLE + #13'<h1>' + FGroupName + ' #' +
@@ -423,6 +445,22 @@ begin
   FData.WriteString(FGroupName, _NOTULEN_RECORDING, '0');
   FData.WriteString(FGroupName, _NOTULEN_TOPIC, '');
   Result := True;
+end;
+
+function TNotulenController.Send: boolean;
+var
+  _mail: TMailer;
+begin
+  Result := False;
+  _mail := TMailer.Create(); // TODO: sent email
+
+  _mail.AddTo('me', 'luri@kioss.com');
+  _mail.Message.Add('test');
+
+  // ... ...
+
+  Result := _mail.Send;
+  _mail.Free;
 end;
 
 procedure TNotulenController.RecordTelegramMessage(Message: string);
@@ -523,6 +561,19 @@ begin
   Result := False;
   if FData.ReadString(FGroupName, _NOTULEN_DISABLE, '0') = '1' then
     Result := True;
+end;
+
+function TNotulenController.IsImageRecognitionDisabled: boolean;
+begin
+  Result := FData.ReadBool(FGroupName, _NOTULEN_IMAGERECOGNITION_DISABLED, False);
+end;
+
+procedure TNotulenController.ImageRecognitionCounting;
+var
+  i: integer;
+begin
+  i := FData.ReadInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, 0) + 1;
+  FData.WriteInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, i);
 end;
 
 end.
