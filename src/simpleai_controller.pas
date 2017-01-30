@@ -17,10 +17,9 @@ uses
   IniFiles, Classes, SysUtils;
 
 const
-  _AI_NAME = 'RockBot';
-  _AI_ACTION_SEPARATOR = '|';
+  _AI_NAME = 'CarikBot';
   _AI_COUNT__MINIMAL_ASKNAME = 5;
-
+  _AI_ACTION_SEPARATOR = '|';
 
 type
 
@@ -92,6 +91,9 @@ implementation
 
 const
   _BASEDIR = 'files/';
+
+  // command
+  _AI_CMD_OPENFILE = 'file';
 
 var
   NamaHari: TWeekNameArray = ('Minggu', 'Senin', 'Selasa', 'Rabu',
@@ -222,10 +224,12 @@ begin
   Result := Msg;
   lst := Explode(Msg, ':');
   case lst[0] of
-    'file':
+    _AI_CMD_OPENFILE:
     begin
       s := trim(_BASEDIR + lst[1]);
       Result := openFile( s);
+      if Result = '' then
+        Result := Msg;
     end;
   end;
 
@@ -236,7 +240,7 @@ function TSimpleAI.openFile(FileName: string): string;
 var
   _note : TStringList;
 begin
-  Result := 'file/data tidak ditemukan';
+  Result := '';
   if FileExists( FileName) then
   begin
     _note := TStringList.Create;
@@ -341,7 +345,7 @@ begin
   if not AutoResponse then
     Exit;
 
-  FRequestText := Text;
+  FRequestText := Text;        // TODO: remove tanda baca, disertai opsi remove atau tidak
   if Result then
   begin
     FResponseText.Add(GetResponse(IntentName, Action, ''));

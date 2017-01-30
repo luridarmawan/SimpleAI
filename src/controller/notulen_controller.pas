@@ -53,6 +53,7 @@ type
     FData: TIniFile;
     FRecordNumber: integer;
     FUserName: string;
+    function getIsPermiited: boolean;
     function getIsRecording: boolean;
     function SaveToFile(Text: string): boolean;
     function SaveToFileCSV(Text: string): boolean;
@@ -81,6 +82,7 @@ type
     property Recording: boolean read getIsRecording;
     property RecordNumber: integer read FRecordNumber;
     property IsGroup: boolean read FIsGroup write FIsGroup;
+    property IsPermitted: boolean read getIsPermiited;
   end;
 
 
@@ -123,6 +125,20 @@ function TNotulenController.getIsRecording: boolean;
 begin
   Result := False;
   if FData.ReadString(FGroupName, _NOTULEN_RECORDING, '0') = '1' then
+    Result := True;
+end;
+
+function TNotulenController.getIsPermiited: boolean;
+var
+  s, _admin: string;
+begin
+  Result := False;
+  s := 'carik/groups/' + FGroupName + '/admin';
+  _admin := Config[s];
+  if _admin = '' then
+    _admin := _NOTULEN_SUPERADMIN;
+
+  if pos(FUserName, _admin) > 0 then
     Result := True;
 end;
 
@@ -238,19 +254,12 @@ end;
 
 function TNotulenController.StartHandler(const IntentName: string;
   Params: TStrings): string;
-var
-  s, _admin: string;
 begin
   Result := _NOTULEN_MSG_CANNOT_START;
-  LogUtil.Add('-prepare:' + FGroupName, 'carik');
   if FGroupName = '' then
     Exit;
-  s := 'carik/groups/' + FGroupName + '/admin';
-  _admin := Config[s];
-  if _admin = '' then
-    _admin := _NOTULEN_SUPERADMIN;
 
-  if pos(FUserName, _admin) = 0 then
+  if not IsPermitted then
     Exit;
 
   LogUtil.Add('starting ... ', 'carik');
@@ -267,15 +276,9 @@ end;
 
 function TNotulenController.StopHandler(const IntentName: string;
   Params: TStrings): string;
-var
-  s, _admin: string;
 begin
   Result := '';
-  s := 'carik/groups/' + FGroupName + '/admin';
-  _admin := Config[s];
-  if _admin = '' then
-    _admin := _NOTULEN_SUPERADMIN;
-  if pos(FUserName, _admin) = 0 then
+  if not IsPermitted then
     Exit;
   Stop;
   Result := '... catetan sudah dihentikan.';
@@ -285,16 +288,12 @@ function TNotulenController.CheckHandler(const IntentName: string;
   Params: TStrings): string;
 var
   i, _recordStatus, _recordNumber: integer;
-  s, _admin, _recordName, _groupName, _groupTopic: string;
+  s, _recordName, _groupName, _groupTopic: string;
   lst: TStringList;
 begin
   Result := _NOTULEN_MSG_SECRET;
 
-  s := 'carik/groups/' + FGroupName + '/admin';
-  _admin := Config[s];
-  if _admin = '' then
-    _admin := _NOTULEN_SUPERADMIN;
-  if pos(FUserName, _admin) = 0 then
+  if not IsPermitted then
     Exit;
 
   lst := TStringList.Create;
@@ -333,15 +332,11 @@ end;
 function TNotulenController.TopicHandler(const IntentName: string;
   Params: TStrings): string;
 var
-  s, _admin, _topic: string;
+  _topic: string;
 begin
   Result := '';
 
-  s := 'carik/groups/' + FGroupName + '/admin';
-  _admin := Config[s];
-  if _admin = '' then
-    _admin := _NOTULEN_SUPERADMIN;
-  if pos(FUserName, _admin) = 0 then
+  if not IsPermitted then
     Exit;
 
   _topic := Params.Values['topic_value'];
@@ -494,16 +489,12 @@ begin
 end;
 
 function TNotulenController.EnableBot: boolean;
-var
-  s, _admin: string;
 begin
   Result := False;
   if FGroupName = '' then
     Exit;
-  s := 'carik/groups/' + FGroupName + '/admin';
-  _admin := Config[s];
-  if _admin = '' then
-    _admin := _NOTULEN_SUPERADMIN;
+  if not IsPermitted then
+    Exit;
 
   FData.WriteString(FGroupName, _NOTULEN_DISABLE, '0');
   Result := True;
@@ -516,10 +507,8 @@ begin
   Result := False;
   if FGroupName = '' then
     Exit;
-  s := 'carik/groups/' + FGroupName + '/admin';
-  _admin := Config[s];
-  if _admin = '' then
-    _admin := _NOTULEN_SUPERADMIN;
+  if not IsPermitted then
+    Exit;
 
   FData.WriteString(FGroupName, _NOTULEN_DISABLE, '1');
   Result := True;

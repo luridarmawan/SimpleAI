@@ -49,45 +49,6 @@ uses
 const
   _AI_BOTNAME_DEFAULT = 'bot';
   _AI_CONFIG_NAME = 'ai/default/name';
-  _AI_CONFIG_BASEDIR = 'ai/default/basedir';
-  _AI_CONFIG_ENTITIES = 'ai/default/entities';
-  _AI_CONFIG_INTENTS = 'ai/default/intents';
-  _AI_CONFIG_RESPONSE = 'ai/default/response';
-  _AI_CONFIG_DEBUG = 'ai/default/debug';
-  _AI_CONFIG_DATASOURCE = 'ai/default/datasource';
-  _AI_DATASOURCE_REDIS = 'redis';
-  _AI_DATASOURCE_FILE = 'file';
-  _AI_RESPONSE_INTRODUCTION = 'introduction';
-  _AI_RESPONSE_FIRSTSESSION = 'firstsession';
-  _AI_RESPONSE_ABOUTME = 'aboutme';
-  _AI_RESPONSE_SECONDSESSION = 'secondsession';
-
-  _AI_ACTION_SEPARATOR = '|';
-
-  _AL_LOG_LEARN = 'learn';
-  _AI_SESSION_VISITED = 'AI_VISITED';
-  _AI_SESSION_LASTVISIT = 'AI_VISITLAST';
-  _AI_SESSION_LASTACTION = 'AI_ACTIONLAST';
-  _AI_SESSION_MESSAGECOUNT = 'AI_MESSAGECOUNT';
-  //_AI_MESSAGEWAITINGLIMIT = 'AI_MESSAGEWAITINGLIMIT';
-
-  _AI_SESSION_ASK_INTENT = 'AI_ASK_INTENT';
-  _AI_SESSION_ASK_KEY = 'AI_ASK_KEY';
-  _AI_SESSION_ASK_VAR = 'AI_ASK_VAR';
-  _AI_SESSION_ASK_COUNTDOWN = 'AI_ASK_COUNTDOWN';
-  _AI_ASK_NAME = 'TanyaNama';
-  _AI_ASK_EMAIL = 'TanyaEmail';
-  _AI_ASK_COUNTDOWN = 'askCount';
-
-  _AI_DEFINE = 'define';
-  _AI_MATH = 'math';
-  _AI_SESSION_USER = 'AI_USER_';
-  _AI_VARKEY = 'varkey';
-  _AI_OBJECT = 'OBJECT';
-  _AI_OBJECT_DATE = 'OBJECT_DATE';
-
-  _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
-  _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
 
 type
 
@@ -191,6 +152,45 @@ uses
 const
   REGEX_EQUATION =
     '^[cos|sin|tan|tangen|sqr|sqrt|log|ln|sec|cosec|arctan|abs|exp|frac|int|round|trunc|shl|shr|ifs|iff|ifd|ifi|0-9*+ ().,-/:]+$';
+
+  _AI_CONFIG_BASEDIR = 'ai/default/basedir';
+  _AI_CONFIG_ENTITIES = 'ai/default/entities';
+  _AI_CONFIG_INTENTS = 'ai/default/intents';
+  _AI_CONFIG_RESPONSE = 'ai/default/response';
+  _AI_CONFIG_DEBUG = 'ai/default/debug';
+  _AI_CONFIG_DATASOURCE = 'ai/default/datasource';
+
+  _AI_DATASOURCE_REDIS = 'redis';
+  _AI_DATASOURCE_FILE = 'file';
+  _AI_RESPONSE_INTRODUCTION = 'introduction';
+  _AI_RESPONSE_FIRSTSESSION = 'firstsession';
+  _AI_RESPONSE_ABOUTME = 'aboutme';
+  _AI_RESPONSE_SECONDSESSION = 'secondsession';
+
+  _AL_LOG_LEARN = 'learn';
+  _AI_SESSION_VISITED = 'AI_VISITED';
+  _AI_SESSION_LASTVISIT = 'AI_VISITLAST';
+  _AI_SESSION_LASTACTION = 'AI_ACTIONLAST';
+  _AI_SESSION_MESSAGECOUNT = 'AI_MESSAGECOUNT';
+  //_AI_MESSAGEWAITINGLIMIT = 'AI_MESSAGEWAITINGLIMIT';
+
+  _AI_SESSION_ASK_INTENT = 'AI_ASK_INTENT';
+  _AI_SESSION_ASK_KEY = 'AI_ASK_KEY';
+  _AI_SESSION_ASK_VAR = 'AI_ASK_VAR';
+  _AI_SESSION_ASK_COUNTDOWN = 'AI_ASK_COUNTDOWN';
+  _AI_ASK_NAME = 'TanyaNama';
+  _AI_ASK_EMAIL = 'TanyaEmail';
+  _AI_ASK_COUNTDOWN = 'askCount';
+
+  _AI_DEFINE = 'define';
+  _AI_MATH = 'math';
+  _AI_SESSION_USER = 'AI_USER_';
+  _AI_VARKEY = 'varkey';
+  _AI_OBJECT = 'OBJECT';
+  _AI_OBJECT_DATE = 'OBJECT_DATE';
+
+  _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
+  _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
 
 constructor TSimpleBotModule.Create;
 begin
