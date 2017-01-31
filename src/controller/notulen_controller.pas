@@ -483,7 +483,21 @@ begin
 
   // photo
   try
-    photo := jsonData.GetPath('message.photo[2].file_id').AsString;
+    try
+      photo := jsonData.GetPath('message.photo[2].file_id').AsString;
+    except
+      try
+        photo := jsonData.GetPath('message.photo[1].file_id').AsString;
+      except
+        try
+          photo := jsonData.GetPath('message.photo[0].file_id').AsString;
+        except
+          on e:Exception do
+          begin
+          end;
+        end;
+      end;
+    end;
     Caption := jsonData.GetPath('message.caption').AsString;
   except
   end;
