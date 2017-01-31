@@ -20,6 +20,7 @@ const
   _AI_NAME = 'CarikBot';
   _AI_COUNT__MINIMAL_ASKNAME = 5;
   _AI_ACTION_SEPARATOR = '|';
+  _AI_CMD_OPENFILE = 'file';
 
 type
 
@@ -94,8 +95,7 @@ implementation
 const
   _BASEDIR = 'files/';
 
-  // command
-  _AI_CMD_OPENFILE = 'file';
+// command
 
 var
   NamaHari: TWeekNameArray = ('Minggu', 'Senin', 'Selasa', 'Rabu',
@@ -243,10 +243,10 @@ var
   _note: TStringList;
 begin
   Result := '';
-  if FileExists(FileName) then
+  if FileExists(trim(FileName)) then
   begin
     _note := TStringList.Create;
-    _note.LoadFromFile(FileName);
+    _note.LoadFromFile(trim(FileName));
     Result := _note.Text;
     Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
     Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);

@@ -34,6 +34,7 @@ interface
 
 uses
   common, fastplaz_handler, telegram_integration, logutil_lib, mailer_lib,
+  simpleai_controller,
   IniFiles, fpjson,
   Classes, SysUtils;
 
@@ -62,6 +63,7 @@ type
     function downloadFile(FileID: string): string;
     procedure setGroupName(AValue: string);
     procedure setPath(AValue: string);
+    function openFile(FileName: string): string;
   public
     constructor Create;
     destructor Destroy;
@@ -89,6 +91,9 @@ type
     property RecordNumber: integer read FRecordNumber;
     property IsGroup: boolean read FIsGroup write FIsGroup;
     property IsPermitted: boolean read getIsPermiited;
+
+    function IsCommand(Text: string): boolean;
+    function ExecCommand(Text: string): string;
   end;
 
 
@@ -98,6 +103,7 @@ const
   _NOTULEN_CONFIG_GROUPS = 'carik/groups/';
   _NOTULEN_CONFIG_PATH = 'carik/path';
   _NOTULEN_PATH_DEFAULT = 'files/carik/';
+  _NOTULEN_PATH_DOCS = 'docs/%s/';
   _NOTULEN_DATA_FILE = 'carik.dat';
   _NOTULEN_FILE_EXTENSION = '.html';
   _NOTULEN_NAME = 'name';
@@ -240,6 +246,27 @@ begin
     Exit;
   FPath := AValue;
   FReady := DirectoryIsWritable(AValue);
+end;
+
+function TNotulenController.openFile(FileName: string): string;
+var
+  _note: TStringList;
+begin
+  Result := '';
+  if FileExists(trim(FileName)) then
+  begin
+    _note := TStringList.Create;
+    try
+      _note.LoadFromFile(trim(FileName));
+      Result := _note.Text;
+      Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
+      Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
+    except
+      on E:Exception do
+        Result := E.Message;
+    end;
+    _note.Free;
+  end;
 end;
 
 constructor TNotulenController.Create;
@@ -492,7 +519,7 @@ begin
         try
           photo := jsonData.GetPath('message.photo[0].file_id').AsString;
         except
-          on e:Exception do
+          on e: Exception do
           begin
           end;
         end;
@@ -588,6 +615,35 @@ var
 begin
   i := FData.ReadInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, 0) + 1;
   FData.WriteInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, i);
+end;
+
+function TNotulenController.IsCommand(Text: string): boolean;
+begin
+  Result := False;
+  if Pos(':', Text) > 0 then
+    Result := True;
+end;
+
+function TNotulenController.ExecCommand(Text: string): string;
+var
+  s, _dir: string;
+  lst: TStrings;
+begin
+  Result := '';
+
+  _dir := _NOTULEN_PATH_DEFAULT + _NOTULEN_PATH_DOCS;
+  _dir := Format(_dir, [FGroupName]);
+
+  lst := Explode(Text, ':');
+  case lst[0] of
+    _AI_CMD_OPENFILE:
+    begin
+      s := _dir + lst[1];
+      Result := openFile(s);
+    end;
+  end;
+
+  lst.Free;
 end;
 
 end.
