@@ -232,6 +232,7 @@ begin
       Result := openFile(s);
       if Result = '' then
         Result := Msg;
+      Result := StringReplacement( Result);
     end;
   end;
 

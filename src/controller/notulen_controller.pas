@@ -35,7 +35,7 @@ interface
 uses
   common, fastplaz_handler, telegram_integration, logutil_lib, mailer_lib,
   simpleai_controller,
-  IniFiles, fpjson,
+  IniFiles, fpjson, strutils,
   Classes, SysUtils;
 
 type
@@ -64,6 +64,7 @@ type
     procedure setGroupName(AValue: string);
     procedure setPath(AValue: string);
     function openFile(FileName: string): string;
+    function isValidCommand(CommandString: string): boolean;
   public
     constructor Create;
     destructor Destroy;
@@ -94,6 +95,9 @@ type
 
     function IsCommand(Text: string): boolean;
     function ExecCommand(Text: string): string;
+
+    function AdminAdd(ValidUserName: string): boolean;
+    function AdminDel(ValidUserName: string): boolean;
   end;
 
 
@@ -112,6 +116,7 @@ const
   _NOTULEN_COUNT = 'count';
   _NOTULEN_TOPIC = 'topic';
   _NOTULEN_DIR_PREFIX = 'group-';
+  _NOTULEN_ADMIN_PREFIX = 'admin-';
   _NOTULEN_IMAGERECOGNITION_COUNTING = 'image_recognition';
   _NOTULEN_IMAGERECOGNITION_DISABLED = 'image_recognition_disabled';
 
@@ -154,6 +159,9 @@ begin
     _admin := _NOTULEN_SUPERADMIN;
 
   if pos(FUserName, _admin) > 0 then
+    Result := True;
+
+  if FData.ReadInteger(FGroupName, _NOTULEN_ADMIN_PREFIX+FUserName,0) > 0 then
     Result := True;
 end;
 
@@ -262,8 +270,9 @@ begin
       Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
       Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
     except
-      on E:Exception do
-        Result := E.Message;
+      on E: Exception do
+      begin
+      end;
     end;
     _note.Free;
   end;
@@ -617,10 +626,22 @@ begin
   FData.WriteInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, i);
 end;
 
-function TNotulenController.IsCommand(Text: string): boolean;
+function TNotulenController.isValidCommand(CommandString: string): boolean;
 begin
   Result := False;
-  if Pos(':', Text) > 0 then
+  if trim(CommandString) = 'file' then  // only 1 command :D
+    Result := True;
+end;
+
+function TNotulenController.IsCommand(Text: string): boolean;
+var
+  lst: TStrings;
+begin
+  Result := False;
+  lst := Explode(Text, ':');
+  if lst.Count = 1 then
+    Exit;
+  if isValidCommand(lst[0]) then
     Result := True;
 end;
 
@@ -638,12 +659,43 @@ begin
   case lst[0] of
     _AI_CMD_OPENFILE:
     begin
-      s := _dir + lst[1];
+      s := trim(_dir + lst[1]);
       Result := openFile(s);
     end;
   end;
 
   lst.Free;
+end;
+
+function TNotulenController.AdminAdd(ValidUserName: string): boolean;
+begin
+  Result := False;
+  if FGroupName = '' then
+    Exit;
+  if not IsPermitted then
+    Exit;
+  if ValidUserName = '' then
+    Exit;
+  ValidUserName:= StringReplace( ValidUserName, '@', '', [rfReplaceAll]);
+
+  FData.WriteInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName, 1);
+  Result := True;
+end;
+
+function TNotulenController.AdminDel(ValidUserName: string): boolean;
+begin
+  Result := False;
+  if FGroupName = '' then
+    Exit;
+  if not IsPermitted then
+    Exit;
+  if ValidUserName = '' then
+    Exit;
+  ValidUserName:= StringReplace( ValidUserName, '@', '', [rfReplaceAll]);
+
+  //Fdata.DeleteKey(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName);
+  FData.WriteInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName, 0);
+  Result := True;
 end;
 
 end.
