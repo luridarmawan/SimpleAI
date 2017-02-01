@@ -66,6 +66,8 @@ type
     procedure setPath(AValue: string);
     function openFile(FileName: string): string;
     function isValidCommand(CommandString: string): boolean;
+    function getGroupInfo(GroupNameID: string): string;
+    function getGroupAdminList(GroupNameID: string): string;
   public
     constructor Create;
     destructor Destroy;
@@ -100,6 +102,7 @@ type
 
     function AdminAdd(ValidUserName: string): boolean;
     function AdminDel(ValidUserName: string): boolean;
+    function GroupInfo: string;
   end;
 
 
@@ -164,7 +167,7 @@ begin
   if pos(FUserName, _admin) > 0 then
     Result := True;
 
-  if FData.ReadInteger(FGroupName, _NOTULEN_ADMIN_PREFIX+FUserName,0) > 0 then
+  if FData.ReadInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + FUserName, 0) > 0 then
     Result := True;
 end;
 
@@ -681,7 +684,7 @@ begin
     Exit;
   if ValidUserName = '' then
     Exit;
-  ValidUserName:= StringReplace( ValidUserName, '@', '', [rfReplaceAll]);
+  ValidUserName := StringReplace(ValidUserName, '@', '', [rfReplaceAll]);
 
   FData.WriteInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName, 1);
   Result := True;
@@ -696,11 +699,86 @@ begin
     Exit;
   if ValidUserName = '' then
     Exit;
-  ValidUserName:= StringReplace( ValidUserName, '@', '', [rfReplaceAll]);
+  ValidUserName := StringReplace(ValidUserName, '@', '', [rfReplaceAll]);
 
   //Fdata.DeleteKey(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName);
   FData.WriteInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName, 0);
   Result := True;
+end;
+
+function TNotulenController.getGroupInfo(GroupNameID: string): string;
+var
+  s: string;
+begin
+  s := FData.ReadString(GroupNameID, 'name', '');
+  if s = '' then
+    s := GroupNameID;
+  Result := '*' + s + '*';
+
+  s := '';
+  if FData.ReadString(GroupNameID, _NOTULEN_DISABLE, '0') = '1' then
+    s := s + ' disabled';
+  if FData.ReadString(GroupNameID, _NOTULEN_RECORDING, '0') = '1' then
+    s := s + ' recording(' + FData.ReadString(GroupNameID, _NOTULEN_COUNT, '0') + ')';
+  if FData.ReadString(GroupNameID, _NOTULEN_IMAGERECOGNITION_COUNTING, '0') <> '0' then
+    s := s + ' img(' + FData.ReadString(GroupNameID,
+      _NOTULEN_IMAGERECOGNITION_COUNTING, '0') + ')';
+
+  if s <> '' then
+    Result := Result + '\n-' + s;
+
+  s := getGroupAdminList(GroupNameID);
+  if s <> '' then
+    Result := Result + '\n- admin: ' + s;
+end;
+
+function TNotulenController.getGroupAdminList(GroupNameID: string): string;
+var
+  i: integer;
+  s: string;
+  lst: TStrings;
+begin
+  Result := '';
+  lst := TStringList.Create;
+
+  FData.ReadSectionValues(GroupNameID, lst);
+  s := '';
+  for i := 0 to lst.Count - 1 do
+  begin
+    if Pos('admin-', lst[i]) > 0 then
+    begin
+      s := copy(lst[i], 7);
+      s := copy(s, 1, pos('=', s) - 1);
+      Result := Result + ' ' + s;
+    end;
+  end;
+
+  Result := trim(Result);
+  lst.Free;
+end;
+
+
+function TNotulenController.GroupInfo: string;
+var
+  i: integer;
+  s: string;
+  lst, return: TStrings;
+begin
+  if FUserName <> _NOTULEN_SUPERADMIN then
+    Exit;
+  lst := TStringList.Create;
+  return := TStringList.Create;
+
+  FData.ReadSections(lst);
+
+  for i := 0 to lst.Count - 1 do
+  begin
+    return.Add(getGroupInfo(lst[i]));
+  end;
+
+  Result := StringReplace(return.Text, #10, '\n', [rfReplaceAll]);
+  return.Free;
+  lst.Free;
 end;
 
 end.
