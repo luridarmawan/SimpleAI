@@ -9,7 +9,7 @@ interface
 uses
   simplebot_controller, simpleairedis_controller, suggestion_controller, 
   domainwhois_controller, kamus_controller, notulen_controller, 
-  movie_controller, LazarusPackageIntf;
+  movie_controller, jadwalsholat_controller, LazarusPackageIntf;
 
 implementation
 

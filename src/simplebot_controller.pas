@@ -614,10 +614,13 @@ begin
   s := getSession(_AI_SESSION_VISITED);
   if s = '' then
   begin
-    s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '', _AI_RESPONSE_FIRSTSESSION);
-    s := s + SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
-      _AI_RESPONSE_ABOUTME);
-    SimpleAI.SuffixText := s;
+    if FFirstSessionResponse then
+    begin
+      s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '', _AI_RESPONSE_FIRSTSESSION);
+      s := s + SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
+        _AI_RESPONSE_ABOUTME);
+      SimpleAI.SuffixText := s;
+    end;;
     //SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_VISITED, '1');
     setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));

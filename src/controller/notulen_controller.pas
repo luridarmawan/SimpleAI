@@ -46,6 +46,7 @@ type
   private
     DataFile: TextFile;
     FFullName: string;
+    FGroupChatID: string;
     FIsGroup: boolean;
     Telegram: TTelegramIntegration;
     FGroupName: string;
@@ -88,6 +89,7 @@ type
     property UserName: string read FUserName write FUserName;
     property FullName: string read FFullName write FFullName;
     property GroupName: string read FGroupName write setGroupName;
+    property GroupChatID: string read FGroupChatID write FGroupChatID;
     property Recording: boolean read getIsRecording;
     property RecordNumber: integer read FRecordNumber;
     property IsGroup: boolean read FIsGroup write FIsGroup;
@@ -115,6 +117,7 @@ const
   _NOTULEN_RECORDING = 'recording';
   _NOTULEN_COUNT = 'count';
   _NOTULEN_TOPIC = 'topic';
+  _NOTULEN_GROUP_ID = 'id';
   _NOTULEN_DIR_PREFIX = 'group-';
   _NOTULEN_ADMIN_PREFIX = 'admin-';
   _NOTULEN_IMAGERECOGNITION_COUNTING = 'image_recognition';
@@ -387,6 +390,7 @@ begin
   _topic := Params.Values['topic_value'];
   _topic := StringReplace(_topic, '"', '', [rfReplaceAll]);
   FData.WriteString(FGroupName, _NOTULEN_TOPIC, _topic);
+  FData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
 
   Result := 'Baik, topik saat ini *"' + ucwords(_topic) + '"*';
 end;
@@ -436,6 +440,7 @@ begin
   i := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0) + 1;
   FRecordNumber := i;
   FData.WriteString(FGroupName, _NOTULEN_NAME, FGroupNameOri);
+  FData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
   FData.WriteString(FGroupName, _NOTULEN_RECORDING, '1');
   FData.WriteInteger(FGroupName, _NOTULEN_COUNT, i);
 

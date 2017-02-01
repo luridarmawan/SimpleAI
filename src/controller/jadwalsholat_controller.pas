@@ -78,7 +78,7 @@ begin
     s := _JADWALSHOLAT_DEFAULT_CITY;
   httpClient.URL := StringReplace(_JADWALSHOLAT_LAMPUMIMPI_URL, '%city', s,
     [rfReplaceAll]);
-  httpClient.URL := StringReplace(httpClient.URL, '%day', i2s(Day), [rfReplaceAll]);
+  httpClient.URL := StringReplace(httpClient.URL, '%day', format( '%.2d', [Day]), [rfReplaceAll]);
 
   Response := httpClient.Get;
   httpClient.Free;
