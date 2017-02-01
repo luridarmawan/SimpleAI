@@ -708,28 +708,37 @@ end;
 
 function TNotulenController.getGroupInfo(GroupNameID: string): string;
 var
-  s: string;
+  s, _groupname, _topic: string;
 begin
-  s := FData.ReadString(GroupNameID, 'name', '');
-  if s = '' then
-    s := GroupNameID;
-  Result := '*' + s + '*';
+  _groupname := FData.ReadString(GroupNameID, 'name', '');
+  if _groupname = '' then
+    _groupname := GroupNameID;
 
   s := '';
-  if FData.ReadString(GroupNameID, _NOTULEN_DISABLE, '0') = '1' then
-    s := s + ' disabled';
+  if FData.ReadString(GroupNameID, _NOTULEN_DISABLE, '0') = '0' then
+    Result := '*' + _groupname + '*'
+  else
+    Result := '' + _groupname + '';
+
+  s := '';
   if FData.ReadString(GroupNameID, _NOTULEN_RECORDING, '0') = '1' then
-    s := s + ' recording(' + FData.ReadString(GroupNameID, _NOTULEN_COUNT, '0') + ')';
+  begin
+    s := ' recording(' + FData.ReadString(GroupNameID, _NOTULEN_COUNT, '0') + ')';
+    if FData.ReadString(GroupNameID, _NOTULEN_TOPIC, '') <> '' then
+      s := s + '\n- topic: ' + FData.ReadString(GroupNameID, _NOTULEN_TOPIC, '');
+  end;
+  Result := Result + s;
+
+  {
   if FData.ReadString(GroupNameID, _NOTULEN_IMAGERECOGNITION_COUNTING, '0') <> '0' then
     s := s + ' img(' + FData.ReadString(GroupNameID,
       _NOTULEN_IMAGERECOGNITION_COUNTING, '0') + ')';
-
-  if s <> '' then
-    Result := Result + '\n-' + s;
+  }
 
   s := getGroupAdminList(GroupNameID);
   if s <> '' then
-    Result := Result + '\n- admin: ' + s;
+    Result := Result + '\n- lurah: ' + s;
+  Result := Result + '\n';
 end;
 
 function TNotulenController.getGroupAdminList(GroupNameID: string): string;
@@ -773,10 +782,17 @@ begin
 
   for i := 0 to lst.Count - 1 do
   begin
-    return.Add(getGroupInfo(lst[i]));
+    if FGroupName <> '' then
+    begin
+      if lst[i] = FGroupName then
+        return.Add(getGroupInfo(lst[i]));
+    end
+    else
+      return.Add(getGroupInfo(lst[i]));
   end;
 
-  Result := StringReplace(return.Text, #10, '\n', [rfReplaceAll]);
+  Result := StringReplace(return.Text, #13, '\n', [rfReplaceAll]);
+  Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
   return.Free;
   lst.Free;
 end;
