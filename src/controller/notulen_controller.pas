@@ -48,6 +48,7 @@ type
     FFullName: string;
     FGroupChatID: string;
     FIsGroup: boolean;
+    FUserID: string;
     Telegram: TTelegramIntegration;
     FGroupName: string;
     FGroupNameOri: string;
@@ -88,6 +89,7 @@ type
 
     property Ready: boolean read FReady;
     property Path: string read FPath write setPath;
+    property UserID: string read FUserID write FUserID;
     property UserName: string read FUserName write FUserName;
     property FullName: string read FFullName write FFullName;
     property GroupName: string read FGroupName write setGroupName;
@@ -103,6 +105,7 @@ type
     function AdminAdd(ValidUserName: string): boolean;
     function AdminDel(ValidUserName: string): boolean;
     function GroupInfo: string;
+    procedure Invited;
   end;
 
 
@@ -120,6 +123,10 @@ const
   _NOTULEN_RECORDING = 'recording';
   _NOTULEN_COUNT = 'count';
   _NOTULEN_TOPIC = 'topic';
+  _NOTULEN_INVITEDBY_ID = 'invitedby_id';
+  _NOTULEN_INVITEDBY_NAME = 'invitedby_name';
+  _NOTULEN_INVITEDBY_USERNAME = 'invitedby_username';
+  _NOTULEN_INVITEDBY_DATE = 'invitedby_date';
   _NOTULEN_GROUP_ID = 'id';
   _NOTULEN_DIR_PREFIX = 'group-';
   _NOTULEN_ADMIN_PREFIX = 'admin-';
@@ -797,6 +804,16 @@ begin
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
   return.Free;
   lst.Free;
+end;
+
+procedure TNotulenController.Invited;
+begin
+  FData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
+  FData.WriteString(FGroupName, _NOTULEN_INVITEDBY_ID, FUserID);
+  FData.WriteString(FGroupName, _NOTULEN_INVITEDBY_NAME, FFullName);
+  FData.WriteString(FGroupName, _NOTULEN_INVITEDBY_USERNAME, FUserName);
+  FData.WriteString(FGroupName, _NOTULEN_INVITEDBY_DATE,
+    FormatDateTime('yyyy/mm/dd hh:nn', now));
 end;
 
 end.
