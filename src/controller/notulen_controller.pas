@@ -646,6 +646,8 @@ var
   lst: TStrings;
 begin
   Result := False;
+  if Text = '' then
+    Exit;
   lst := Explode(Text, ':');
   if lst.Count = 1 then
     Exit;

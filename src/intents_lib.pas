@@ -12,7 +12,7 @@ unit intents_lib;
 interface
 
 uses
-  common,
+  common, logutil_lib,
   entities_lib,
   RegExpr, IniFiles, Classes, SysUtils;
 
