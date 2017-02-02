@@ -35,8 +35,7 @@ interface
 uses
   common, fastplaz_handler, telegram_integration, logutil_lib, mailer_lib,
   simpleai_controller,
-  IniFiles, fpjson, strutils,
-  Classes, SysUtils;
+  IniFiles, fpjson, Classes, SysUtils;
 
 type
 
@@ -554,6 +553,7 @@ begin
   end;
 
   // document
+  _mime := '';
   try
     _doc := jsonData.GetPath('message.document.file_id').AsString;
     _mime := jsonData.GetPath('message.document.mime_type').AsString;
@@ -608,8 +608,6 @@ begin
 end;
 
 function TNotulenController.DisableBot: boolean;
-var
-  s, _admin: string;
 begin
   Result := False;
   if FGroupName = '' then
