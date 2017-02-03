@@ -54,6 +54,7 @@ type
     FPath: string;
     FReady: boolean;
     FData: TIniFile;
+    FGroupData: TIniFile;
     FRecordNumber: integer;
     FUserName: string;
     function getIsPermiited: boolean;
@@ -61,6 +62,7 @@ type
     function SaveToFile(Text: string): boolean;
     function SaveToFileCSV(Text: string): boolean;
     function getDirPath(IndexRecording: integer): string;
+    function getSafeGroupName(AGroupChatID: string): string;
     function downloadFile(FileID: string): string;
     procedure setGroupName(AValue: string);
     procedure setPath(AValue: string);
@@ -116,6 +118,7 @@ const
   _NOTULEN_PATH_DEFAULT = 'files/carik/';
   _NOTULEN_PATH_DOCS = 'docs/%s/';
   _NOTULEN_DATA_FILE = 'carik.dat';
+  _NOTULEN_GROUP_DATA_FILE = 'carik-group.dat';
   _NOTULEN_FILE_EXTENSION = '.html';
   _NOTULEN_NAME = 'name';
   _NOTULEN_DISABLE = 'disable';
@@ -131,6 +134,8 @@ const
   _NOTULEN_ADMIN_PREFIX = 'admin-';
   _NOTULEN_IMAGERECOGNITION_COUNTING = 'image_recognition';
   _NOTULEN_IMAGERECOGNITION_DISABLED = 'image_recognition_disabled';
+
+  _NOTULEN_SECTION_GROUP_LIST = 'GroupList';
 
   _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ... ✍ ...';
   _NOTULEN_MSG_RECORDNUMBER = '\nini notulen ke %d';
@@ -156,7 +161,7 @@ const
 function TNotulenController.getIsRecording: boolean;
 begin
   Result := False;
-  if FData.ReadString(FGroupName, _NOTULEN_RECORDING, '0') = '1' then
+  if FGroupData.ReadString(FGroupName, _NOTULEN_RECORDING, '0') = '1' then
     Result := True;
 end;
 
@@ -173,7 +178,7 @@ begin
   if pos(FUserName, _admin) > 0 then
     Result := True;
 
-  if FData.ReadInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + FUserName, 0) > 0 then
+  if FGroupData.ReadInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + FUserName, 0) > 0 then
     Result := True;
 end;
 
@@ -182,7 +187,7 @@ var
   i: integer;
   fileName, dir: string;
 begin
-  i := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
+  i := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
   dir := getDirPath(i);
   fileName := dir + 'index' + _NOTULEN_FILE_EXTENSION;
 
@@ -204,7 +209,7 @@ var
   i: integer;
   fileName, dir: string;
 begin
-  i := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
+  i := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
   dir := getDirPath(i);
   fileName := dir + LowerCase(FGroupName) + '.csv';
 
@@ -222,9 +227,17 @@ begin
 end;
 
 function TNotulenController.getDirPath(IndexRecording: integer): string;
+var
+  _safeNAme: string;
 begin
-  Result := FPath + FGroupName + DirectorySeparator + FGroupName +
-    '-' + i2s(IndexRecording) + DirectorySeparator;
+  _safeNAme := getSafeGroupName(FGroupChatID) + '-' + FGroupChatID;
+  Result := FPath + 'groups' + DirectorySeparator + _safeNAme + '-' +
+    i2s(IndexRecording) + DirectorySeparator;
+end;
+
+function TNotulenController.getSafeGroupName(AGroupChatID: string): string;
+begin
+  Result := FData.ReadString(_NOTULEN_SECTION_GROUP_LIST, AGroupChatID, '');
 end;
 
 function TNotulenController.downloadFile(FileID: string): string;
@@ -237,7 +250,7 @@ begin
   if Telegram.Token = '' then
     Exit;
 
-  FRecordNumber := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
+  FRecordNumber := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
 
   filePath := Telegram.GetFileURL(FileID);
   targetFile := getDirPath(FRecordNumber) + filePath;
@@ -250,6 +263,9 @@ end;
 
 procedure TNotulenController.setGroupName(AValue: string);
 begin
+  FGroupName:= getSafeGroupName(FGroupChatID);
+  if FGroupName <> '' then
+    Exit;
   FGroupName := AValue;
   FGroupNameOri := AValue;
   //FGroupName:= SafeText( AValue);
@@ -258,6 +274,7 @@ begin
   FGroupName := StringReplace(FGroupName, ')', '', [rfReplaceAll]);
   FGroupName := StringReplace(FGroupName, '@', '', [rfReplaceAll]);
   FGroupName := StringReplace(FGroupName, '-', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, '"', '', [rfReplaceAll]);
 end;
 
 procedure TNotulenController.setPath(AValue: string);
@@ -291,8 +308,6 @@ begin
 end;
 
 constructor TNotulenController.Create;
-var
-  fileData: string;
 begin
   FReady := False;
   FIsGroup := False;
@@ -300,13 +315,14 @@ begin
   if Path = '' then
     Path := _NOTULEN_PATH_DEFAULT;
 
-  fileData := FPath + _NOTULEN_DATA_FILE;
-  FData := TIniFile.Create(fileData);
+  FGroupData := TIniFile.Create(FPath + _NOTULEN_GROUP_DATA_FILE);
+  FData := TIniFile.Create(FPath + _NOTULEN_DATA_FILE);
 end;
 
 destructor TNotulenController.Destroy;
 begin
   FData.Free;
+  FGroupData.Free;
 end;
 
 function TNotulenController.StartHandler(const IntentName: string;
@@ -322,7 +338,7 @@ begin
   LogUtil.Add('starting ... ', 'carik');
   if Start then
   begin
-    LogUtil.Add('== ' + FGroupName + ' recorded', 'carik');
+    LogUtil.Add('--- ' + FGroupName + ' recorded', 'carik');
     Result := _NOTULEN_MSG_START + format(_NOTULEN_MSG_RECORDNUMBER, [FRecordNumber]);
   end
   else
@@ -354,7 +370,7 @@ begin
     Exit;
 
   lst := TStringList.Create;
-  FData.ReadSections(lst);
+  FGroupData.ReadSections(lst);
 
   s := '';
   for i := 0 to lst.Count - 1 do
@@ -365,12 +381,12 @@ begin
       if _groupName <> FGroupName then
         Continue;
     end;
-    _recordStatus := FData.ReadInteger(_groupName, _NOTULEN_RECORDING, 0);
+    _recordStatus := FGroupData.ReadInteger(_groupName, _NOTULEN_RECORDING, 0);
     if _recordStatus = 1 then
     begin
-      _recordName := FData.ReadString(_groupName, _NOTULEN_NAME, _groupName);
-      _groupTopic := FData.ReadString(_groupName, _NOTULEN_TOPIC, '');
-      _recordNumber := FData.ReadInteger(_groupName, _NOTULEN_COUNT, 0);
+      _recordName := FGroupData.ReadString(_groupName, _NOTULEN_NAME, _groupName);
+      _groupTopic := FGroupData.ReadString(_groupName, _NOTULEN_TOPIC, '');
+      _recordNumber := FGroupData.ReadInteger(_groupName, _NOTULEN_COUNT, 0);
 
       s := s + '\n- ' + _recordName + ' (#' + i2s(_recordNumber) + ')';
       if _groupTopic <> '' then
@@ -398,8 +414,8 @@ begin
 
   _topic := Params.Values['topic_value'];
   _topic := StringReplace(_topic, '"', '', [rfReplaceAll]);
-  FData.WriteString(FGroupName, _NOTULEN_TOPIC, _topic);
-  FData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
+  FGroupData.WriteString(FGroupName, _NOTULEN_TOPIC, _topic);
+  FGroupData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
 
   Result := 'Baik, topik saat ini *"' + ucwords(_topic) + '"*';
 end;
@@ -428,8 +444,8 @@ begin
   if not FReady then
     Exit;
 
-  i := FData.ReadInteger(FGroupName, _NOTULEN_RECORDING, 0);
-  FRecordNumber := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
+  i := FGroupData.ReadInteger(FGroupName, _NOTULEN_RECORDING, 0);
+  FRecordNumber := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
   if i = 1 then
   begin
     Result := True;
@@ -440,18 +456,16 @@ begin
   s := Config[s];
   if s <> '' then
   begin
-    LogUtil.Add('-' + FUserName + ' is in ' + s, 'notulen');
     if Pos(FUserName, s) = 0 then
       Exit;
-    LogUtil.Add('-' + FUserName + ' is permitted', 'notulen');
   end;
 
-  i := FData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0) + 1;
+  i := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0) + 1;
   FRecordNumber := i;
-  FData.WriteString(FGroupName, _NOTULEN_NAME, FGroupNameOri);
-  FData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
-  FData.WriteString(FGroupName, _NOTULEN_RECORDING, '1');
-  FData.WriteInteger(FGroupName, _NOTULEN_COUNT, i);
+  FGroupData.WriteString(FGroupName, _NOTULEN_NAME, FGroupNameOri);
+  FGroupData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
+  FGroupData.WriteString(FGroupName, _NOTULEN_RECORDING, '1');
+  FGroupData.WriteInteger(FGroupName, _NOTULEN_COUNT, i);
 
   dir := getDirPath(i);
   try
@@ -465,7 +479,6 @@ begin
   except
     on E: Exception do
     begin
-      LogUtil.Add('== start: ' + e.Message, 'carik');
     end;
   end;
 
@@ -473,7 +486,7 @@ begin
   fileName := dir + 'index' + _NOTULEN_FILE_EXTENSION;
   if not FileExists(fileName) then
   begin
-    _topic := FData.ReadString(FGroupName, _NOTULEN_TOPIC, '');
+    _topic := FGroupData.ReadString(FGroupName, _NOTULEN_TOPIC, '');
     if _topic = '' then
       _topic := '%topic%';
     s := _NOTULEN_HTML_STYLE + #13'<h1>' + FGroupName + ' #' +
@@ -492,8 +505,8 @@ end;
 function TNotulenController.Stop: boolean;
 begin
   Result := False;
-  FData.WriteString(FGroupName, _NOTULEN_RECORDING, '0');
-  FData.WriteString(FGroupName, _NOTULEN_TOPIC, '');
+  FGroupData.WriteString(FGroupName, _NOTULEN_RECORDING, '0');
+  FGroupData.WriteString(FGroupName, _NOTULEN_TOPIC, '');
   Result := True;
 end;
 
@@ -603,7 +616,7 @@ begin
   if not IsPermitted then
     Exit;
 
-  FData.WriteString(FGroupName, _NOTULEN_DISABLE, '0');
+  FGroupData.WriteString(FGroupName, _NOTULEN_DISABLE, '0');
   Result := True;
 end;
 
@@ -615,28 +628,28 @@ begin
   if not IsPermitted then
     Exit;
 
-  FData.WriteString(FGroupName, _NOTULEN_DISABLE, '1');
+  FGroupData.WriteString(FGroupName, _NOTULEN_DISABLE, '1');
   Result := True;
 end;
 
 function TNotulenController.IsDisabled: boolean;
 begin
   Result := False;
-  if FData.ReadString(FGroupName, _NOTULEN_DISABLE, '0') = '1' then
+  if FGroupData.ReadString(FGroupName, _NOTULEN_DISABLE, '0') = '1' then
     Result := True;
 end;
 
 function TNotulenController.IsImageRecognitionDisabled: boolean;
 begin
-  Result := FData.ReadBool(FGroupName, _NOTULEN_IMAGERECOGNITION_DISABLED, False);
+  Result := FGroupData.ReadBool(FGroupName, _NOTULEN_IMAGERECOGNITION_DISABLED, False);
 end;
 
 procedure TNotulenController.ImageRecognitionCounting;
 var
   i: integer;
 begin
-  i := FData.ReadInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, 0) + 1;
-  FData.WriteInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, i);
+  i := FGroupData.ReadInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, 0) + 1;
+  FGroupData.WriteInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, i);
 end;
 
 function TNotulenController.isValidCommand(CommandString: string): boolean;
@@ -693,7 +706,7 @@ begin
     Exit;
   ValidUserName := StringReplace(ValidUserName, '@', '', [rfReplaceAll]);
 
-  FData.WriteInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName, 1);
+  FGroupData.WriteInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName, 1);
   Result := True;
 end;
 
@@ -708,8 +721,8 @@ begin
     Exit;
   ValidUserName := StringReplace(ValidUserName, '@', '', [rfReplaceAll]);
 
-  //Fdata.DeleteKey(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName);
-  FData.WriteInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName, 0);
+  //FGroupData.DeleteKey(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName);
+  FGroupData.WriteInteger(FGroupName, _NOTULEN_ADMIN_PREFIX + ValidUserName, 0);
   Result := True;
 end;
 
@@ -717,28 +730,28 @@ function TNotulenController.getGroupInfo(GroupNameID: string): string;
 var
   s, _groupname, _topic: string;
 begin
-  _groupname := FData.ReadString(GroupNameID, 'name', '');
+  _groupname := FGroupData.ReadString(GroupNameID, 'name', '');
   if _groupname = '' then
     _groupname := GroupNameID;
 
   s := '';
-  if FData.ReadString(GroupNameID, _NOTULEN_DISABLE, '0') = '0' then
+  if FGroupData.ReadString(GroupNameID, _NOTULEN_DISABLE, '0') = '0' then
     Result := '*' + _groupname + '*'
   else
     Result := '' + _groupname + '';
 
   s := '';
-  if FData.ReadString(GroupNameID, _NOTULEN_RECORDING, '0') = '1' then
+  if FGroupData.ReadString(GroupNameID, _NOTULEN_RECORDING, '0') = '1' then
   begin
-    s := ' recording(' + FData.ReadString(GroupNameID, _NOTULEN_COUNT, '0') + ')';
-    if FData.ReadString(GroupNameID, _NOTULEN_TOPIC, '') <> '' then
-      s := s + '\n- topic: ' + FData.ReadString(GroupNameID, _NOTULEN_TOPIC, '');
+    s := ' recording(' + FGroupData.ReadString(GroupNameID, _NOTULEN_COUNT, '0') + ')';
+    if FGroupData.ReadString(GroupNameID, _NOTULEN_TOPIC, '') <> '' then
+      s := s + '\n- topic: ' + FGroupData.ReadString(GroupNameID, _NOTULEN_TOPIC, '');
   end;
   Result := Result + s;
 
   {
-  if FData.ReadString(GroupNameID, _NOTULEN_IMAGERECOGNITION_COUNTING, '0') <> '0' then
-    s := s + ' img(' + FData.ReadString(GroupNameID,
+  if FGroupData.ReadString(GroupNameID, _NOTULEN_IMAGERECOGNITION_COUNTING, '0') <> '0' then
+    s := s + ' img(' + FGroupData.ReadString(GroupNameID,
       _NOTULEN_IMAGERECOGNITION_COUNTING, '0') + ')';
   }
 
@@ -758,7 +771,7 @@ begin
   Result := '';
   lst := TStringList.Create;
 
-  FData.ReadSectionValues(GroupNameID, lst);
+  FGroupData.ReadSectionValues(GroupNameID, lst);
   s := '';
   for i := 0 to lst.Count - 1 do
   begin
@@ -786,7 +799,7 @@ begin
   lst := TStringList.Create;
   return := TStringList.Create;
 
-  FData.ReadSections(lst);
+  FGroupData.ReadSections(lst);
 
   for i := 0 to lst.Count - 1 do
   begin
@@ -807,11 +820,13 @@ end;
 
 procedure TNotulenController.Invited;
 begin
-  FData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
-  FData.WriteString(FGroupName, _NOTULEN_INVITEDBY_ID, FUserID);
-  FData.WriteString(FGroupName, _NOTULEN_INVITEDBY_NAME, FFullName);
-  FData.WriteString(FGroupName, _NOTULEN_INVITEDBY_USERNAME, FUserName);
-  FData.WriteString(FGroupName, _NOTULEN_INVITEDBY_DATE,
+  FData.WriteString(_NOTULEN_SECTION_GROUP_LIST, FGroupChatID, FGroupName);
+
+  FGroupData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
+  FGroupData.WriteString(FGroupName, _NOTULEN_INVITEDBY_ID, FUserID);
+  FGroupData.WriteString(FGroupName, _NOTULEN_INVITEDBY_NAME, FFullName);
+  FGroupData.WriteString(FGroupName, _NOTULEN_INVITEDBY_USERNAME, FUserName);
+  FGroupData.WriteString(FGroupName, _NOTULEN_INVITEDBY_DATE,
     FormatDateTime('yyyy/mm/dd hh:nn', now));
 end;
 
