@@ -745,7 +745,8 @@ begin
   s := getGroupAdminList(GroupNameID);
   if s <> '' then
     Result := Result + '\n- lurah: ' + s;
-  Result := Result + '\n';
+  if Result <> '' then
+    Result := Result + '\n';
 end;
 
 function TNotulenController.getGroupAdminList(GroupNameID: string): string;
@@ -795,7 +796,7 @@ begin
         return.Add(getGroupInfo(lst[i]));
     end
     else
-      return.Add(getGroupInfo(lst[i]));
+      return.Add(i2s(i + 1) + '. ' + getGroupInfo(lst[i]));
   end;
 
   Result := StringReplace(return.Text, #13, '\n', [rfReplaceAll]);
