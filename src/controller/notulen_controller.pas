@@ -263,7 +263,7 @@ end;
 
 procedure TNotulenController.setGroupName(AValue: string);
 begin
-  FGroupName:= getSafeGroupName(FGroupChatID);
+  FGroupName := getSafeGroupName(FGroupChatID);
   if FGroupName <> '' then
     Exit;
   FGroupName := AValue;
@@ -274,6 +274,7 @@ begin
   FGroupName := StringReplace(FGroupName, ')', '', [rfReplaceAll]);
   FGroupName := StringReplace(FGroupName, '@', '', [rfReplaceAll]);
   FGroupName := StringReplace(FGroupName, '-', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, '_', '', [rfReplaceAll]);
   FGroupName := StringReplace(FGroupName, '"', '', [rfReplaceAll]);
 end;
 
@@ -506,7 +507,7 @@ function TNotulenController.Stop: boolean;
 begin
   Result := False;
   FGroupData.WriteString(FGroupName, _NOTULEN_RECORDING, '0');
-  FGroupData.WriteString(FGroupName, _NOTULEN_TOPIC, '');
+  //FGroupData.WriteString(FGroupName, _NOTULEN_TOPIC, '');
   Result := True;
 end;
 
@@ -758,8 +759,8 @@ begin
   s := getGroupAdminList(GroupNameID);
   if s <> '' then
     Result := Result + '\n- lurah: ' + s;
-  if Result <> '' then
-    Result := Result + '\n';
+  //if Result <> '' then
+  //  Result := Result + '\n';
 end;
 
 function TNotulenController.getGroupAdminList(GroupNameID: string): string;
@@ -784,6 +785,7 @@ begin
   end;
 
   Result := trim(Result);
+  Result := StringReplace( Result, ' ', ', ', [rfReplaceAll]);
   lst.Free;
 end;
 
@@ -800,6 +802,7 @@ begin
   return := TStringList.Create;
 
   FGroupData.ReadSections(lst);
+  (lst as TStringList).Sort;
 
   for i := 0 to lst.Count - 1 do
   begin
@@ -814,6 +817,7 @@ begin
 
   Result := StringReplace(return.Text, #13, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
+  Result := StringReplace(Result, '_', '\_', [rfReplaceAll]);
   return.Free;
   lst.Free;
 end;
