@@ -796,7 +796,7 @@ var
   s: string;
   lst, return: TStrings;
 begin
-  if FUserName <> _NOTULEN_SUPERADMIN then
+  if not IsPermitted then
     Exit;
   lst := TStringList.Create;
   return := TStringList.Create;
