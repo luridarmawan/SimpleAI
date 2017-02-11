@@ -78,6 +78,7 @@ type
     function CheckHandler(const IntentName: string; Params: TStrings): string;
     function TopicHandler(const IntentName: string; Params: TStrings): string;
     function SendHandler(const IntentName: string; Params: TStrings): string;
+    function GroupInfoHandler(const IntentName: string; Params: TStrings): string;
     function Start: boolean;
     function Stop: boolean;
     function Send: boolean;
@@ -95,7 +96,7 @@ type
     property FullName: string read FFullName write FFullName;
     property GroupName: string read FGroupName write setGroupName;
     property GroupChatID: string read FGroupChatID write FGroupChatID;
-    property Recording: boolean read getIsRecording;
+    property IsRecording: boolean read getIsRecording;
     property RecordNumber: integer read FRecordNumber;
     property IsGroup: boolean read FIsGroup write FIsGroup;
     property IsPermitted: boolean read getIsPermiited;
@@ -436,6 +437,12 @@ begin
   end;
 end;
 
+function TNotulenController.GroupInfoHandler(const IntentName: string;
+  Params: TStrings): string;
+begin
+  Result := GroupInfo;
+end;
+
 function TNotulenController.Start: boolean;
 var
   i: integer;
@@ -729,7 +736,7 @@ end;
 
 function TNotulenController.getGroupInfo(GroupNameID: string): string;
 var
-  s, _groupname, _topic: string;
+  s, _groupname: string;
 begin
   _groupname := FGroupData.ReadString(GroupNameID, 'name', '');
   if _groupname = '' then
@@ -793,7 +800,6 @@ end;
 function TNotulenController.GroupInfo: string;
 var
   i: integer;
-  s: string;
   lst, return: TStrings;
 begin
   if not IsPermitted then
