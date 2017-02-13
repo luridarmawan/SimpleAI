@@ -253,7 +253,7 @@ begin
 
   FRecordNumber := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
 
-  filePath := Telegram.GetFileURL(FileID);
+  filePath := Telegram.GetFilePath(FileID);
   targetFile := getDirPath(FRecordNumber) + filePath;
   if Telegram.DownloadFile(filePath, targetFile) then
   begin
