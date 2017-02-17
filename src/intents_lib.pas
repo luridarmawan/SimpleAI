@@ -41,7 +41,7 @@ type
     FEntities: TEntitiesFAI;
     FisLoaded: boolean;
     FObjectName: string;
-    FParameters: TStrings;
+    FParameters: TStringList;
     FPattern: string;
 
   public
@@ -71,7 +71,7 @@ type
 
     property isLoaded: boolean read FisLoaded;
     property isBoundary: boolean read FBoundary write FBoundary;
-    property Parameters: TStrings read FParameters;
+    property Parameters: TStringList read FParameters;
     property PatternString: string read FPattern;
     property Debug: boolean read FDebug write FDebug;
   end;
@@ -128,9 +128,10 @@ end;
 
 function TIntentsFAI.Exec(Text: string): boolean;
 var
-  i, j, k, p, match_index: integer;
+  i, j, k, v, p, match_index: integer;
   Source, s, pattern, entity_name, intent_name, key_used, section_name: string;
-  intent_list, item_list, str, pattern_str: TStrings;
+  intent_list, item_list, pattern_str: TStrings;
+  varsIndex: TStringList;
   tmp: TStrings;
   regex: TRegExpr;
 begin
@@ -148,6 +149,7 @@ begin
   intent_list := TStringList.Create;
   item_list := TStringList.Create;
   pattern_str := TStringList.Create;
+  varsIndex := TStringList.Create;
   tmp := TStringList.Create;
   FData.ReadSections(intent_list);
   for i := 0 to intent_list.Count - 1 do
@@ -215,7 +217,7 @@ begin
       end;
 
       if FBoundary then
-        if length( Text) > 1 then
+        if length(Text) > 1 then
           pattern := pattern + '\b';
 
       try
@@ -229,6 +231,7 @@ begin
 
           key_used := '';
           match_index := 1;
+          varsIndex.Clear;
           repeat
             if FParameters.Count > 0 then
               section_name := FParameters.Names[match_index - 1];
@@ -242,8 +245,17 @@ begin
             //FParameters.Values[ '_'+section_name + '_value'] := regex.Match[ match_index];
             if trim(section_name) <> '' then
               FParameters.Values[section_name + '_value'] := regex.Match[match_index];
+            varsIndex.Values['$' + i2s(match_index)] := regex.Match[match_index];
             Inc(match_index);
           until regex.Match[match_index] = '';
+          if varsIndex.Count > 0 then
+          begin
+            for v := 0 to varsIndex.Count - 1 do
+            begin
+              FParameters.Values[varsIndex.Names[v]] := varsIndex.ValueFromIndex[v];
+            end;
+          end;
+          FParameters.Sort;
 
           if FDebug then
             FParameters.Values['pattern'] := pattern;
@@ -268,7 +280,7 @@ begin
         begin
           FPattern := '';
         end;
-      //
+
       except
       end;
 
@@ -279,6 +291,7 @@ begin
   end;
 
   tmp.Free;
+  varsIndex.Free;
   pattern_str.Free;
   item_list.Free;
   intent_list.Free;
