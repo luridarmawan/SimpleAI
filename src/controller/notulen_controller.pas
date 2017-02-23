@@ -792,7 +792,7 @@ begin
   end;
 
   Result := trim(Result);
-  Result := StringReplace( Result, ' ', ', ', [rfReplaceAll]);
+  Result := StringReplace(Result, ' ', ', ', [rfReplaceAll]);
   lst.Free;
 end;
 
@@ -818,7 +818,12 @@ begin
         return.Add(getGroupInfo(lst[i]));
     end
     else
-      return.Add(i2s(i + 1) + '. ' + getGroupInfo(lst[i]));
+    begin
+      if i < lst.Count - 1 then
+        return.Add('├' + i2s(i + 1) + '. ' + getGroupInfo(lst[i]))
+      else
+        return.Add('└' + i2s(i + 1) + '. ' + getGroupInfo(lst[i])); ---
+    end;
   end;
 
   Result := StringReplace(return.Text, #13, '\n', [rfReplaceAll]);
@@ -838,6 +843,7 @@ begin
   FGroupData.WriteString(FGroupName, _NOTULEN_INVITEDBY_USERNAME, FUserName);
   FGroupData.WriteString(FGroupName, _NOTULEN_INVITEDBY_DATE,
     FormatDateTime('yyyy/mm/dd hh:nn', now));
+  LogUtil.Add('invited to ' + FGroupChatID + ' ' + FGroupName, 'INVITATION');
 end;
 
 end.
