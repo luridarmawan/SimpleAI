@@ -145,6 +145,8 @@ const
   _NOTULEN_MSG_SECRET = 'rahasia ...';
   _NOTULEN_MSG_NORECORDING = 'saat ini tidak ada yang dicatat di sini.';
   _NOTULEN_MSG_RECORDING = 'Sekarang sedang mencatat diskusi:';
+  _NOTULEN_MSG_TERKIRIM = '🎁 terkirim ... ';
+  _NOTULEN_MSG_NOTFOUND = 'Catatan tidak tersedia';
 
   _NOTULEN_HTML_STYLE =
     '<style>body{font-family:Tahoma,"Lucida Grande","Trebuchet MS"}span.username{border-bottom:1px solid #c2d1f0;font-size:small;display:block;background:#e6f5ff;padding:2px 2px 2px 5px}span.message{padding:0 0 0 10px}table{min-width:300px}table,td,th{border:1px solid #00134d}td{border:0;border-bottom:1px solid #668cff}</style>';
@@ -247,7 +249,7 @@ var
 begin
   Result := '';
   Telegram := TTelegramIntegration.Create;
-  Telegram.Token := Config['telegram/token'];
+  Telegram.Token := Config['telegram/default/token'];
   if Telegram.Token = '' then
     Exit;
 
@@ -424,6 +426,9 @@ end;
 
 function TNotulenController.SendHandler(const IntentName: string;
   Params: TStrings): string;
+var
+  i: integer;
+  _dir, _fileTarget: string;
 begin
   Result := _NOTULEN_MSG_NOTPERMITTED;
   if FGroupName = '' then
@@ -431,10 +436,42 @@ begin
   if not IsPermitted then
     Exit;
 
+  i := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
+  if i = 0 then
+  begin
+    Result := _NOTULEN_MSG_NOTFOUND;
+    Exit;
+  end;
+
+  _dir := getDirPath(i);
+  if not DirectoryExists(_dir) then
+  begin
+    Result := _NOTULEN_MSG_NOTFOUND + ' ...';
+    Exit;
+  end;
+
+  _fileTarget := Copy(_dir, 0, Length(_dir) - 1) + '.zip';
+  if ZipFolder(_dir, _fileTarget) then
+  begin
+    Telegram := TTelegramIntegration.Create;
+    Telegram.Token := Config['telegram/default/token'];
+    if Telegram.Token <> '' then
+    begin
+      Result := 'Catatan ' + FGroupName;
+      if FGroupData.ReadString(FGroupName, _NOTULEN_TOPIC, '') <> '' then
+        Result := Result + ', Topik: ' + FGroupData.ReadString(FGroupName, _NOTULEN_TOPIC, '');
+      Telegram.SendDocument( UserID, _fileTarget, Result);
+      Result := _NOTULEN_MSG_TERKIRIM;
+    end;
+    Telegram.Free;
+  end;
+
+  {
   if Send then
   begin
     Result := 'terkirim ...';
   end;
+  }
 end;
 
 function TNotulenController.GroupInfoHandler(const IntentName: string;
@@ -765,7 +802,7 @@ begin
 
   s := getGroupAdminList(GroupNameID);
   if s <> '' then
-    Result := Result + '\n- lurah: ' + s;
+    Result := Result + '\n   - lurah: ' + s;
   //if Result <> '' then
   //  Result := Result + '\n';
 end;
@@ -820,9 +857,9 @@ begin
     else
     begin
       if i < lst.Count - 1 then
-        return.Add('├' + i2s(i + 1) + '. ' + getGroupInfo(lst[i]))
+        return.Add('├ ' + i2s(i + 1) + '. ' + getGroupInfo(lst[i]))
       else
-        return.Add('└' + i2s(i + 1) + '. ' + getGroupInfo(lst[i])); ---
+        return.Add('└ ' + i2s(i + 1) + '. ' + getGroupInfo(lst[i]));
     end;
   end;
 
