@@ -451,10 +451,12 @@ begin
   end;
 
   _fileTarget := Copy(_dir, 0, Length(_dir) - 1) + '.zip';
+  Result := 'sepertinya gagal kirim nihh... ';
   if ZipFolder(_dir, _fileTarget) then
   begin
     Telegram := TTelegramIntegration.Create;
     Telegram.Token := Config['telegram/default/token'];
+    Result := '. . .';
     if Telegram.Token <> '' then
     begin
       Result := 'Catatan ' + FGroupName;
