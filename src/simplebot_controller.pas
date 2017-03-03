@@ -616,11 +616,13 @@ begin
   begin
     if FFirstSessionResponse then
     begin
-      s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '', _AI_RESPONSE_FIRSTSESSION);
+      s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
+        _AI_RESPONSE_FIRSTSESSION);
       s := s + SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
         _AI_RESPONSE_ABOUTME);
       SimpleAI.SuffixText := s;
-    end;;
+    end;
+    ;
     //SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_VISITED, '1');
     setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
@@ -877,9 +879,9 @@ begin
   if regex.Exec(Message) then
   begin
     s := UserData[regex.Match[1]];
-    //if s <> '' then
-    Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
-      '%(.*)%', s, Message, True);
+    if s <> '' then
+      Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
+        '%(.*)%', s, Message, True);
   end;
   regex.Free;
 end;
