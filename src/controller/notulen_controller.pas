@@ -48,6 +48,7 @@ type
     FGroupChatID: string;
     FIsGroup: boolean;
     FUserID: string;
+    FUserPrefix: string;
     Telegram: TTelegramIntegration;
     FGroupName: string;
     FGroupNameOri: string;
@@ -92,6 +93,7 @@ type
     property Ready: boolean read FReady;
     property Path: string read FPath write setPath;
     property UserID: string read FUserID write FUserID;
+    property UserPrefix: string read FUserPrefix write FUserPrefix;
     property UserName: string read FUserName write FUserName;
     property FullName: string read FFullName write FFullName;
     property GroupName: string read FGroupName write setGroupName;
@@ -321,6 +323,7 @@ begin
 
   FGroupData := TIniFile.Create(FPath + _NOTULEN_GROUP_DATA_FILE);
   FData := TIniFile.Create(FPath + _NOTULEN_DATA_FILE);
+  FUserPrefix := '';
 end;
 
 destructor TNotulenController.Destroy;
