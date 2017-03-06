@@ -424,6 +424,10 @@ begin
   end;
 
   item_list.Free;
+  if isCommand(Result) then
+  begin
+    Result := execCommand(Result);
+  end;
 end;
 
 function TSimpleAI.SetResponseData(List: TStrings): boolean;
