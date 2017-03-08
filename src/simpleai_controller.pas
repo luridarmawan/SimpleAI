@@ -166,6 +166,10 @@ begin
       begin
         dateTimePosition := IncDay(Now, 2);
       end;
+      'besok lusa':
+      begin
+        dateTimePosition := IncDay(Now, 3);
+      end;
     end;
   end;
   // waktu
