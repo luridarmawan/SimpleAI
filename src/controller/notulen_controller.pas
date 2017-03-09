@@ -815,19 +815,22 @@ begin
     Result := Result + '\n   - lurah: ' + s;
 
   // get admin list
-  Telegram := TTelegramIntegration.Create;
-  Telegram.Token := Config['telegram/default/token'];
-  if Telegram.Token = '' then
-    Exit;
-  s := Telegram.GroupAdminList(gid);
-  if s <> '' then
+  if FGroupName <> '' then
   begin
-    s := ' -' + StringReplace(s, ',', #10' -', [rfReplaceAll]);
-    Result := Result + #10'👮 Admin:'#10 + s;
+    Telegram := TTelegramIntegration.Create;
+    Telegram.Token := Config['telegram/default/token'];
+    if Telegram.Token = '' then
+      Exit;
+    s := Telegram.GroupAdminList(gid);
+    if s <> '' then
+    begin
+      s := ' -' + StringReplace(s, ',', #10' -', [rfReplaceAll]);
+      Result := Result + #10'👮 Admin:'#10 + s;
+    end;
+    i := Telegram.GroupMemberCount(gid);
+    Result := Result + #10'ada ' + i2s(i) + ' anggota';
+    Telegram.Free;
   end;
-  i := Telegram.GroupMemberCount(gid);
-  Result := Result + #10'ada ' + i2s(i) + ' anggota';
-  Telegram.Free;
 
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
 end;
