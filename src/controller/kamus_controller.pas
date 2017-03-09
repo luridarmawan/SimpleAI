@@ -88,7 +88,8 @@ var
   lst : TStrings;
 begin
   lst := Explode( Text, ' ');
-  Result := findKemdikbud( lst.ValueFromIndex[0]);
+  //Result := findKemdikbud( lst.ValueFromIndex[0]);
+  Result := findKemdikbud( Text);
   Result := '*tentang ' + Text + ':*\n' + Result;
   lst.Free;
 end;
