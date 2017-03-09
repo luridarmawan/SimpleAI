@@ -69,7 +69,7 @@ type
     procedure setPath(AValue: string);
     function openFile(FileName: string): string;
     function isValidCommand(CommandString: string): boolean;
-    function getGroupInfo(GroupNameID: string): string;
+    function getGroupInfo(GroupNameID: string; ADetail:boolean = false): string;
     function getGroupAdminList(GroupNameID: string): string;
   public
     constructor Create;
@@ -779,7 +779,8 @@ begin
   Result := True;
 end;
 
-function TNotulenController.getGroupInfo(GroupNameID: string): string;
+function TNotulenController.getGroupInfo(GroupNameID: string; ADetail: boolean
+  ): string;
 var
   i: integer;
   s, _groupname, gid: string;
@@ -814,8 +815,8 @@ begin
   if s <> '' then
     Result := Result + '\n   - lurah: ' + s;
 
-  // get admin list
-  if FGroupName <> '' then
+  // detail group - admin list etc
+  if ADetail then;
   begin
     Telegram := TTelegramIntegration.Create;
     Telegram.Token := Config['telegram/default/token'];
@@ -824,13 +825,13 @@ begin
     s := Telegram.GroupAdminList(gid);
     if s <> '' then
     begin
-      s := ' -' + StringReplace(s, ',', #10' -', [rfReplaceAll]);
+      s := ' - ' + StringReplace(s, ',', #10' - ', [rfReplaceAll]);
       Result := Result + #10'👮 Admin:'#10 + s;
     end;
     i := Telegram.GroupMemberCount(gid);
     Result := Result + #10'ada ' + i2s(i) + ' anggota';
     Telegram.Free;
-  end;
+  end; // detail group
 
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
 end;
@@ -880,7 +881,7 @@ begin
     if FGroupName <> '' then
     begin
       if lst[i] = FGroupName then
-        return.Add(getGroupInfo(lst[i]));
+        return.Add(getGroupInfo(lst[i], True));
     end
     else
     begin
