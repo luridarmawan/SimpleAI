@@ -281,6 +281,8 @@ begin
   FGroupName := StringReplace(FGroupName, '-', '', [rfReplaceAll]);
   FGroupName := StringReplace(FGroupName, '_', '', [rfReplaceAll]);
   FGroupName := StringReplace(FGroupName, '"', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, '''', '', [rfReplaceAll]);
+  FGroupName := StringReplace(FGroupName, '&', '', [rfReplaceAll]);
 end;
 
 procedure TNotulenController.setPath(AValue: string);
@@ -464,8 +466,9 @@ begin
     begin
       Result := 'Catatan ' + FGroupName;
       if FGroupData.ReadString(FGroupName, _NOTULEN_TOPIC, '') <> '' then
-        Result := Result + ', Topik: ' + FGroupData.ReadString(FGroupName, _NOTULEN_TOPIC, '');
-      Telegram.SendDocument( UserID, _fileTarget, Result);
+        Result := Result + ', Topik: ' + FGroupData.ReadString(FGroupName,
+          _NOTULEN_TOPIC, '');
+      Telegram.SendDocument(UserID, _fileTarget, Result);
       Result := _NOTULEN_MSG_TERKIRIM;
     end;
     Telegram.Free;
@@ -778,9 +781,11 @@ end;
 
 function TNotulenController.getGroupInfo(GroupNameID: string): string;
 var
-  s, _groupname: string;
+  i: integer;
+  s, _groupname, gid: string;
 begin
   _groupname := FGroupData.ReadString(GroupNameID, 'name', '');
+  gid := FGroupData.ReadString(GroupNameID, 'id', '');
   if _groupname = '' then
     _groupname := GroupNameID;
 
@@ -808,8 +813,23 @@ begin
   s := getGroupAdminList(GroupNameID);
   if s <> '' then
     Result := Result + '\n   - lurah: ' + s;
-  //if Result <> '' then
-  //  Result := Result + '\n';
+
+  // get admin list
+  Telegram := TTelegramIntegration.Create;
+  Telegram.Token := Config['telegram/default/token'];
+  if Telegram.Token = '' then
+    Exit;
+  s := Telegram.GroupAdminList(gid);
+  if s <> '' then
+  begin
+    s := ' -' + StringReplace(s, ',', #10' -', [rfReplaceAll]);
+    Result := Result + #10'👮 Admin:'#10 + s;
+  end;
+  i := Telegram.GroupMemberCount(gid);
+  Result := Result + #10'ada ' + i2s(i) + ' anggota';
+  Telegram.Free;
+
+  Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
 end;
 
 function TNotulenController.getGroupAdminList(GroupNameID: string): string;
