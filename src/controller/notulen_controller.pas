@@ -69,7 +69,7 @@ type
     procedure setPath(AValue: string);
     function openFile(FileName: string): string;
     function isValidCommand(CommandString: string): boolean;
-    function getGroupInfo(GroupNameID: string; ADetail:boolean = false): string;
+    function getGroupInfo(GroupNameID: string; ADetail: boolean = False): string;
     function getGroupAdminList(GroupNameID: string): string;
   public
     constructor Create;
@@ -779,8 +779,8 @@ begin
   Result := True;
 end;
 
-function TNotulenController.getGroupInfo(GroupNameID: string; ADetail: boolean
-  ): string;
+function TNotulenController.getGroupInfo(GroupNameID: string;
+  ADetail: boolean): string;
 var
   i: integer;
   s, _groupname, gid: string;
@@ -813,7 +813,15 @@ begin
 
   s := getGroupAdminList(GroupNameID);
   if s <> '' then
-    Result := Result + '\n   - lurah: ' + s;
+  begin
+    if ADetail then
+    begin
+      s := ' ├ @' + StringReplace(s, ', ', #10' ├ @', [rfReplaceAll]);
+      Result := Result + #10'👤 Lurah:'#10 + s;
+    end
+    else
+      Result := Result + '\n   - lurah: ' + s;
+  end;
 
   // detail group - admin list etc
   if ADetail then;
@@ -825,15 +833,15 @@ begin
     s := Telegram.GroupAdminList(gid);
     if s <> '' then
     begin
-      s := ' - ' + StringReplace(s, ',', #10' - ', [rfReplaceAll]);
+      s := ' ├ ' + StringReplace(s, ',', #10' ├ ', [rfReplaceAll]);
       Result := Result + #10'👮 Admin:'#10 + s;
     end;
     i := Telegram.GroupMemberCount(gid);
-    Result := Result + #10'ada ' + i2s(i) + ' anggota';
+    Result := Result + #10'👥 ada ' + i2s(i) + ' anggota';
     Telegram.Free;
   end; // detail group
 
-  Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
+  //Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
 end;
 
 function TNotulenController.getGroupAdminList(GroupNameID: string): string;
