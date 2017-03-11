@@ -883,7 +883,7 @@ begin
   return := TStringList.Create;
 
   FGroupData.ReadSections(lst);
-  lastGroup := '*7 group terakhir:* ';
+  lastGroup := '*7 Group Terakhir:* ';
   for i:=lst.Count-7 to lst.Count-1 do
   begin
     lastGroup := lastGroup + #10 + i2s(i) + '. '+  lst[i];
@@ -906,10 +906,11 @@ begin
     end;
   end;
 
-  Result := lastGroup + return.Text;
+  Result := lastGroup + #10#10'*Group List:*'#10 + return.Text;
   Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, '_', '\_', [rfReplaceAll]);
+
   return.Free;
   lst.Free;
 end;
