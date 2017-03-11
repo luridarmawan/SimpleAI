@@ -5,7 +5,7 @@ This file is part of the SimpleBOT package.
 For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 }
-unit notulen_controller;
+unit carik_controller;
 
 {
   Chat Recorder
@@ -824,7 +824,7 @@ begin
   end;
 
   // detail group - admin list etc
-  if ADetail then;
+  if ADetail then
   begin
     Telegram := TTelegramIntegration.Create;
     Telegram.Token := Config['telegram/default/token'];

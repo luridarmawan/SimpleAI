@@ -34,8 +34,8 @@
         <UnitName Value="kamus_controller"/>
       </Item5>
       <Item6>
-        <Filename Value="src/controller/notulen_controller.pas"/>
-        <UnitName Value="notulen_controller"/>
+        <Filename Value="src/controller/carik_controller.pas"/>
+        <UnitName Value="carik_controller"/>
       </Item6>
       <Item7>
         <Filename Value="src/controller/movie_controller.pas"/>
