@@ -11,7 +11,7 @@ unit carik_controller;
   Chat Recorder
 
 
-  Carik := TNotulenController.Create;
+  Carik := TCarikController.Create;
   Carik.UserName := 'usernamethatsendmessage';
   Carik.GroupName := 'thisgroupname';
   .
@@ -39,9 +39,9 @@ uses
 
 type
 
-  { TNotulenController }
+  { TCarikController }
 
-  TNotulenController = class
+  TCarikController = class
   private
     DataFile: TextFile;
     FFullName: string;
@@ -161,16 +161,16 @@ const
 
   _NOTULEN_MIME_VIDEO = 'video/mp4';
 
-{ TNotulenController }
+{ TCarikController }
 
-function TNotulenController.getIsRecording: boolean;
+function TCarikController.getIsRecording: boolean;
 begin
   Result := False;
   if FGroupData.ReadString(FGroupName, _NOTULEN_RECORDING, '0') = '1' then
     Result := True;
 end;
 
-function TNotulenController.getIsPermiited: boolean;
+function TCarikController.getIsPermiited: boolean;
 var
   s, _admin: string;
 begin
@@ -187,7 +187,7 @@ begin
     Result := True;
 end;
 
-function TNotulenController.SaveToFile(Text: string): boolean;
+function TCarikController.SaveToFile(Text: string): boolean;
 var
   i: integer;
   fileName, dir: string;
@@ -209,7 +209,7 @@ begin
   end;
 end;
 
-function TNotulenController.SaveToFileCSV(Text: string): boolean;
+function TCarikController.SaveToFileCSV(Text: string): boolean;
 var
   i: integer;
   fileName, dir: string;
@@ -231,7 +231,7 @@ begin
   end;
 end;
 
-function TNotulenController.getDirPath(IndexRecording: integer): string;
+function TCarikController.getDirPath(IndexRecording: integer): string;
 var
   _safeNAme: string;
 begin
@@ -240,12 +240,12 @@ begin
     i2s(IndexRecording) + DirectorySeparator;
 end;
 
-function TNotulenController.getSafeGroupName(AGroupChatID: string): string;
+function TCarikController.getSafeGroupName(AGroupChatID: string): string;
 begin
   Result := FData.ReadString(_NOTULEN_SECTION_GROUP_LIST, AGroupChatID, '');
 end;
 
-function TNotulenController.downloadFile(FileID: string): string;
+function TCarikController.downloadFile(FileID: string): string;
 var
   filePath, targetFile: string;
 begin
@@ -266,7 +266,7 @@ begin
   Telegram.Free;
 end;
 
-procedure TNotulenController.setGroupName(AValue: string);
+procedure TCarikController.setGroupName(AValue: string);
 begin
   FGroupName := getSafeGroupName(FGroupChatID);
   if FGroupName <> '' then
@@ -285,7 +285,7 @@ begin
   FGroupName := StringReplace(FGroupName, '&', '', [rfReplaceAll]);
 end;
 
-procedure TNotulenController.setPath(AValue: string);
+procedure TCarikController.setPath(AValue: string);
 begin
   if FPath = AValue then
     Exit;
@@ -293,7 +293,7 @@ begin
   FReady := DirectoryIsWritable(AValue);
 end;
 
-function TNotulenController.openFile(FileName: string): string;
+function TCarikController.openFile(FileName: string): string;
 var
   _note: TStringList;
 begin
@@ -315,7 +315,7 @@ begin
   end;
 end;
 
-constructor TNotulenController.Create;
+constructor TCarikController.Create;
 begin
   FReady := False;
   FIsGroup := False;
@@ -328,13 +328,13 @@ begin
   FUserPrefix := '';
 end;
 
-destructor TNotulenController.Destroy;
+destructor TCarikController.Destroy;
 begin
   FData.Free;
   FGroupData.Free;
 end;
 
-function TNotulenController.StartHandler(const IntentName: string;
+function TCarikController.StartHandler(const IntentName: string;
   Params: TStrings): string;
 begin
   Result := _NOTULEN_MSG_CANNOT_START;
@@ -356,7 +356,7 @@ begin
   end;
 end;
 
-function TNotulenController.StopHandler(const IntentName: string;
+function TCarikController.StopHandler(const IntentName: string;
   Params: TStrings): string;
 begin
   Result := '';
@@ -366,7 +366,7 @@ begin
   Result := '... catetan sudah dihentikan.';
 end;
 
-function TNotulenController.CheckHandler(const IntentName: string;
+function TCarikController.CheckHandler(const IntentName: string;
   Params: TStrings): string;
 var
   i, _recordStatus, _recordNumber: integer;
@@ -411,7 +411,7 @@ begin
   lst.Free;
 end;
 
-function TNotulenController.TopicHandler(const IntentName: string;
+function TCarikController.TopicHandler(const IntentName: string;
   Params: TStrings): string;
 var
   _topic: string;
@@ -429,7 +429,7 @@ begin
   Result := 'Baik, topik saat ini *"' + ucwords(_topic) + '"*';
 end;
 
-function TNotulenController.SendHandler(const IntentName: string;
+function TCarikController.SendHandler(const IntentName: string;
   Params: TStrings): string;
 var
   i: integer;
@@ -482,13 +482,13 @@ begin
   }
 end;
 
-function TNotulenController.GroupInfoHandler(const IntentName: string;
+function TCarikController.GroupInfoHandler(const IntentName: string;
   Params: TStrings): string;
 begin
   Result := GroupInfo;
 end;
 
-function TNotulenController.Start: boolean;
+function TCarikController.Start: boolean;
 var
   i: integer;
   s, fileName, dir, _topic: string;
@@ -555,7 +555,7 @@ begin
   Result := True;
 end;
 
-function TNotulenController.Stop: boolean;
+function TCarikController.Stop: boolean;
 begin
   Result := False;
   FGroupData.WriteString(FGroupName, _NOTULEN_RECORDING, '0');
@@ -563,7 +563,7 @@ begin
   Result := True;
 end;
 
-function TNotulenController.Send: boolean;
+function TCarikController.Send: boolean;
 var
   _mail: TMailer;
 begin
@@ -579,7 +579,7 @@ begin
   _mail.Free;
 end;
 
-procedure TNotulenController.RecordTelegramMessage(Message: string);
+procedure TCarikController.RecordTelegramMessage(Message: string);
 var
   s: string;
   html: TStringList;
@@ -661,7 +661,7 @@ begin
   html.Free;
 end;
 
-function TNotulenController.EnableBot: boolean;
+function TCarikController.EnableBot: boolean;
 begin
   Result := False;
   if FGroupName = '' then
@@ -673,7 +673,7 @@ begin
   Result := True;
 end;
 
-function TNotulenController.DisableBot: boolean;
+function TCarikController.DisableBot: boolean;
 begin
   Result := False;
   if FGroupName = '' then
@@ -685,19 +685,19 @@ begin
   Result := True;
 end;
 
-function TNotulenController.IsDisabled: boolean;
+function TCarikController.IsDisabled: boolean;
 begin
   Result := False;
   if FGroupData.ReadString(FGroupName, _NOTULEN_DISABLE, '0') = '1' then
     Result := True;
 end;
 
-function TNotulenController.IsImageRecognitionDisabled: boolean;
+function TCarikController.IsImageRecognitionDisabled: boolean;
 begin
   Result := FGroupData.ReadBool(FGroupName, _NOTULEN_IMAGERECOGNITION_DISABLED, False);
 end;
 
-procedure TNotulenController.ImageRecognitionCounting;
+procedure TCarikController.ImageRecognitionCounting;
 var
   i: integer;
 begin
@@ -705,14 +705,14 @@ begin
   FGroupData.WriteInteger(FGroupName, _NOTULEN_IMAGERECOGNITION_COUNTING, i);
 end;
 
-function TNotulenController.isValidCommand(CommandString: string): boolean;
+function TCarikController.isValidCommand(CommandString: string): boolean;
 begin
   Result := False;
   if trim(CommandString) = 'file' then  // only 1 command :D
     Result := True;
 end;
 
-function TNotulenController.IsCommand(Text: string): boolean;
+function TCarikController.IsCommand(Text: string): boolean;
 var
   lst: TStrings;
 begin
@@ -726,7 +726,7 @@ begin
     Result := True;
 end;
 
-function TNotulenController.ExecCommand(Text: string): string;
+function TCarikController.ExecCommand(Text: string): string;
 var
   s, _dir: string;
   lst: TStrings;
@@ -748,7 +748,7 @@ begin
   lst.Free;
 end;
 
-function TNotulenController.AdminAdd(ValidUserName: string): boolean;
+function TCarikController.AdminAdd(ValidUserName: string): boolean;
 begin
   Result := False;
   if FGroupName = '' then
@@ -763,7 +763,7 @@ begin
   Result := True;
 end;
 
-function TNotulenController.AdminDel(ValidUserName: string): boolean;
+function TCarikController.AdminDel(ValidUserName: string): boolean;
 begin
   Result := False;
   if FGroupName = '' then
@@ -779,7 +779,7 @@ begin
   Result := True;
 end;
 
-function TNotulenController.getGroupInfo(GroupNameID: string;
+function TCarikController.getGroupInfo(GroupNameID: string;
   ADetail: boolean): string;
 var
   i: integer;
@@ -844,7 +844,7 @@ begin
   //Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
 end;
 
-function TNotulenController.getGroupAdminList(GroupNameID: string): string;
+function TCarikController.getGroupAdminList(GroupNameID: string): string;
 var
   i: integer;
   s: string;
@@ -871,9 +871,10 @@ begin
 end;
 
 
-function TNotulenController.GroupInfo: string;
+function TCarikController.GroupInfo: string;
 var
   i: integer;
+  lastGroup: string;
   lst, return: TStrings;
 begin
   if not IsPermitted then
@@ -882,6 +883,11 @@ begin
   return := TStringList.Create;
 
   FGroupData.ReadSections(lst);
+  lastGroup := '*7 group terakhir:* ';
+  for i:=lst.Count-7 to lst.Count-1 do
+  begin
+    lastGroup := lastGroup + #10 + i2s(i) + '. '+  lst[i];
+  end;
   (lst as TStringList).Sort;
 
   for i := 0 to lst.Count - 1 do
@@ -900,14 +906,15 @@ begin
     end;
   end;
 
-  Result := StringReplace(return.Text, #13, '\n', [rfReplaceAll]);
+  Result := lastGroup + return.Text;
+  Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, '_', '\_', [rfReplaceAll]);
   return.Free;
   lst.Free;
 end;
 
-procedure TNotulenController.Invited;
+procedure TCarikController.Invited;
 begin
   FData.WriteString(_NOTULEN_SECTION_GROUP_LIST, FGroupChatID, FGroupName);
 
