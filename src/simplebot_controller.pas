@@ -422,6 +422,7 @@ begin
   end;
 
   Result := StringReplace(Result, ':', '/', [rfReplaceAll]);
+  Result := StringReplace(Result, 'x', '*', [rfReplaceAll]);
   Result := '(' + Result + ')';
   mathParser := TFPExpressionParser.Create(nil);
   try
