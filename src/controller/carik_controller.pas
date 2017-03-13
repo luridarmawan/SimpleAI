@@ -883,10 +883,14 @@ begin
   return := TStringList.Create;
 
   FGroupData.ReadSections(lst);
-  lastGroup := '*7 Group Terakhir:* ';
-  for i:=lst.Count-7 to lst.Count-1 do
+
+  if FGroupName = '' then
   begin
-    lastGroup := lastGroup + #10 + i2s(i) + '. '+  lst[i];
+    lastGroup := '*7 Group Terakhir:* ';
+    for i:=lst.Count-7 to lst.Count-1 do
+    begin
+      lastGroup := lastGroup + #10 + i2s(i) + '. '+  lst[i];
+    end;
   end;
   (lst as TStringList).Sort;
 
