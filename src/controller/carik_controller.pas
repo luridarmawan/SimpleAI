@@ -526,8 +526,8 @@ begin
     begin
       ForceDirectories(dir);
       ForceDirectories(dir + 'files');
-      ForceDirectories(dir + 'photo');
-      ForceDirectories(dir + 'document');
+      ForceDirectories(dir + 'photos');
+      ForceDirectories(dir + 'documents');
     end;
   except
     on E: Exception do
