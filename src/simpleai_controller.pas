@@ -142,8 +142,10 @@ begin
 
   //if in range
   range := FSimpleAILib.Parameters.Values['range_value'];
+  {
   if range = 'sekarang' then
     range := '';
+  }
   if (range <> '') then
   begin
     case range of
@@ -185,7 +187,7 @@ begin
       'tahun': t := IntToStr(y);
       'tanggal': t := FormatDateTime('dd/mm/yyyy', dateTimePosition)
     end;
-    t := s + ' ' + t;
+    t := range + ' ' + t;
     Result := FSimpleAILib.Intent.Entities.preg_replace(
       '%(time)%', t, Result, False);
   end;
@@ -267,11 +269,11 @@ begin
   Result := 'pagi';
   if Hour > 11 then
     Result := 'siang';
-  if Hour > 15 then
+  if Hour >= 15 then
     Result := 'sore';
   if Hour > 17 then
-    Result := 'petang';
-  if Hour > 18 then
+    Result := 'sore';
+  if Hour >= 18 then
     Result := 'malam';
 end;
 
