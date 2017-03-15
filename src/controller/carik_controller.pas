@@ -154,6 +154,7 @@ const
     '<style>body{font-family:Tahoma,"Lucida Grande","Trebuchet MS"}span.username{border-bottom:1px solid #c2d1f0;font-size:small;display:block;background:#e6f5ff;padding:2px 2px 2px 5px}span.message{padding:0 0 0 10px}table{min-width:300px}table,td,th{border:1px solid #00134d}td{border:0;border-bottom:1px solid #668cff}</style>';
   _NOTULEN_HTML_USERNAME = '<span class="username">%s, %s</span>';
   _NOTULEN_HTML_MESSAGE = '<span class="message">%s</span>';
+  _NOTULEN_HTML_DOCUMENT = '<a href="%s">document</a>';
   _NOTULEN_HTML_PHOTO = '<img src="%s">';
   _NOTULEN_HTML_VIDEO = '<video controls><source src="%s" type="video/mp4"></video>';
 

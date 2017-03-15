@@ -68,6 +68,7 @@ type
     FBotName: string;
     FFirstSessionResponse: boolean;
     FSecondSessionResponse: boolean;
+    FSessionUserID: string;
     Suggestion: TBotSuggestion;
     FAskCountdown: integer;
     FAskEmail: boolean;
@@ -145,6 +146,8 @@ type
     property OnError: TOnErrorCallback read FOnError write FOnError;
     property TrimMessage: boolean read getTrimMessage write setTrimMessage;
 
+    property SessionUserID:string read FSessionUserID write FSessionUserID;
+
   end;
 
 var
@@ -220,6 +223,7 @@ begin
   FAskEmail := False;
   FSecondSessionResponse := False;
   FFirstSessionResponse := False;
+  FSessionUserID := '';
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
@@ -327,12 +331,12 @@ end;
 
 procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
 begin
-  SetSession(_AI_SESSION_USER + KeyName, AValue);
+  SetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName, AValue);
 end;
 
 function TSimpleBotModule.getUserData(const KeyName: string): string;
 begin
-  Result := GetSession(_AI_SESSION_USER + KeyName);
+  Result := GetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName);
 end;
 
 function TSimpleBotModule.handlerProcessing(ActionName, Message: string): string;
