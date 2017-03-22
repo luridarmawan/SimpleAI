@@ -44,7 +44,7 @@ uses
   kamus_controller,
   fastplaz_handler, logutil_lib, http_lib,
   fpexprpars, // formula
-  dateutils,
+  dateutils, IniFiles,
   RegExpr, fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
 
 const
@@ -60,6 +60,8 @@ type
 
   TOnErrorCallback = function(const Text: string): string of object;
 
+  TStorageType = (stFile, stDatabase);
+
   { TSimpleBotModule }
 
   TSimpleBotModule = class
@@ -69,6 +71,9 @@ type
     FFirstSessionResponse: boolean;
     FSecondSessionResponse: boolean;
     FSessionUserID: string;
+    FStorageFileName: string;
+    FStorageType: TStorageType;
+    FUserData: TIniFile;
     Suggestion: TBotSuggestion;
     FAskCountdown: integer;
     FAskEmail: boolean;
@@ -90,6 +95,7 @@ type
     function defineHandlerDefault(): string;
     function mathHandlerDefault(): string;
     function ErrorHandler(Message: string): string;
+    procedure setStorageType(AValue: TStorageType);
     procedure setTrimMessage(AValue: boolean);
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
@@ -147,6 +153,9 @@ type
     property TrimMessage: boolean read getTrimMessage write setTrimMessage;
 
     property SessionUserID:string read FSessionUserID write FSessionUserID;
+  published
+    property StorageType:TStorageType read FStorageType write setStorageType;
+    property StorageFileName:string read FStorageFileName write FStorageFileName;
 
   end;
 
@@ -207,6 +216,8 @@ begin
   ___HandlerCallbackMap := THandlerCallbackMap.Create;
 
   FDataLoaded := False;
+  FStorageType := stFile;
+  FStorageFileName := '';
   {$ifdef AI_REDIS}
   SimpleAI := TSimpleAIRedis.Create;
   {$else}
@@ -332,11 +343,31 @@ end;
 procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
 begin
   SetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName, AValue);
+
+  if (FStorageType = stFile)and(FStorageFileName<>'') then
+  begin
+    try
+      FUserData := TIniFile.Create( FStorageFileName);
+      FUserData.WriteString( FSessionUserID, KeyName, AValue);
+    except
+    end;
+    FUserData.Free;
+  end;
 end;
 
 function TSimpleBotModule.getUserData(const KeyName: string): string;
 begin
   Result := GetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName);
+
+  if (FStorageType = stFile)and(FStorageFileName<>'') then
+  begin
+    try
+      FUserData := TIniFile.Create( FStorageFileName);
+      FUserData.ReadString( FSessionUserID, KeyName, '');
+    except
+    end;
+    FUserData.Free;
+  end;
 end;
 
 function TSimpleBotModule.handlerProcessing(ActionName, Message: string): string;
@@ -464,6 +495,17 @@ begin
       UserData['Email'] := Message;
       Result := 'Data email telah kami simpan';
     end;
+  end;
+end;
+
+procedure TSimpleBotModule.setStorageType(AValue: TStorageType);
+begin
+  if FStorageType=AValue then Exit;
+  FStorageType:=AValue;
+
+  if FStorageType = stFile then
+  begin
+
   end;
 end;
 

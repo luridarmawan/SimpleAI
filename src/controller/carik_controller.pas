@@ -37,6 +37,9 @@ uses
   simpleai_controller,
   IniFiles, fpjson, Classes, SysUtils;
 
+const
+  _GROUP_MEMBERBARU_ABAIKAN = 'group_memberbaru_abaikan';
+
 type
 
   { TCarikController }
@@ -140,8 +143,6 @@ const
   _NOTULEN_ADMIN_PREFIX = 'admin-';
   _NOTULEN_IMAGERECOGNITION_COUNTING = 'image_recognition';
   _NOTULEN_IMAGERECOGNITION_DISABLED = 'image_recognition_disabled';
-
-  _GROUP_MEMBERBARU_ABAIKAN = 'group_memberbaru_abaikan';
 
   _NOTULEN_SECTION_GROUP_LIST = 'GroupList';
 
@@ -526,7 +527,7 @@ begin
 
   FGroupData.WriteString(FGroupName, _GROUP_MEMBERBARU_ABAIKAN, '0');
 
-  Result := 'OKE';
+  Result := 'OK';
 end;
 
 
