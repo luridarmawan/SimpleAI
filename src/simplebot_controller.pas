@@ -627,7 +627,7 @@ begin
         _AI_RESPONSE_ABOUTME);
       SimpleAI.SuffixText := s;
     end;
-    ;
+
     //SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_VISITED, '1');
     setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));

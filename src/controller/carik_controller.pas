@@ -80,6 +80,9 @@ type
     function TopicHandler(const IntentName: string; Params: TStrings): string;
     function SendHandler(const IntentName: string; Params: TStrings): string;
     function GroupInfoHandler(const IntentName: string; Params: TStrings): string;
+    function isSapaMemberBaru:boolean;
+    function MemberBaruAbaikanHandler(const IntentName: string; Params: TStrings): string;
+    function MemberBaruSapaHandler(const IntentName: string; Params: TStrings): string;
     function Start: boolean;
     function Stop: boolean;
     function Send: boolean;
@@ -137,6 +140,8 @@ const
   _NOTULEN_ADMIN_PREFIX = 'admin-';
   _NOTULEN_IMAGERECOGNITION_COUNTING = 'image_recognition';
   _NOTULEN_IMAGERECOGNITION_DISABLED = 'image_recognition_disabled';
+
+  _GROUP_MEMBERBARU_ABAIKAN = 'group_memberbaru_abaikan';
 
   _NOTULEN_SECTION_GROUP_LIST = 'GroupList';
 
@@ -488,6 +493,42 @@ function TCarikController.GroupInfoHandler(const IntentName: string;
 begin
   Result := GroupInfo;
 end;
+
+function TCarikController.isSapaMemberBaru: boolean;
+begin
+  Result := False;
+  if FGroupData.ReadString(FGroupName, _GROUP_MEMBERBARU_ABAIKAN, '1') = '1' then
+    Result := True;
+end;
+
+function TCarikController.MemberBaruAbaikanHandler(const IntentName: string;
+  Params: TStrings): string;
+begin
+  Result := _NOTULEN_MSG_NOTPERMITTED;
+  if FGroupName = '' then
+    Exit;
+  if not IsPermitted then
+    Exit;
+
+  FGroupData.WriteString(FGroupName, _GROUP_MEMBERBARU_ABAIKAN, '1');
+
+  Result := 'OK';
+end;
+
+function TCarikController.MemberBaruSapaHandler(const IntentName: string;
+  Params: TStrings): string;
+begin
+  Result := _NOTULEN_MSG_NOTPERMITTED;
+  if FGroupName = '' then
+    Exit;
+  if not IsPermitted then
+    Exit;
+
+  FGroupData.WriteString(FGroupName, _GROUP_MEMBERBARU_ABAIKAN, '0');
+
+  Result := 'OKE';
+end;
+
 
 function TCarikController.Start: boolean;
 var
