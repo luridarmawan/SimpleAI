@@ -585,12 +585,15 @@ end;
 function TSimpleBotModule.domainWhoisHandler(const IntentName: string;
   Params: TStrings): string;
 var
+  domain : string;
   domainWhois: TDomainWhoisController;
 begin
   Result := '..';
+  domain := Params.Values['domain_value'];
+  domain := preg_replace('<(.*)\|(.*)>', '$2', domain); // striptag slack: "whois <http://kemana.com|kemana.com>"
+
   domainWhois := TDomainWhoisController.Create;
-  Result := domainWhois.Find(Params.Values['domain_value'],
-    Params.Values['option_value']);
+  Result := domainWhois.Find(domain, Params.Values['option_value']);
   domainWhois.Free;
 end;
 
@@ -602,7 +605,7 @@ begin
   Result := '...';
   try
     kamus := TKamusController.Create;
-    kamus.Token := Config['ibacor/token'];
+    kamus.Token := Config['ibacor/default/token'];
     Result := kamus.Find(Params.Values['word_value']);
   except
   end;
