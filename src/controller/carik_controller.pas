@@ -61,6 +61,7 @@ type
     FGroupData: TIniFile;
     FRecordNumber: integer;
     FUserName: string;
+    function getCustomMessage(const KeyName: string): string;
     function getIsPermiited: boolean;
     function getIsRecording: boolean;
     function SaveToFile(Text: string): boolean;
@@ -68,6 +69,7 @@ type
     function getDirPath(IndexRecording: integer): string;
     function getSafeGroupName(AGroupChatID: string): string;
     function downloadFile(FileID: string): string;
+    procedure setCustomMessage(const KeyName: string; AValue: string);
     procedure setGroupName(AValue: string);
     procedure setPath(AValue: string);
     function openFile(FileName: string): string;
@@ -108,6 +110,7 @@ type
     property RecordNumber: integer read FRecordNumber;
     property IsGroup: boolean read FIsGroup write FIsGroup;
     property IsPermitted: boolean read getIsPermiited;
+    property CustomMessage[const KeyName: string]: string read getCustomMessage write setCustomMessage;
 
     function IsCommand(Text: string): boolean;
     function ExecCommand(Text: string): string;
@@ -194,6 +197,11 @@ begin
     Result := True;
 end;
 
+function TCarikController.getCustomMessage(const KeyName: string): string;
+begin
+  FGroupData.ReadString(FGroupName, 'MSG_' + KeyName, '');
+end;
+
 function TCarikController.SaveToFile(Text: string): boolean;
 var
   i: integer;
@@ -271,6 +279,12 @@ begin
     Result := filePath;
   end;
   Telegram.Free;
+end;
+
+procedure TCarikController.setCustomMessage(const KeyName: string;
+  AValue: string);
+begin
+  FGroupData.WriteString(FGroupName, 'MSG_' + KeyName, AValue);
 end;
 
 procedure TCarikController.setGroupName(AValue: string);
