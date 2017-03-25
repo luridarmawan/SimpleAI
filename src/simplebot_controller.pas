@@ -350,6 +350,11 @@ begin
       FUserData := TIniFile.Create( FStorageFileName);
       FUserData.WriteString( FSessionUserID, KeyName, AValue);
     except
+      on E:Exception do
+      begin
+        if Debug then
+          LogUtil.Add( E.Message, 'USERDATA');
+      end;
     end;
     FUserData.Free;
   end;
