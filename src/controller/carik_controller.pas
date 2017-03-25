@@ -197,11 +197,6 @@ begin
     Result := True;
 end;
 
-function TCarikController.getCustomMessage(const KeyName: string): string;
-begin
-  FGroupData.ReadString(FGroupName, 'MSG_' + KeyName, '');
-end;
-
 function TCarikController.SaveToFile(Text: string): boolean;
 var
   i: integer;
@@ -279,6 +274,11 @@ begin
     Result := filePath;
   end;
   Telegram.Free;
+end;
+
+function TCarikController.getCustomMessage(const KeyName: string): string;
+begin
+  Result := FGroupData.ReadString(FGroupName, 'MSG_' + KeyName, '');
 end;
 
 procedure TCarikController.setCustomMessage(const KeyName: string;

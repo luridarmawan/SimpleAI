@@ -590,7 +590,7 @@ var
 begin
   Result := '..';
   domain := Params.Values['domain_value'];
-  domain := preg_replace('<(.*)\|(.*)>', '$2', domain); // striptag slack: "whois <http://kemana.com|kemana.com>"
+  domain := preg_replace('<(.*)\|(.*)>', '$2', domain); // striptag slack: "whois <http://domain.com|domain.com>"
 
   domainWhois := TDomainWhoisController.Create;
   Result := domainWhois.Find(domain, Params.Values['option_value']);
