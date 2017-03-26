@@ -368,7 +368,7 @@ begin
   begin
     try
       FUserData := TIniFile.Create( FStorageFileName);
-      FUserData.ReadString( FSessionUserID, KeyName, '');
+      Result := FUserData.ReadString( FSessionUserID, KeyName, '');
     except
     end;
     FUserData.Free;
