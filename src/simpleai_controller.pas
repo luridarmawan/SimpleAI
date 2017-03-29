@@ -21,6 +21,7 @@ const
   _AI_COUNT__MINIMAL_ASKNAME = 5;
   _AI_ACTION_SEPARATOR = '|';
   _AI_CMD_OPENFILE = 'file';
+  _AI_CMD_OPENJSONFILE = 'json';
 
 type
 
@@ -238,6 +239,16 @@ begin
       Result := openFile(s);
       if Result = '' then
         Result := Msg;
+      Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
+      Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
+      Result := StringReplacement( Result);
+    end;
+    _AI_CMD_OPENJSONFILE:
+    begin
+      s := trim(_BASEDIR + lst[1]);
+      Result := openFile(s);
+      if Result = '' then
+        Result := Msg;
       Result := StringReplacement( Result);
     end;
   end;
@@ -255,8 +266,6 @@ begin
     _note := TStringList.Create;
     _note.LoadFromFile(trim(FileName));
     Result := _note.Text;
-    Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
-    Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
     _note.Free;
   end;
 end;
