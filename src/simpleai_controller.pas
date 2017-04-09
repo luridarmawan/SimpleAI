@@ -420,6 +420,7 @@ begin
   if item_list.Count > 0 then
   begin
     Randomize;
+    RandSeed := GetTickCount; // more true random
     i := Random(item_list.Count);
 
     Result := item_list[i];
