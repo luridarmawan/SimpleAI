@@ -448,6 +448,11 @@ begin
   FGroupData.WriteString(FGroupName, _NOTULEN_TOPIC, _topic);
   FGroupData.WriteString(FGroupName, _NOTULEN_GROUP_ID, FGroupChatID);
 
+  if IsRecording then
+  begin
+    // TODO: direct save to file
+  end;
+
   Result := 'Baik, topik saat ini *"' + ucwords(_topic) + '"*';
 end;
 

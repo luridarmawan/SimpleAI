@@ -5,7 +5,9 @@ unit simpleairedis_controller;
 interface
 
 uses
+  {$IFNDEF Windows}
   cthreads,
+  {$ENDIF}
   common,
   fpcgi, simpleai_controller, redis_controller,
   Classes, SysUtils;
