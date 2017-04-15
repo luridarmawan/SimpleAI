@@ -26,7 +26,7 @@ type
     FOmdb: TOmdbIntegration;
   public
     constructor Create;
-    destructor Destroy;
+    destructor Destroy; override;
 
     property Cache: boolean read FCache write FCache;
     function Find(MovieTitle: string): string;

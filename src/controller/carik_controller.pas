@@ -78,7 +78,7 @@ type
     function getGroupAdminList(GroupNameID: string): string;
   public
     constructor Create;
-    destructor Destroy;
+    destructor Destroy; override;
     function StartHandler(const IntentName: string; Params: TStrings): string;
     function StopHandler(const IntentName: string; Params: TStrings): string;
     function CheckHandler(const IntentName: string; Params: TStrings): string;
@@ -142,7 +142,7 @@ const
   _NOTULEN_INVITEDBY_USERNAME = 'invitedby_username';
   _NOTULEN_INVITEDBY_DATE = 'invitedby_date';
   _NOTULEN_GROUP_ID = 'id';
-  _NOTULEN_DIR_PREFIX = 'group-';
+  //_NOTULEN_DIR_PREFIX = 'group-';
   _NOTULEN_ADMIN_PREFIX = 'admin-';
   _NOTULEN_IMAGERECOGNITION_COUNTING = 'image_recognition';
   _NOTULEN_IMAGERECOGNITION_DISABLED = 'image_recognition_disabled';
@@ -164,13 +164,13 @@ const
     + '<style>span {white-space: pre;font-family: monospace;display: block;unicode-bidi: embed}</style>';
   _NOTULEN_HTML_USERNAME = '<span class="username">%s, %s</span>';
   _NOTULEN_HTML_MESSAGE = '<span class="message">%s</span>';
-  _NOTULEN_HTML_DOCUMENT = '<a href="%s">document</a>';
+  //_NOTULEN_HTML_DOCUMENT = '<a href="%s">document</a>';
   _NOTULEN_HTML_PHOTO = '<img src="%s">';
   _NOTULEN_HTML_VIDEO = '<video controls><source src="%s" type="video/mp4"></video>';
 
   _NOTULEN_SUPERADMIN = 'luridarmawan';
 
-  _NOTULEN_MIME_VIDEO = 'video/mp4';
+  //_NOTULEN_MIME_VIDEO = 'video/mp4';
 
 { TCarikController }
 
@@ -203,6 +203,7 @@ var
   i: integer;
   fileName, dir: string;
 begin
+  Result := False;
   i := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
   dir := getDirPath(i);
   fileName := dir + 'index' + _NOTULEN_FILE_EXTENSION;
@@ -216,6 +217,7 @@ begin
       Append(DataFile);
     WriteLn(DataFile, Text);
     CloseFile(DataFile);
+    Result := True;
   except
   end;
 end;
@@ -225,6 +227,7 @@ var
   i: integer;
   fileName, dir: string;
 begin
+  Result := False;
   i := FGroupData.ReadInteger(FGroupName, _NOTULEN_COUNT, 0);
   dir := getDirPath(i);
   fileName := dir + LowerCase(FGroupName) + '.csv';
@@ -238,6 +241,7 @@ begin
       Append(DataFile);
     WriteLn(DataFile, Text);
     CloseFile(DataFile);
+    Result := True;
   except
   end;
 end;

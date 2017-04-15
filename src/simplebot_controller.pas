@@ -176,10 +176,10 @@ const
   _AI_CONFIG_INTENTS = 'ai/default/intents';
   _AI_CONFIG_RESPONSE = 'ai/default/response';
   _AI_CONFIG_DEBUG = 'ai/default/debug';
-  _AI_CONFIG_DATASOURCE = 'ai/default/datasource';
+  //_AI_CONFIG_DATASOURCE = 'ai/default/datasource';
 
-  _AI_DATASOURCE_REDIS = 'redis';
-  _AI_DATASOURCE_FILE = 'file';
+  //_AI_DATASOURCE_REDIS = 'redis';
+  //_AI_DATASOURCE_FILE = 'file';
   _AI_RESPONSE_INTRODUCTION = 'introduction';
   _AI_RESPONSE_FIRSTSESSION = 'firstsession';
   _AI_RESPONSE_ABOUTME = 'aboutme';
@@ -203,12 +203,12 @@ const
   _AI_DEFINE = 'define';
   _AI_MATH = 'math';
   _AI_SESSION_USER = 'AI_USER_';
-  _AI_VARKEY = 'varkey';
+  //_AI_VARKEY = 'varkey';
   _AI_OBJECT = 'OBJECT';
   _AI_OBJECT_DATE = 'OBJECT_DATE';
 
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
-  _TELEGRAM_CONFIG_TOKEN = 'telegram/token';
+  //_TELEGRAM_CONFIG_TOKEN = 'telegram/token';
 
 constructor TSimpleBotModule.Create;
 begin
@@ -963,7 +963,10 @@ begin
 
     try
       httpResponse := httpClient.Get();
-      //if httpResponse.ResultCode = 200 then
+      if httpResponse.ResultCode = 200 then
+      begin
+
+      end;
     except
     end;
 
