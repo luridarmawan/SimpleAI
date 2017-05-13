@@ -68,6 +68,7 @@ type
   private
     FAskName: boolean;
     FBotName: string;
+    FCLI: Boolean;
     FFirstSessionResponse: boolean;
     FSecondSessionResponse: boolean;
     FSessionUserID: string;
@@ -154,6 +155,7 @@ type
 
     property SessionUserID:string read FSessionUserID write FSessionUserID;
   published
+    property CLI:Boolean read FCLI write FCLI;
     property StorageType:TStorageType read FStorageType write setStorageType;
     property StorageFileName:string read FStorageFileName write FStorageFileName;
 
@@ -212,6 +214,7 @@ const
 
 constructor TSimpleBotModule.Create;
 begin
+  FCLI := FALSE;
   FOnError := nil;
   ___HandlerCallbackMap := THandlerCallbackMap.Create;
 
@@ -651,8 +654,12 @@ var
 
   lastvisit_time, lastvisit_length: cardinal;
 begin
-  if _GET['_DEBUG'] <> '' then
-    SimpleAI.Debug := True;
+  if not CLI then
+  begin
+    if _GET['_DEBUG'] <> '' then
+      SimpleAI.Debug := True;
+  end;
+
   if Message = '' then
   begin
     Result := '{}';
@@ -687,7 +694,11 @@ begin
   end;
 
   s := getSession(_AI_SESSION_LASTVISIT);
-  lastvisit_time := StrToInt64(s);
+  try
+    lastvisit_time := _GetTickCount;
+    lastvisit_time := StrToInt64(s);
+  except
+  end;
   lastvisit_length := (_GetTickCount - lastvisit_time) div 3600000; // jam
   if lastvisit_length > 1 then
   begin

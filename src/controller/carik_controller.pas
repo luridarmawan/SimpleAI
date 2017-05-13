@@ -522,7 +522,7 @@ end;
 function TCarikController.isSapaMemberBaru: boolean;
 begin
   Result := False;
-  if FGroupData.ReadString(FGroupName, _GROUP_MEMBERBARU_ABAIKAN, '1') <> '1' then
+  if FGroupData.ReadString(FGroupName, _GROUP_MEMBERBARU_ABAIKAN, '0') <> '1' then
     Result := True;
 end;
 
