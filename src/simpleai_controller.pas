@@ -422,8 +422,7 @@ begin
   begin
     Randomize;
 
-    // todo: use GetTickCount64
-    RandSeed := GetTickCount; // more true random
+    RandSeed := GetTickCount64;
     i := Random(item_list.Count);
 
     Result := item_list[i];
