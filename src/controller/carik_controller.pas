@@ -808,6 +808,7 @@ begin
     _AI_CMD_OPENFILE:
     begin
       s := trim(_dir + lst[1]);
+      s := StringReplace(s, '\n', '', [rfReplaceAll]);
       Result := openFile(s);
     end;
   end;

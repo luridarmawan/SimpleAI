@@ -239,6 +239,7 @@ begin
       Result := openFile(s);
       if Result = '' then
         Result := Msg;
+      Result := Trim( Result);
       Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
       Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
       Result := StringReplacement( Result);
@@ -420,6 +421,8 @@ begin
   if item_list.Count > 0 then
   begin
     Randomize;
+
+    // todo: use GetTickCount64
     RandSeed := GetTickCount; // more true random
     i := Random(item_list.Count);
 
