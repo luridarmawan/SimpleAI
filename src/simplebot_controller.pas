@@ -83,8 +83,10 @@ type
     FOnError: TOnErrorCallback;
     FDataLoaded: boolean;
     Text: string;
+    FIsStemming : boolean;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
+    function getIsStemming: boolean;
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
 
@@ -96,6 +98,7 @@ type
     function defineHandlerDefault(): string;
     function mathHandlerDefault(): string;
     function ErrorHandler(Message: string): string;
+    procedure setIsStemming(AValue: boolean);
     procedure setStorageType(AValue: TStorageType);
     procedure setTrimMessage(AValue: boolean);
     procedure setUserData(const KeyName: string; AValue: string);
@@ -159,6 +162,8 @@ type
     property StorageType:TStorageType read FStorageType write setStorageType;
     property StorageFileName:string read FStorageFileName write FStorageFileName;
 
+    // Stemming
+    property IsStemming: boolean read getIsStemming write setIsStemming;
   end;
 
 var
@@ -231,6 +236,7 @@ begin
   Suggestion := TBotSuggestion.Create;
   Suggestion.FileName := Config[_AI_CONFIG_BASEDIR] + 'suggestion.txt';
 
+  FIsStemming := False;
   FChatID := '';
   FAskCountdown := 0;
   FAskName := False;
@@ -506,6 +512,16 @@ begin
   end;
 end;
 
+function TSimpleBotModule.getIsStemming: boolean;
+begin
+  Result := FIsStemming;
+end;
+
+procedure TSimpleBotModule.setIsStemming(AValue: boolean);
+begin
+    FIsStemming := AValue;
+end;
+
 procedure TSimpleBotModule.setStorageType(AValue: TStorageType);
 begin
   if FStorageType=AValue then Exit;
@@ -723,6 +739,7 @@ begin
   end;
   messageCount := messageCount + 1;
 
+  SimpleAI.Stemming := FIsStemming;
   if SimpleAI.Exec(Text) then
   begin
     SimpleAI.ResponseText.Text := trim(SimpleAI.ResponseText.Text);

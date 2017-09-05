@@ -3,7 +3,7 @@
 ## What is it?
 
 
-SimpleBOT merupakan salah satu contoh penggunaan SimpleAI yang dipergunakan untuk membuat BOT.
+SimpleBOT merupakan salah satu contoh penggunaan NLP SimpleAI yang dipergunakan untuk membuat BOT.
 Memiliki fitur menjawab otomatis, dan belajar suatu definisi kata sederhana.
 Kecerdasan Bot ini tergantung dari data entities dan intent yang Anda miliki, serta logic handler yang Anda buat.
 
@@ -116,3 +116,4 @@ which this project is licensed under.
 
 Credit list in [CREDITS](CREDITS)
 
+[Carik Bot](http://www.carik.id/) 

@@ -2,7 +2,7 @@
 
 ## What is it?
 
-SimpleAI adalah _package code_ yang bisa digunakan untuk menerapkan AI (_Artificial Intelligence_) secara sederhana.
+SimpleAI adalah _package code_ yang bisa digunakan untuk menerapkan AI (_Artificial Intelligence_) secara sederhana, khususnya untuk implementasi NLP (_Natural Language Processing_).
 
 SimpleAI ini dibangun dalam bahasa Pascal, khususnya dengan [freepascal](http://www.freepascal.org/). Untuk memudahkan dalam proses development, telah disediakan juga _package_ untuk digunakan di dalam IDE [Lazarus](http://www.lazarus-ide.org/)
 
@@ -123,3 +123,4 @@ which this project is licensed under.
 
 Credit list in [CREDITS](CREDITS)
 
+[Carik Bot](http://www.carik.id/)

@@ -12,7 +12,7 @@ unit simpleai_controller;
 interface
 
 uses
-  common,
+  common, stemmingnazief_lib,
   simpleai_lib, dateutils, Dos, RegExpr, fpjson,
   IniFiles, Classes, SysUtils;
 
@@ -38,10 +38,15 @@ type
     FSimpleAILib: TSimpleAILib;
     FResponseData: TMemIniFile;
     FResponseDataAsList: TStringList;
+    FStemmedText: string;
+    FStemmedJson: string;
+    FStemmingDictionary: string;
     FSuffixText: string;
     FTrimMessage: boolean;
     FVarName: string;
+    FIsStemming: boolean;
 
+    function getIsStemming: boolean;
     function getResponseJson: string;
     function getTimeSession(): string;
 
@@ -56,6 +61,8 @@ type
     function isCommand(Msg: string): boolean;
     function execCommand(Msg: string): string;
     function openFile(FileName: string): string;
+    procedure setIsStemming(AValue: boolean);
+    procedure SetStemmingDictionary(AValue: string);
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
@@ -89,6 +96,11 @@ type
     property Pattern: string read getPatternString;
     property Msg: string read FMsg;
     property TrimMessage: boolean read FTrimMessage write FTrimMessage;
+
+    // Stemming
+    property Stemming: boolean read getIsStemming write setIsStemming;
+    property StemmingDictionary: string read FStemmingDictionary write SetStemmingDictionary;
+    property StemmedText: string read FStemmedText;
   end;
 
 implementation
@@ -306,6 +318,11 @@ begin
   FResponseText := TStringList.Create;
   FMsg := '';
   FTrimMessage := False;
+
+  // Stemming
+  FIsStemming := False;
+  FStemmingDictionary := 'files' + DirectorySeparator + STEMMINGNAZIEF_DICTIONARY_FILE;
+  FStemmedText := '';
 end;
 
 destructor TSimpleAI.Destroy;
@@ -356,6 +373,8 @@ begin
 end;
 
 function TSimpleAI.Exec(Text: string; AutoResponse: boolean): boolean;
+var
+  Stemmer : TStemmingNazief;
 begin
   FMsg := '';
   Result := False;
@@ -365,6 +384,15 @@ begin
   if FTrimMessage then
   begin
     Text := ReplaceAll(Text, ['''', '"'], '');
+  end;
+
+  if FIsStemming then
+  begin
+    Stemmer := TStemmingNazief.Create;
+    Stemmer.LoadDictionaryFromFile( FStemmingDictionary);
+    FStemmedJson := Stemmer.ParseSentence( Text);
+    FStemmedText := Stemmer.Text;
+    Stemmer.Free;
   end;
 
   Result := FSimpleAILib.Exec(Text);
@@ -493,6 +521,13 @@ begin
   json := json + '"request" : {';
   json := json + '"text" : "' + StringToJSONString(FRequestText) + '"';
   json := json + '},';
+  if FIsStemming then
+  begin
+    json := json + '"stemming" : {';
+    json := json + '"text" : "' + FStemmedText + '",';
+    json := json + '"response" : ' + FStemmedJson;
+    json := json + '},';
+  end;
   json := json + '"response" : {';
   json := json + '"intents" : {';
   json := json + '"action" : "' + actionName + '",';
@@ -524,6 +559,22 @@ begin
 
   lst.Free;
   Result := json;
+end;
+
+procedure TSimpleAI.setIsStemming(AValue: boolean);
+begin
+  FIsStemming := AValue;
+end;
+
+procedure TSimpleAI.SetStemmingDictionary(AValue: string);
+begin
+  if FStemmingDictionary=AValue then Exit;
+  FStemmingDictionary:=AValue;
+end;
+
+function TSimpleAI.getIsStemming: boolean;
+begin
+  Result := FIsStemming;
 end;
 
 
