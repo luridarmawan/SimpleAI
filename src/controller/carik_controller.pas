@@ -952,10 +952,11 @@ begin
 
   FGroupData.ReadSections(lst);
 
+  lastGroup := '';
   if FGroupName = '' then
   begin
-    lastGroup := '*7 Group Terakhir:* ';
-    for i:=lst.Count-7 to lst.Count-1 do
+    lastGroup := '*20 Group Terakhir:* ';
+    for i:=lst.Count-20 to lst.Count-1 do
     begin
       lastGroup := lastGroup + #10 + i2s(i) + '. '+  lst[i];
     end;
@@ -978,7 +979,8 @@ begin
     end;
   end;
 
-  Result := lastGroup + #10#10'*Group List:*'#10 + return.Text;
+  //Result := lastGroup + #10#10'*Group List:*'#10 + return.Text;
+  Result := lastGroup + ' ';
   Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, '_', '\_', [rfReplaceAll]);

@@ -11,6 +11,8 @@ del /s *.o
 del *.compiled
 del /s /q lib\*
 rmdir /s /q lib\
+mkdir lib
+type "" > lib/empty
 rmdir /s /q backup\
 rmdir /s /q src\backup
 rmdir /s /q src\controller\backup
