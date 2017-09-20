@@ -958,7 +958,10 @@ begin
     lastGroup := '*20 Group Terakhir:* ';
     for i:=lst.Count-20 to lst.Count-1 do
     begin
-      lastGroup := lastGroup + #10 + i2s(i) + '. '+  lst[i];
+      if i < lst.Count - 1 then
+        lastGroup := lastGroup + #10'├ ' + i2s(i) + '. '+  getGroupInfo(lst[i])
+      else
+        lastGroup := lastGroup + #10'└ ' + i2s(i) + '. '+  getGroupInfo(lst[i]);
     end;
   end;
   (lst as TStringList).Sort;
