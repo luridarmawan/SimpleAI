@@ -59,7 +59,7 @@ type
 
     procedure setDebug(AValue: boolean);
     function isCommand(Msg: string): boolean;
-    function execCommand(Msg: string): string;
+    function execCommand(Message: string): string;
     function openFile(FileName: string): string;
     procedure setIsStemming(AValue: boolean);
     procedure SetStemmingDictionary(AValue: string);
@@ -237,20 +237,20 @@ begin
   lst.Free;
 end;
 
-function TSimpleAI.execCommand(Msg: string): string;
+function TSimpleAI.execCommand(Message: string): string;
 var
   s: string;
   lst: TStrings;
 begin
-  Result := Msg;
-  lst := Explode(Msg, ':');
+  Result := Message;
+  lst := Explode(Message, ':');
   case lst[0] of
     _AI_CMD_OPENFILE:
     begin
       s := trim(_BASEDIR + lst[1]);
       Result := openFile(s);
       if Result = '' then
-        Result := Msg;
+        Result := Message;
       Result := Trim( Result);
       Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
       Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
@@ -261,7 +261,7 @@ begin
       s := trim(_BASEDIR + lst[1]);
       Result := openFile(s);
       if Result = '' then
-        Result := Msg;
+        Result := Message;
       Result := StringReplacement( Result);
     end;
   end;
@@ -419,7 +419,7 @@ begin
   // is Command
   if isCommand(FResponseText.Text) then
   begin
-    FResponseText.Text := execCommand(FResponseText.Text);
+    //FResponseText.Text := execCommand(FResponseText.Text);
   end;
 end;
 

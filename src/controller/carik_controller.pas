@@ -324,11 +324,12 @@ var
   _note: TStringList;
 begin
   Result := '';
-  if FileExists(trim(FileName)) then
+  FileName := Trim( FileName);
+  if FileExists(FileName) then
   begin
     _note := TStringList.Create;
     try
-      _note.LoadFromFile(trim(FileName));
+      _note.LoadFromFile(FileName);
       Result := _note.Text;
       Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
       Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
@@ -802,6 +803,7 @@ begin
 
   _dir := _NOTULEN_PATH_DEFAULT + _NOTULEN_PATH_DOCS;
   _dir := Format(_dir, [FGroupName]);
+  _dir := StringReplace(_dir, '//', '/', [rfReplaceAll]);
 
   lst := Explode(Text, ':');
   case lst[0] of
