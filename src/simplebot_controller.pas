@@ -625,12 +625,17 @@ function TSimpleBotModule.kamusHandler(const IntentName: string;
   Params: TStrings): string;
 var
   kamus: TKamusController;
+  s: string;
 begin
   Result := '...';
   try
     kamus := TKamusController.Create;
     kamus.Token := Config['ibacor/default/token'];
-    Result := kamus.Find(Params.Values['word_value']);
+    s := Params.Values['Text_value'];
+    if Params.Values['word_value'] <> '' then
+      Result := kamus.Find(Params.Values['word_value'])
+    else
+      Result := kamus.Find( s);
   except
   end;
   kamus.Free;
