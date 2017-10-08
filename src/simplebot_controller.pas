@@ -90,7 +90,6 @@ type
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
 
-    procedure LoadConfig(DataName: string);
     procedure LoadAIDataFromFile;
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
@@ -122,6 +121,7 @@ type
     {$endif}
     constructor Create; virtual;
     destructor Destroy; virtual;
+    procedure LoadConfig(DataName: string);
 
     function Exec(Message: string): string;
     function GetResponse(IntentName: string; Action: string = '';

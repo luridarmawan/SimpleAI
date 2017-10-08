@@ -333,6 +333,7 @@ begin
       Result := _note.Text;
       Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
       Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
+      Result := StringReplace(Result, '===', #13, [rfReplaceAll]); // page break
     except
       on E: Exception do
       begin

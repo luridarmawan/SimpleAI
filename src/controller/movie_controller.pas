@@ -23,6 +23,7 @@ type
   TMovieController = class
   private
     FCache: boolean;
+    FKey: string;
     FOmdb: TOmdbIntegration;
   public
     constructor Create;
@@ -30,6 +31,7 @@ type
 
     property Cache: boolean read FCache write FCache;
     function Find(MovieTitle: string): string;
+    property Key:string read FKey write FKey;
   end;
 
 implementation
@@ -38,6 +40,7 @@ implementation
 
 constructor TMovieController.Create;
 begin
+  FKey := '';
   FCache := True;
 end;
 
@@ -55,6 +58,7 @@ begin
   if _forceGetInfo then
   begin
     FOmdb := TOmdbIntegration.Create;
+    FOmdb.Key := FKey;
     Result := FOmdb.Find(MovieTitle);
     FOmdb.Free;
   end;
