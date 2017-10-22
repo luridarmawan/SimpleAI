@@ -213,6 +213,8 @@ const
   //_AI_VARKEY = 'varkey';
   _AI_OBJECT = 'OBJECT';
   _AI_OBJECT_DATE = 'OBJECT_DATE';
+  _AI_CONTEXT = 'CONTEXT';
+  _AI_CONTEXT_DATE = 'CONTEXT_DATE';
 
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   //_TELEGRAM_CONFIG_TOKEN = 'telegram/token';
@@ -779,6 +781,11 @@ begin
       UserData[_AI_OBJECT] := SimpleAI.SimpleAILib.Intent.ObjectName;
       UserData[_AI_OBJECT_DATE] := DateTimeToStr(Now);
     end;
+    if SimpleAI.SimpleAILib.Intent.Context <> '' then
+    begin
+      UserData[_AI_CONTEXT] := SimpleAI.SimpleAILib.Intent.Context;
+      UserData[_AI_CONTEXT_DATE] := DateTimeToStr(Now);
+    end;
 
     {
     if isAnswer() then
@@ -833,6 +840,7 @@ begin
     json['response/user/fullname'] := UserData['FullName'];
     json['response/user/email'] := UserData['Email'];
     json['response/object/name'] := UserData[_AI_OBJECT];
+    json['response/context/name'] := UserData[_AI_CONTEXT];
     text_response := json.AsJSONFormated;
   end
   else
