@@ -20,6 +20,7 @@ const
   _SIMPLEAI_INTENT_DATA_FILENAME = 'files/intents.txt';
   _SIMPLEAI_INTENT_ACTIONKEY = 'action';
   _SIMPLEAI_OBJECT = 'object';
+  _SIMPLEAI_CONTEXT = 'context';
   _SIMPLEAI_VARIABLE = 'var';
   _SIMPLEAI_BOUNDARY = 'boundary';
   _AI_VARKEY = 'varkey';
@@ -32,6 +33,7 @@ type
   private
     FAction: string;
     FBoundary: boolean;
+    FContext: string;
     FData: TMemIniFile;
     FDataAsList: TStringList;
     FDebug: boolean;
@@ -63,6 +65,7 @@ type
     property Data: TMemIniFile read FData write FData;
     property Entities: TEntitiesFAI read FEntities;
     property Action: string read FAction;
+    property Context: string read FContext;
     property ObjectName: string read FObjectName;
     property IntentName: string read FIntentName;
     property IntentKey: string read FIntentKey;
@@ -109,6 +112,7 @@ begin
   FDataAsList := TStringList.Create;
 
   FAction := '';
+  FContext := '';
   FObjectName := '';
   FIntentName := '';
   FIntentKey := '';
@@ -227,6 +231,7 @@ begin
         begin
           FIntentName := intent_name;
           FAction := FData.ReadString(FIntentName, _SIMPLEAI_INTENT_ACTIONKEY, '');
+          FContext := FData.ReadString(FIntentName, _SIMPLEAI_CONTEXT, '');
           FObjectName := FData.ReadString(FIntentName, _SIMPLEAI_OBJECT, '');
 
           key_used := '';
