@@ -197,6 +197,11 @@ begin
       for k := pattern_str.Count - 1 downto 0 do
       begin
         s := pattern_str[k];
+        p := pos('(', s);
+        if p = 1 then
+        begin
+          FParameters.Insert(0, '$' + i2s(k+1) + '=');
+        end;
         p := pos('@', s);
         if p > 0 then
         begin
