@@ -841,6 +841,7 @@ begin
     json['response/user/email'] := UserData['Email'];
     json['response/object/name'] := UserData[_AI_OBJECT];
     json['response/context/name'] := UserData[_AI_CONTEXT];
+    json['response/context/language'] := UserData['language'];
     text_response := json.AsJSONFormated;
   end
   else
