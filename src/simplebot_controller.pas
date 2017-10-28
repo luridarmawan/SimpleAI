@@ -738,12 +738,14 @@ begin
     //SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_VISITED, '1');
     setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
+    UserData[_AI_SESSION_LASTVISIT] := i2s(_GetTickCount);
     if FAskName then
       if UserData['Name'] = '' then
         SetQuestions(_AI_ASK_NAME);
   end;
 
-  s := getSession(_AI_SESSION_LASTVISIT);
+  //s := getSession(_AI_SESSION_LASTVISIT);
+  s := UserData[_AI_SESSION_LASTVISIT];
   try
     lastvisit_time := _GetTickCount;
     lastvisit_time := StrToInt64(s);
@@ -880,6 +882,7 @@ begin
   Result := text_response;
   setSession(_AI_SESSION_MESSAGECOUNT, i2s(messageCount));
   setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
+  UserData[_AI_SESSION_LASTVISIT] := i2s(_GetTickCount);
 end;
 
 function TSimpleBotModule.prepareQuestion: boolean;
