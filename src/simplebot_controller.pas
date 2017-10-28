@@ -70,6 +70,7 @@ type
     FBotName: string;
     FCLI: Boolean;
     FFirstSessionResponse: boolean;
+    FLastVisit: Cardinal;
     FSecondSessionResponse: boolean;
     FSessionUserID: string;
     FStorageFileName: string;
@@ -87,6 +88,8 @@ type
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
     function getIsStemming: boolean;
+    function getLastSeen: Cardinal;
+    function getOriginalMessage: string;
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
 
@@ -98,6 +101,7 @@ type
     function mathHandlerDefault(): string;
     function ErrorHandler(Message: string): string;
     procedure setIsStemming(AValue: boolean);
+    procedure setOriginalMessage(AValue: string);
     procedure setStorageType(AValue: TStorageType);
     procedure setTrimMessage(AValue: boolean);
     procedure setUserData(const KeyName: string; AValue: string);
@@ -161,6 +165,9 @@ type
     property CLI:Boolean read FCLI write FCLI;
     property StorageType:TStorageType read FStorageType write setStorageType;
     property StorageFileName:string read FStorageFileName write FStorageFileName;
+    property LastVisit:Cardinal read FLastVisit;
+    property LastSeen:Cardinal read getLastSeen; // in seconds
+    property OriginalMessage: string read getOriginalMessage write setOriginalMessage;
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
@@ -246,6 +253,7 @@ begin
   FSecondSessionResponse := False;
   FFirstSessionResponse := False;
   FSessionUserID := '';
+  FLastVisit := 0;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
@@ -519,9 +527,28 @@ begin
   Result := FIsStemming;
 end;
 
+function TSimpleBotModule.getLastSeen: Cardinal;
+var
+  s: string;
+begin
+  Result := 0;
+  //Result := (_GetTickCount - FLastVisit) div 3600000; // jam
+  Result := (_GetTickCount - FLastVisit) div 1000;
+end;
+
+function TSimpleBotModule.getOriginalMessage: string;
+begin
+  Result := SimpleAI.OriginalMessage;
+end;
+
 procedure TSimpleBotModule.setIsStemming(AValue: boolean);
 begin
     FIsStemming := AValue;
+end;
+
+procedure TSimpleBotModule.setOriginalMessage(AValue: string);
+begin
+  SimpleAI.OriginalMessage := AValue;
 end;
 
 procedure TSimpleBotModule.setStorageType(AValue: TStorageType);
@@ -720,6 +747,7 @@ begin
   try
     lastvisit_time := _GetTickCount;
     lastvisit_time := StrToInt64(s);
+    FLastVisit := lastvisit_time;
   except
   end;
   lastvisit_length := (_GetTickCount - lastvisit_time) div 3600000; // jam

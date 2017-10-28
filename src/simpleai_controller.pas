@@ -32,6 +32,7 @@ type
     FAIName: string;
     FKeyName: string;
     FMsg: string;
+    FOriginalMessage: string;
     FPrefixText: string;
     FRequestText: string;
     FResponseText: TStringList;
@@ -96,6 +97,7 @@ type
     property Pattern: string read getPatternString;
     property Msg: string read FMsg;
     property TrimMessage: boolean read FTrimMessage write FTrimMessage;
+    property OriginalMessage: string read FOriginalMessage write FOriginalMessage;
 
     // Stemming
     property Stemming: boolean read getIsStemming write setIsStemming;
@@ -317,6 +319,7 @@ begin
   FSimpleAILib := TSimpleAILib.Create;
   FResponseText := TStringList.Create;
   FMsg := '';
+  FOriginalMessage := '';
   FTrimMessage := False;
 
   // Stemming
@@ -520,6 +523,8 @@ begin
   json := json + '"code" : 0,';
   json := json + '"request" : {';
   json := json + '"text" : "' + StringToJSONString(FRequestText) + '"';
+  if FOriginalMessage <> '' then
+    json := json + ',"original_text" : "' + StringToJSONString(FOriginalMessage) + '"';
   json := json + '},';
   if FIsStemming then
   begin
