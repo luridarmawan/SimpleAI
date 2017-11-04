@@ -69,6 +69,7 @@ type
     constructor Create; virtual;
     destructor Destroy; virtual;
 
+    procedure Clear;
     function AddIntentFromFile(FileName: string): boolean;
     function AddEntitiesFromFile(FileName: string): boolean;
     function AddResponFromFile(FileName: string): boolean;
@@ -340,6 +341,11 @@ begin
   FSimpleAILib.Free;
 end;
 
+procedure TSimpleAI.Clear;
+begin
+  FSimpleAILib.Clear;
+end;
+
 function TSimpleAI.AddIntentFromFile(FileName: string): boolean;
 begin
   FSimpleAILib.AddDataIntentFromFile(FileName);
@@ -402,6 +408,7 @@ begin
     Stemmer.Free;
   end;
 
+  FResponseText.Clear;
   Result := FSimpleAILib.Exec(Text);
   if not AutoResponse then
     Exit;
