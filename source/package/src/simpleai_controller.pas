@@ -65,6 +65,7 @@ type
     procedure setIsStemming(AValue: boolean);
     procedure SetStemmingDictionary(AValue: string);
   public
+    StartTime, StopTime, ElapsedTime: cardinal;
     constructor Create; virtual;
     destructor Destroy; virtual;
 
@@ -152,6 +153,8 @@ begin
     '%(time_session)%', getTimeSession, Result, False);
   Result := FSimpleAILib.Intent.Entities.preg_replace(
     '%(AIName)%', AIName, Result, False);
+  Result := FSimpleAILib.Intent.Entities.preg_replace(
+    '%(BotName)%', AIName, Result, False);
 
   dateTimePosition := now;
 
@@ -377,13 +380,14 @@ end;
 
 function TSimpleAI.Exec(Text: string; AutoResponse: boolean): boolean;
 var
-  Stemmer : TStemmingNazief;
+  stemmer : TStemmingNazief;
 begin
   FMsg := '';
   Result := False;
   if Text = '' then
     Exit;
 
+  StartTime := _GetTickCount;
   if FTrimMessage then
   begin
     Text := ReplaceAll(Text, ['''', '"'], '');
@@ -391,10 +395,10 @@ begin
 
   if FIsStemming then
   begin
-    Stemmer := TStemmingNazief.Create;
-    Stemmer.LoadDictionaryFromFile( FStemmingDictionary);
-    FStemmedJson := Stemmer.ParseSentence( Text);
-    FStemmedText := Stemmer.Text;
+    stemmer := TStemmingNazief.Create;
+    stemmer.LoadDictionaryFromFile( FStemmingDictionary);
+    FStemmedJson := stemmer.ParseSentence( Text);
+    FStemmedText := stemmer.Text;
     Stemmer.Free;
   end;
 
@@ -424,6 +428,8 @@ begin
   begin
     //FResponseText.Text := execCommand(FResponseText.Text);
   end;
+  StopTime := _GetTickCount;
+  ElapsedTime := StopTime - StartTime;
 end;
 
 function TSimpleAI.GetQuestions(IntentName: string; Key: string;
@@ -541,10 +547,10 @@ begin
   begin
     json := json + '"key" : "' + FSimpleAILib.Intent.IntentKey + '",';
     json := json + '"pattern" : "' + StringToJSONString(FSimpleAILib.Pattern) + '",';
+    //json := json + '"time_usage" : "' + IntToStr(ElapsedTime) + '",';
   end;
   json := json + '"parameters" : {';
 
-  //json := json + '"Greeting" : "' + '-' + '"';
   for i := 0 to FSimpleAILib.Parameters.Count - 1 do
   begin
     v := FSimpleAILib.Parameters.ValueFromIndex[i];
