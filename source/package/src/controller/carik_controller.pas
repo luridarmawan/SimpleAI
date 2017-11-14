@@ -40,6 +40,8 @@ uses
 const
   _GROUP_MEMBERBARU_ABAIKAN = 'group_memberbaru_abaikan';
 
+  CommandList  : array  [1..4] of string = ('file','get','url','json');
+
 type
 
   { TCarikController }
@@ -775,10 +777,15 @@ begin
 end;
 
 function TCarikController.isValidCommand(CommandString: string): boolean;
+var
+  s: string;
 begin
   Result := False;
-  if trim(CommandString) = 'file' then  // only 1 command :D
-    Result := True;
+  for s in CommandList do
+  begin
+    if CommandString = s then
+      Exit( True);
+  end;
 end;
 
 function TCarikController.IsCommand(Text: string): boolean;
@@ -813,6 +820,17 @@ begin
       s := trim(_dir + lst[1]);
       s := StringReplace(s, '\n', '', [rfReplaceAll]);
       Result := openFile(s);
+    end;
+    _AI_CMD_URL:
+    begin
+      Result := Trim( Copy( Text, Pos( ':', Text)+1));
+      Result := file_get_contents( Result);
+      Result := StringReplace( Result, '<b>', '*', [rfReplaceAll]);
+      Result := StringReplace( Result, '</b>', '*', [rfReplaceAll]);
+      Result := StripHTML( Result);
+      Result := StringReplace( Result, #9, '', [rfReplaceAll]);
+      Result := StringReplace( Result, #13, '\n', [rfReplaceAll]);
+      Result := StringReplace( Result, #10, '\n', [rfReplaceAll]);
     end;
   end;
 

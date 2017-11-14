@@ -57,7 +57,6 @@ type
     function loadDataEntities: boolean;
     function loadDataIntents: boolean;
     function loadDataResponses: boolean;
-    //function jsonFormatter(JsonString: string): string;
   public
   end;
 
@@ -78,6 +77,7 @@ begin
 
   NLP := TSimpleAI.Create;
   NLP.AIName := BOTNAME;
+  NLP.Stemming := False;
   //NLP.Debug := True;
 
   //demo
