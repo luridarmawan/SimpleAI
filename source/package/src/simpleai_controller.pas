@@ -212,13 +212,22 @@ begin
   end;
 
   regex := TRegExpr.Create;
-  regex.Expression := '%(.*)%';
+  //regex.Expression := '%(.*)%';
+  regex.Expression := '%([a-zA-Z0-9_]+)%';
   if regex.Exec(Result) then
   begin
     s := regex.Match[1];
     if FSimpleAILib.Parameters.Values[s] <> '' then
       Result := SimpleAILib.Intent.Entities.preg_replace(
         '%' + s + '%', FSimpleAILib.Parameters.Values[s], Result, True);
+    while regex.ExecNext do
+    begin
+      s := regex.Match[1];
+      if FSimpleAILib.Parameters.Values[s] <> '' then
+        Result := SimpleAILib.Intent.Entities.preg_replace(
+          '%' + s + '%', FSimpleAILib.Parameters.Values[s], Result, True);
+    end;
+
   end;
   regex.Free;
 
@@ -405,6 +414,7 @@ begin
     stemmer.LoadDictionaryFromFile( FStemmingDictionary);
     FStemmedJson := stemmer.ParseSentence( Text);
     FStemmedText := stemmer.Text;
+    FIsStemming := stemmer.IsDictionaryLoaded;
     Stemmer.Free;
   end;
 

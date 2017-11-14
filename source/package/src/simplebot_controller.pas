@@ -1003,13 +1003,21 @@ begin
   Message := SimpleAI.StringReplacement(Message);
 
   regex := TRegExpr.Create;
-  regex.Expression := '%(.*)%';
+  //regex.Expression := '%(.*)%';
+  regex.Expression := '%([a-zA-Z0-9_]+)%';
   if regex.Exec(Message) then
   begin
     s := UserData[regex.Match[1]];
     if s <> '' then
       Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
         '%(.*)%', s, Message, True);
+    while regex.ExecNext do
+    begin
+      s := UserData[regex.Match[1]];
+      if s <> '' then
+        Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
+          '%(.*)%', s, Message, True);
+    end;
   end;
   regex.Free;
 end;
