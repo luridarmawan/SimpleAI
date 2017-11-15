@@ -40,13 +40,6 @@ uses
 const
   _GROUP_MEMBERBARU_ABAIKAN = 'group_memberbaru_abaikan';
 
-  CMD_URL_WITH_CACHE = 'url-cache';
-  CMD_GET_WITH_CACHE = 'get-cache';
-  CMD_JSON_WITH_CACHE = 'json-cache';
-  CommandList: array  [1..6] of string =
-    (_AI_CMD_OPENFILE, _AI_CMD_GET, _AI_CMD_URL, _AI_CMD_GETJSON,
-    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE);
-
 type
 
   { TCarikController }
@@ -805,22 +798,13 @@ begin
     Exit;
   if isValidCommand(lst[0]) then
     Result := True;
+  lst.Free;
 end;
 
 function TCarikController.ExecCommand(Text: string): string;
 var
-  s, _dir, url: string;
+  s, _dir: string;
   lst: TStrings;
-
-  function stripText(AText: string): string;
-  begin
-    Result := StringReplace(AText, '<b>', '*', [rfReplaceAll]);
-    Result := StringReplace(Result, '</b>', '*', [rfReplaceAll]);
-    Result := StripHTML(Result);
-    Result := StringReplace(Result, #9, '', [rfReplaceAll]);
-    Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
-    Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
-  end;
 
 begin
   Result := '';
@@ -836,25 +820,6 @@ begin
       s := trim(_dir + lst[1]);
       s := StringReplace(s, '\n', '', [rfReplaceAll]);
       Result := openFile(s);
-    end;
-    _AI_CMD_URL:
-    begin
-      Result := Trim(Copy(Text, Pos(':', Text) + 1));
-      Result := file_get_contents(Result);
-      Result := stripText(Result);
-    end;
-    CMD_GET_WITH_CACHE,
-    CMD_URL_WITH_CACHE:
-    begin
-      url := Trim(Copy(Text, Pos(':', Text) + 1));
-      Result := LoadCache( url);
-      if Result = '' then
-      begin
-        Result := file_get_contents( url);
-        Result := stripText(Result);
-        SaveCache( url, Result);
-      end;
-
     end;
   end;
 

@@ -26,6 +26,13 @@ const
   _AI_CMD_GETJSON = 'json';
   _AI_CMD_OPENJSONFILE = 'json';
 
+  CMD_URL_WITH_CACHE = 'url-cache';
+  CMD_GET_WITH_CACHE = 'get-cache';
+  CMD_JSON_WITH_CACHE = 'json-cache';
+  CommandList: array  [1..6] of string =
+    (_AI_CMD_OPENFILE, _AI_CMD_GET, _AI_CMD_URL, _AI_CMD_GETJSON,
+    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE);
+
 type
 
   { TSimpleAI }
@@ -62,6 +69,7 @@ type
     function getPatternString: string;
 
     procedure setDebug(AValue: boolean);
+    function isValidCommand(ACommandString: string): boolean;
     function isCommand(Msg: string): boolean;
     function execCommand(Message: string): string;
     function openFile(FileName: string): string;
@@ -241,26 +249,56 @@ begin
   FSimpleAILib.Intent.Debug := AValue;
 end;
 
+function TSimpleAI.isValidCommand(ACommandString: string): boolean;
+var
+  s: string;
+begin
+  Result := False;
+  for s in CommandList do
+  begin
+    if ACommandString = s then
+      Exit(True);
+  end;
+end;
+
 function TSimpleAI.isCommand(Msg: string): boolean;
 var
   lst: TStrings;
 begin
   Result := False;
+  if Msg = '' then
+    Exit;
   lst := Explode(Msg, ':');
+  if lst.Count = 1 then
+  begin
+    lst.Free;
+    Exit;
+  end;
 
-  //todo: is valid command
-
-  if lst.Count > 1 then
+  if isValidCommand(lst[0]) then
     Result := True;
+
   lst.Free;
 end;
 
 function TSimpleAI.execCommand(Message: string): string;
 var
-  s: string;
+  s, url: string;
   lst: TStrings;
+
+  function stripText(AText: string): string;
+  begin
+    Result := StringReplace(AText, '<b>', '*', [rfReplaceAll]);
+    Result := StringReplace(Result, '</b>', '*', [rfReplaceAll]);
+    Result := StripHTML(Result);
+    Result := StringReplace(Result, #9, '', [rfReplaceAll]);
+    Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
+    Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
+  end;
+
 begin
   Result := Message;
+  Message := StringReplacement( Message);
   lst := Explode(Message, ':');
   case lst[0] of
     _AI_CMD_OPENFILE:
@@ -281,6 +319,24 @@ begin
       if Result = '' then
         Result := Message;
       Result := StringReplacement( Result);
+    end;
+    _AI_CMD_URL:
+    begin
+      Result := Trim(Copy(Message, Pos(':', Message) + 1));
+      Result := file_get_contents(Result);
+      Result := stripText(Result);
+    end;
+    CMD_GET_WITH_CACHE,
+    CMD_URL_WITH_CACHE:
+    begin
+      url := Trim(Copy(Message, Pos(':', Message) + 1));
+      Result := LoadCache( url);
+      if Result = '' then
+      begin
+        Result := file_get_contents( url);
+        Result := stripText(Result);
+        SaveCache( url, Result);
+      end;
     end;
   end;
 
