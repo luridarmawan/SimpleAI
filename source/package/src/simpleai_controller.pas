@@ -331,13 +331,15 @@ begin
     begin
       url := Trim(Copy(Message, Pos(':', Message) + 1));
       Result := LoadCache( url);
+      Result := Trim( Result);
       if Result = '' then
       begin
         Result := file_get_contents( url);
+        Result := Trim( Result);
         Result := stripText(Result);
         SaveCache( url, Result);
       end;
-      Result := Result + '\n' + GetResponse( IntentName + 'Footer');
+      Result := Result + GetResponse( IntentName + 'Footer');
     end;
   end;
 
