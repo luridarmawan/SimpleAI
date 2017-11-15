@@ -337,6 +337,7 @@ begin
         Result := stripText(Result);
         SaveCache( url, Result);
       end;
+      Result := Result + '\n' + GetResponse( IntentName + 'Footer');
     end;
   end;
 
