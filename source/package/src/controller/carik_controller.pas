@@ -40,7 +40,12 @@ uses
 const
   _GROUP_MEMBERBARU_ABAIKAN = 'group_memberbaru_abaikan';
 
-  CommandList  : array  [1..4] of string = ('file','get','url','json');
+  CMD_URL_WITH_CACHE = 'url-cache';
+  CMD_GET_WITH_CACHE = 'get-cache';
+  CMD_JSON_WITH_CACHE = 'json-cache';
+  CommandList: array  [1..6] of string =
+    (_AI_CMD_OPENFILE, _AI_CMD_GET, _AI_CMD_URL, _AI_CMD_GETJSON,
+    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE);
 
 type
 
@@ -87,8 +92,9 @@ type
     function TopicHandler(const IntentName: string; Params: TStrings): string;
     function SendHandler(const IntentName: string; Params: TStrings): string;
     function GroupInfoHandler(const IntentName: string; Params: TStrings): string;
-    function isSapaMemberBaru:boolean;
-    function MemberBaruAbaikanHandler(const IntentName: string; Params: TStrings): string;
+    function isSapaMemberBaru: boolean;
+    function MemberBaruAbaikanHandler(const IntentName: string;
+      Params: TStrings): string;
     function MemberBaruSapaHandler(const IntentName: string; Params: TStrings): string;
     function Start: boolean;
     function Stop: boolean;
@@ -112,7 +118,8 @@ type
     property RecordNumber: integer read FRecordNumber;
     property IsGroup: boolean read FIsGroup write FIsGroup;
     property IsPermitted: boolean read getIsPermiited;
-    property CustomMessage[const KeyName: string]: string read getCustomMessage write setCustomMessage;
+    property CustomMessage[const KeyName: string]: string
+      read getCustomMessage write setCustomMessage;
 
     function IsCommand(Text: string): boolean;
     function ExecCommand(Text: string): string;
@@ -162,8 +169,7 @@ const
   _NOTULEN_MSG_NOTFOUND = 'Catatan tidak tersedia';
 
   _NOTULEN_HTML_STYLE =
-    '<style>body{font-family:Tahoma,"Lucida Grande","Trebuchet MS"}span.username{border-bottom:1px solid #c2d1f0;font-size:small;display:block;background:#e6f5ff;padding:2px 2px 2px 5px}span.message{padding:0 0 0 10px}table{min-width:300px}table,td,th{border:1px solid #00134d}td{border:0;border-bottom:1px solid #668cff}</style>'
-    + '<style>span {white-space: pre;font-family: monospace;display: block;unicode-bidi: embed}</style>';
+    '<style>body{font-family:Tahoma,"Lucida Grande","Trebuchet MS"}span.username{border-bottom:1px solid #c2d1f0;font-size:small;display:block;background:#e6f5ff;padding:2px 2px 2px 5px}span.message{padding:0 0 0 10px}table{min-width:300px}table,td,th{border:1px solid #00134d}td{border:0;border-bottom:1px solid #668cff}</style>' + '<style>span {white-space: pre;font-family: monospace;display: block;unicode-bidi: embed}</style>';
   _NOTULEN_HTML_USERNAME = '<span class="username">%s, %s</span>';
   _NOTULEN_HTML_MESSAGE = '<span class="message">%s</span>';
   //_NOTULEN_HTML_DOCUMENT = '<a href="%s">document</a>';
@@ -172,7 +178,7 @@ const
 
   _NOTULEN_SUPERADMIN = 'luridarmawan';
 
-  //_NOTULEN_MIME_VIDEO = 'video/mp4';
+//_NOTULEN_MIME_VIDEO = 'video/mp4';
 
 { TCarikController }
 
@@ -288,8 +294,7 @@ begin
   Result := FGroupData.ReadString(FGroupName, 'MSG_' + KeyName, '');
 end;
 
-procedure TCarikController.setCustomMessage(const KeyName: string;
-  AValue: string);
+procedure TCarikController.setCustomMessage(const KeyName: string; AValue: string);
 begin
   FGroupData.WriteString(FGroupName, 'MSG_' + KeyName, AValue);
 end;
@@ -326,7 +331,7 @@ var
   _note: TStringList;
 begin
   Result := '';
-  FileName := Trim( FileName);
+  FileName := Trim(FileName);
   if FileExists(FileName) then
   begin
     _note := TStringList.Create;
@@ -784,7 +789,7 @@ begin
   for s in CommandList do
   begin
     if CommandString = s then
-      Exit( True);
+      Exit(True);
   end;
 end;
 
@@ -804,8 +809,19 @@ end;
 
 function TCarikController.ExecCommand(Text: string): string;
 var
-  s, _dir: string;
+  s, _dir, url: string;
   lst: TStrings;
+
+  function stripText(AText: string): string;
+  begin
+    Result := StringReplace(AText, '<b>', '*', [rfReplaceAll]);
+    Result := StringReplace(Result, '</b>', '*', [rfReplaceAll]);
+    Result := StripHTML(Result);
+    Result := StringReplace(Result, #9, '', [rfReplaceAll]);
+    Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
+    Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
+  end;
+
 begin
   Result := '';
 
@@ -823,14 +839,22 @@ begin
     end;
     _AI_CMD_URL:
     begin
-      Result := Trim( Copy( Text, Pos( ':', Text)+1));
-      Result := file_get_contents( Result);
-      Result := StringReplace( Result, '<b>', '*', [rfReplaceAll]);
-      Result := StringReplace( Result, '</b>', '*', [rfReplaceAll]);
-      Result := StripHTML( Result);
-      Result := StringReplace( Result, #9, '', [rfReplaceAll]);
-      Result := StringReplace( Result, #13, '\n', [rfReplaceAll]);
-      Result := StringReplace( Result, #10, '\n', [rfReplaceAll]);
+      Result := Trim(Copy(Text, Pos(':', Text) + 1));
+      Result := file_get_contents(Result);
+      Result := stripText(Result);
+    end;
+    CMD_GET_WITH_CACHE,
+    CMD_URL_WITH_CACHE:
+    begin
+      url := Trim(Copy(Text, Pos(':', Text) + 1));
+      Result := LoadCache( url);
+      if Result = '' then
+      begin
+        Result := file_get_contents( url);
+        Result := stripText(Result);
+        SaveCache( url, Result);
+      end;
+
     end;
   end;
 
@@ -868,8 +892,7 @@ begin
   Result := True;
 end;
 
-function TCarikController.getGroupInfo(GroupNameID: string;
-  ADetail: boolean): string;
+function TCarikController.getGroupInfo(GroupNameID: string; ADetail: boolean): string;
 var
   i: integer;
   s, _groupname, gid: string;
@@ -977,12 +1000,12 @@ begin
   if FGroupName = '' then
   begin
     lastGroup := '*20 Group Terakhir:* ';
-    for i:=lst.Count-20 to lst.Count-1 do
+    for i := lst.Count - 20 to lst.Count - 1 do
     begin
       if i < lst.Count - 1 then
-        lastGroup := lastGroup + #10'├ ' + i2s(i) + '. '+  (lst[i])
+        lastGroup := lastGroup + #10'├ ' + i2s(i) + '. ' + (lst[i])
       else
-        lastGroup := lastGroup + #10'└ ' + i2s(i) + '. '+  (lst[i]);
+        lastGroup := lastGroup + #10'└ ' + i2s(i) + '. ' + (lst[i]);
     end;
   end;
   (lst as TStringList).Sort;
