@@ -862,7 +862,7 @@ begin
   prepareQuestion;
 
   text_response := SimpleAI.ResponseJson;
-  json := TJSONUtil.Create;                            //TODO: object -> context
+  json := TJSONUtil.Create;
   json.LoadFromJsonString(text_response);
   if SimpleAI.Debug then
   begin

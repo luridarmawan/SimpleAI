@@ -169,6 +169,8 @@ begin
         Continue;
       if tmp[0] = _SIMPLEAI_OBJECT then
         Continue;
+      if tmp[0] = _SIMPLEAI_CONTEXT then
+        Continue;
       if tmp[0] = _SIMPLEAI_BOUNDARY then
       begin
         if tmp[1] = 'false' then

@@ -12,7 +12,7 @@ unit simpleai_controller;
 interface
 
 uses
-  common, stemmingnazief_lib,
+  common, stemmingnazief_lib, json_lib,
   simpleai_lib, dateutils, Dos, RegExpr, fpjson,
   IniFiles, Classes, SysUtils;
 
@@ -24,14 +24,14 @@ const
   _AI_CMD_URL = 'url';
   _AI_CMD_GET = 'get';
   _AI_CMD_GETJSON = 'json';
-  _AI_CMD_OPENJSONFILE = 'json';
+  _AI_CMD_OPENJSONFILE = 'file-json';
 
   CMD_URL_WITH_CACHE = 'url-cache';
   CMD_GET_WITH_CACHE = 'get-cache';
   CMD_JSON_WITH_CACHE = 'json-cache';
-  CommandList: array  [1..6] of string =
+  CommandList: array  [1..7] of string =
     (_AI_CMD_OPENFILE, _AI_CMD_GET, _AI_CMD_URL, _AI_CMD_GETJSON,
-    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE);
+    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE, CMD_JSON_WITH_CACHE);
 
 type
 
@@ -73,6 +73,7 @@ type
     function isCommand(Msg: string): boolean;
     function execCommand(Message: string): string;
     function openFile(FileName: string): string;
+    function getJsonContent(AURL:String; ACache:Boolean=False):string;
     procedure setIsStemming(AValue: boolean);
     procedure SetStemmingDictionary(AValue: string);
   public
@@ -361,6 +362,20 @@ begin
       if Result <> '' then
         Result := Result + GetResponse(IntentName + 'Footer');
     end;
+    _AI_CMD_GETJSON:
+    begin
+      convertedMessage := StringReplacement(Message, True);
+      url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
+      Result := getJsonContent( url);
+      Result := stripText(Result);
+    end;
+    CMD_JSON_WITH_CACHE:
+    begin
+      convertedMessage := StringReplacement(Message, True);
+      url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
+      Result := getJsonContent( url, True);
+      Result := stripText(Result);
+    end;
   end;
 
   lst.Free;
@@ -378,6 +393,49 @@ begin
     Result := _note.Text;
     _note.Free;
   end;
+end;
+
+function TSimpleAI.getJsonContent(AURL: String; ACache: Boolean): string;
+var
+  s, pathName: String;
+  lst: TStrings;
+  json: TJSONUtil;
+begin
+  Result := 'yes: ' + AURL;
+  pathName := 'text';
+  lst := Explode( AURL, '|');
+  if lst.Count > 1 then
+  begin
+    pathName:= lst[0];
+    AURL:= lst[1];
+    Result := pathName;
+  end;
+  lst.Free;
+
+  if ACache then
+  begin
+    Result := LoadCache(AURL);
+    Result := Trim(Result);
+    if Result <> '' then
+      Exit;
+  end;
+
+  Result := file_get_contents(AURL);
+  if Result = '' then
+    Exit;
+
+  json := TJSONUtil.Create;
+  try
+    json.LoadFromJsonString( Result);
+    Result := json[pathName];
+    if ACache and (Result<>'') then
+    begin
+      SaveCache(AURL, Result);
+    end;
+  except
+    Result := '';
+  end;
+
 end;
 
 function TSimpleAI.getTimeSession: string;
