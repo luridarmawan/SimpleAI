@@ -91,7 +91,7 @@ type
     function GetResponse(IntentName: string; Action: string = '';
       EntitiesKey: string = ''): string;
     function SetResponseData(List: TStrings): boolean;
-    function StringReplacement(Text: string): string;
+    function StringReplacement(Text: string; BURLEncode: boolean = False): string;
 
     property AIName: string read FAIName write FAIName;
     property SimpleAILib: TSimpleAILib read FSimpleAILib;
@@ -114,7 +114,8 @@ type
 
     // Stemming
     property Stemming: boolean read getIsStemming write setIsStemming;
-    property StemmingDictionary: string read FStemmingDictionary write SetStemmingDictionary;
+    property StemmingDictionary: string read FStemmingDictionary
+      write SetStemmingDictionary;
     property StemmedText: string read FStemmedText;
   end;
 
@@ -153,7 +154,7 @@ begin
   Result := FSimpleAILib.Pattern;
 end;
 
-function TSimpleAI.StringReplacement(Text: string): string;
+function TSimpleAI.StringReplacement(Text: string; BURLEncode: boolean): string;
 var
   s, t, range: string;
   y, m, d: word;
@@ -229,14 +230,27 @@ begin
   begin
     s := regex.Match[1];
     if FSimpleAILib.Parameters.Values[s] <> '' then
-      Result := SimpleAILib.Intent.Entities.preg_replace(
-        '%' + s + '%', FSimpleAILib.Parameters.Values[s], Result, True);
+    begin
+      if BURLEncode then
+        Result := SimpleAILib.Intent.Entities.preg_replace(
+          '%' + s + '%', UrlEncode(FSimpleAILib.Parameters.Values[s]), Result, True)
+      else
+        Result := SimpleAILib.Intent.Entities.preg_replace(
+          '%' + s + '%', FSimpleAILib.Parameters.Values[s], Result, True);
+    end;
+
     while regex.ExecNext do
     begin
       s := regex.Match[1];
       if FSimpleAILib.Parameters.Values[s] <> '' then
-        Result := SimpleAILib.Intent.Entities.preg_replace(
-          '%' + s + '%', FSimpleAILib.Parameters.Values[s], Result, True);
+      begin
+        if BURLEncode then
+          Result := SimpleAILib.Intent.Entities.preg_replace(
+            '%' + s + '%', UrlEncode(FSimpleAILib.Parameters.Values[s]), Result, True)
+        else
+          Result := SimpleAILib.Intent.Entities.preg_replace(
+            '%' + s + '%', FSimpleAILib.Parameters.Values[s], Result, True);
+      end;
     end;
 
   end;
@@ -283,7 +297,7 @@ end;
 
 function TSimpleAI.execCommand(Message: string): string;
 var
-  s, url: string;
+  convertedMessage, s, url: string;
   lst: TStrings;
 
   function stripText(AText: string): string;
@@ -298,48 +312,54 @@ var
 
 begin
   Result := Message;
-  Message := StringReplacement( Message);
-  lst := Explode(Message, ':');
+  convertedMessage := StringReplacement(Message);
+  lst := Explode(convertedMessage, ':');
   case lst[0] of
     _AI_CMD_OPENFILE:
     begin
       s := trim(_BASEDIR + lst[1]);
       Result := openFile(s);
       if Result = '' then
-        Result := Message;
-      Result := Trim( Result);
+        Result := convertedMessage;
+      Result := Trim(Result);
       Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
       Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
-      Result := StringReplacement( Result);
+      Result := StringReplacement(Result);
     end;
     _AI_CMD_OPENJSONFILE:
     begin
       s := trim(_BASEDIR + lst[1]);
       Result := openFile(s);
       if Result = '' then
-        Result := Message;
-      Result := StringReplacement( Result);
+        Result := convertedMessage;
+      Result := StringReplacement(Result);
     end;
     _AI_CMD_URL:
     begin
-      Result := Trim(Copy(Message, Pos(':', Message) + 1));
+      convertedMessage := StringReplacement(Message, True);
+      Result := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
       Result := file_get_contents(Result);
       Result := stripText(Result);
     end;
     CMD_GET_WITH_CACHE,
     CMD_URL_WITH_CACHE:
     begin
-      url := Trim(Copy(Message, Pos(':', Message) + 1));
-      Result := LoadCache( url);
-      Result := Trim( Result);
+      convertedMessage := StringReplacement(Message, True);
+      url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
+      Result := LoadCache(url);
+      Result := Trim(Result);
       if Result = '' then
       begin
-        Result := file_get_contents( url);
-        Result := Trim( Result);
-        Result := stripText(Result);
-        SaveCache( url, Result);
+        Result := file_get_contents(url);
+        Result := Trim(Result);
+        if Result <> '' then
+        begin
+          Result := stripText(Result);
+          SaveCache(url, Result);
+        end;
       end;
-      Result := Result + GetResponse( IntentName + 'Footer');
+      if Result <> '' then
+        Result := Result + GetResponse(IntentName + 'Footer');
     end;
   end;
 
@@ -457,7 +477,7 @@ end;
 
 function TSimpleAI.Exec(Text: string; AutoResponse: boolean): boolean;
 var
-  stemmer : TStemmingNazief;
+  stemmer: TStemmingNazief;
 begin
   FMsg := '';
   Result := False;
@@ -473,8 +493,8 @@ begin
   if FIsStemming then
   begin
     stemmer := TStemmingNazief.Create;
-    stemmer.LoadDictionaryFromFile( FStemmingDictionary);
-    FStemmedJson := stemmer.ParseSentence( Text);
+    stemmer.LoadDictionaryFromFile(FStemmingDictionary);
+    FStemmedJson := stemmer.ParseSentence(Text);
     FStemmedText := stemmer.Text;
     FIsStemming := stemmer.IsDictionaryLoaded;
     Stemmer.Free;
@@ -658,8 +678,9 @@ end;
 
 procedure TSimpleAI.SetStemmingDictionary(AValue: string);
 begin
-  if FStemmingDictionary=AValue then Exit;
-  FStemmingDictionary:=AValue;
+  if FStemmingDictionary = AValue then
+    Exit;
+  FStemmingDictionary := AValue;
 end;
 
 function TSimpleAI.getIsStemming: boolean;
