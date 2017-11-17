@@ -39,6 +39,7 @@ type
 
   TSimpleAI = class
   private
+    FAdditionalParameters: TStrings;
     FAIName: string;
     FKeyName: string;
     FMsg: string;
@@ -101,6 +102,7 @@ type
     property KeyName: string read FKeyName;
     property VarName: string read FVarName;
     property Parameters: TStrings read getParameters;
+    property AdditionalParameters: TStrings read FAdditionalParameters write FAdditionalParameters;
     property Values[KeyValue: string]: string read getParameterValue; default;
     property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
@@ -157,6 +159,7 @@ end;
 
 function TSimpleAI.StringReplacement(Text: string; BURLEncode: boolean): string;
 var
+  i: Integer;
   s, t, range: string;
   y, m, d: word;
   regex: TRegExpr;
@@ -171,6 +174,14 @@ begin
     '%(BotName)%', AIName, Result, False);
 
   dateTimePosition := now;
+
+  //Setup Additional Parameter
+  for i:=0 to FAdditionalParameters.Count-1 do
+  begin
+    FSimpleAILib.Parameters.Values[ FAdditionalParameters.Names[i] ] := FAdditionalParameters.ValueFromIndex[i];
+  end;
+
+
 
   //if in range
   range := FSimpleAILib.Parameters.Values['range_value'];
@@ -471,6 +482,7 @@ begin
   FResponseDataAsList := TStringList.Create;
   FSimpleAILib := TSimpleAILib.Create;
   FResponseText := TStringList.Create;
+  FAdditionalParameters := TStringList.Create;
   FMsg := '';
   FOriginalMessage := '';
   FTrimMessage := False;
@@ -483,8 +495,8 @@ end;
 
 destructor TSimpleAI.Destroy;
 begin
+  FAdditionalParameters.Free;
   FResponseText.Free;
-  ;
   FResponseDataAsList.Free;
   FResponseData.Free;
   FSimpleAILib.Free;

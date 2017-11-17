@@ -85,6 +85,7 @@ type
     FDataLoaded: boolean;
     Text: string;
     FIsStemming : boolean;
+    function getAdditionalParameters: TStrings;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
     function getIsStemming: boolean;
@@ -168,6 +169,7 @@ type
     property LastVisit:Cardinal read FLastVisit;
     property LastSeen:Cardinal read getLastSeen; // in seconds
     property OriginalMessage: string read getOriginalMessage write setOriginalMessage;
+    property AdditionalParameters: TStrings read getAdditionalParameters;
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
@@ -342,6 +344,11 @@ end;
 function TSimpleBotModule.getDebug: boolean;
 begin
   Result := SimpleAI.Debug;
+end;
+
+function TSimpleBotModule.getAdditionalParameters: TStrings;
+begin
+  Result := SimpleAI.AdditionalParameters;
 end;
 
 procedure TSimpleBotModule.setHandler(const TagName: string; AValue: THandlerCallback);
