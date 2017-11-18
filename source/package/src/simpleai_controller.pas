@@ -346,6 +346,7 @@ begin
         Result := convertedMessage;
       Result := StringReplacement(Result);
     end;
+    _AI_CMD_GET,
     _AI_CMD_URL:
     begin
       convertedMessage := StringReplacement(Message, True);
