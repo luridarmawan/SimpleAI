@@ -12,7 +12,7 @@ unit simpleai_controller;
 interface
 
 uses
-  common, stemmingnazief_lib, json_lib,
+  common, stemmingnazief_lib, json_lib, http_lib,
   simpleai_lib, dateutils, Dos, RegExpr, fpjson,
   IniFiles, Classes, SysUtils;
 
@@ -29,9 +29,12 @@ const
   CMD_URL_WITH_CACHE = 'url-cache';
   CMD_GET_WITH_CACHE = 'get-cache';
   CMD_JSON_WITH_CACHE = 'json-cache';
-  CommandList: array  [1..7] of string =
+  CMD_POST = 'post';
+  CMD_POST_WITH_CACHE = 'post-cache';
+  CommandList: array  [1..9] of string =
     (_AI_CMD_OPENFILE, _AI_CMD_GET, _AI_CMD_URL, _AI_CMD_GETJSON,
-    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE, CMD_JSON_WITH_CACHE);
+    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE, CMD_JSON_WITH_CACHE,
+    CMD_POST, CMD_POST_WITH_CACHE);
 
 type
 
@@ -68,13 +71,15 @@ type
     function getParameters: TStrings;
     function getParameterValue(KeyName: string): string;
     function getPatternString: string;
+    function generateGetQuery: string;
+    function execPost(AURL: string): string;
+    function execJson(AURL: string; ACache: boolean = False): string;
 
     procedure setDebug(AValue: boolean);
     function isValidCommand(ACommandString: string): boolean;
     function isCommand(Msg: string): boolean;
     function execCommand(Message: string): string;
     function openFile(FileName: string): string;
-    function getJsonContent(AURL:String; ACache:Boolean=False):string;
     procedure setIsStemming(AValue: boolean);
     procedure SetStemmingDictionary(AValue: string);
   public
@@ -102,7 +107,8 @@ type
     property KeyName: string read FKeyName;
     property VarName: string read FVarName;
     property Parameters: TStrings read getParameters;
-    property AdditionalParameters: TStrings read FAdditionalParameters write FAdditionalParameters;
+    property AdditionalParameters: TStrings
+      read FAdditionalParameters write FAdditionalParameters;
     property Values[KeyValue: string]: string read getParameterValue; default;
     property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
@@ -157,9 +163,21 @@ begin
   Result := FSimpleAILib.Pattern;
 end;
 
+function TSimpleAI.generateGetQuery: string;
+var
+  i: integer;
+begin
+  Result := '';
+  for i := 0 to FSimpleAILib.Parameters.Count - 1 do
+  begin
+    Result := Result + '&' + FSimpleAILib.Parameters.Names[i] + '=' +
+      UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
+  end;
+end;
+
 function TSimpleAI.StringReplacement(Text: string; BURLEncode: boolean): string;
 var
-  i: Integer;
+  i: integer;
   s, t, range: string;
   y, m, d: word;
   regex: TRegExpr;
@@ -176,9 +194,10 @@ begin
   dateTimePosition := now;
 
   //Setup Additional Parameter
-  for i:=0 to FAdditionalParameters.Count-1 do
+  for i := 0 to FAdditionalParameters.Count - 1 do
   begin
-    FSimpleAILib.Parameters.Values[ FAdditionalParameters.Names[i] ] := FAdditionalParameters.ValueFromIndex[i];
+    FSimpleAILib.Parameters.Values[FAdditionalParameters.Names[i]] :=
+      FAdditionalParameters.ValueFromIndex[i];
   end;
 
 
@@ -346,12 +365,25 @@ begin
         Result := convertedMessage;
       Result := StringReplacement(Result);
     end;
+
+    CMD_POST:
+    begin
+      convertedMessage := StringReplacement(Message, True);
+      url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
+      Result := execPost(url);
+      Result := stripText(Result);
+    end;
+    CMD_POST_WITH_CACHE:
+    begin
+      ;
+    end;
+
     _AI_CMD_GET,
     _AI_CMD_URL:
     begin
       convertedMessage := StringReplacement(Message, True);
       Result := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := file_get_contents(Result);
+      Result := file_get_contents(Result + generateGetQuery);
       Result := stripText(Result);
     end;
     CMD_GET_WITH_CACHE,
@@ -363,7 +395,7 @@ begin
       Result := Trim(Result);
       if Result = '' then
       begin
-        Result := file_get_contents(url);
+        Result := file_get_contents(url + generateGetQuery);
         Result := Trim(Result);
         if Result <> '' then
         begin
@@ -378,14 +410,14 @@ begin
     begin
       convertedMessage := StringReplacement(Message, True);
       url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := getJsonContent( url);
+      Result := execJson(url);
       Result := stripText(Result);
     end;
     CMD_JSON_WITH_CACHE:
     begin
       convertedMessage := StringReplacement(Message, True);
       url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := getJsonContent( url, True);
+      Result := execJson(url, True);
       Result := stripText(Result);
     end;
   end;
@@ -407,19 +439,49 @@ begin
   end;
 end;
 
-function TSimpleAI.getJsonContent(AURL: String; ACache: Boolean): string;
+function TSimpleAI.execPost(AURL: string): string;
 var
-  s, pathName: String;
+  i: integer;
+  Response: IHTTPResponse;
+begin
+  Result := '';
+  with THTTPLib.Create(AURL) do
+  begin
+    try
+      for i := 0 to FSimpleAILib.Parameters.Count - 1 do
+      begin
+        FormData[FSimpleAILib.Parameters.Names[i]] :=
+          UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
+      end;
+      Response := Post();
+      Result := Response.ResultText;
+    except
+      on e: Exception do
+      begin
+        if Debug then
+        begin
+          Result := e.Message;
+        end;
+      end;
+    end;
+
+    Free;
+  end;
+end;
+
+function TSimpleAI.execJson(AURL: string; ACache: boolean): string;
+var
+  s, pathName: string;
   lst: TStrings;
   json: TJSONUtil;
 begin
-  Result := 'yes: ' + AURL;
+  Result := '';
   pathName := 'text';
-  lst := Explode( AURL, '|');
+  lst := Explode(AURL, '|');
   if lst.Count > 1 then
   begin
-    pathName:= lst[0];
-    AURL:= lst[1];
+    pathName := lst[0];
+    AURL := lst[1];
     Result := pathName;
   end;
   lst.Free;
@@ -438,9 +500,9 @@ begin
 
   json := TJSONUtil.Create;
   try
-    json.LoadFromJsonString( Result);
+    json.LoadFromJsonString(Result);
     Result := json[pathName];
-    if ACache and (Result<>'') then
+    if ACache and (Result <> '') then
     begin
       SaveCache(AURL, Result);
     end;
