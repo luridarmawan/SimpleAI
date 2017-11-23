@@ -687,6 +687,13 @@ begin
   item_list := TStringList.Create;
   FResponseData.ReadSectionRaw(IntentName, item_list);
 
+  // clean up
+  for i := item_list.Count-1 downto 0 do
+  begin
+    if pos( 'say=', item_list[i]) <> 1 then
+      item_list.Delete(i);
+  end;
+
   if item_list.Count > 0 then
   begin
     Randomize;
