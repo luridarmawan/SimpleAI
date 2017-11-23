@@ -23,18 +23,20 @@ const
   _AI_CMD_OPENFILE = 'file';
   _AI_CMD_URL = 'url';
   _AI_CMD_GET = 'get';
-  _AI_CMD_GETJSON = 'json';
   _AI_CMD_OPENJSONFILE = 'file-json';
 
   CMD_URL_WITH_CACHE = 'url-cache';
   CMD_GET_WITH_CACHE = 'get-cache';
+  CMD_JSON = 'json';
   CMD_JSON_WITH_CACHE = 'json-cache';
+  CMD_JSONGET = 'json-get';
+  CMD_JSONGET_WITH_CACHE = 'json-get-cache';
   CMD_POST = 'post';
   CMD_POST_WITH_CACHE = 'post-cache';
-  CommandList: array  [1..9] of string =
-    (_AI_CMD_OPENFILE, _AI_CMD_GET, _AI_CMD_URL, _AI_CMD_GETJSON,
-    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE, CMD_JSON_WITH_CACHE,
-    CMD_POST, CMD_POST_WITH_CACHE);
+  CommandList: array  [1..11] of string =
+    (_AI_CMD_OPENFILE, _AI_CMD_GET, _AI_CMD_URL, CMD_JSONGET,
+    CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE, CMD_JSON, CMD_JSON_WITH_CACHE,
+    CMD_JSONGET_WITH_CACHE, CMD_POST, CMD_POST_WITH_CACHE);
 
 type
 
@@ -74,6 +76,7 @@ type
     function generateGetQuery: string;
     function execPost(AURL: string): string;
     function execJson(AURL: string; ACache: boolean = False): string;
+    function execJsonGet(AURL: string; ACache: boolean = False): string;
 
     procedure setDebug(AValue: boolean);
     function isValidCommand(ACommandString: string): boolean;
@@ -378,6 +381,21 @@ begin
       ;
     end;
 
+    CMD_JSON:
+    begin
+      convertedMessage := StringReplacement(Message, True);
+      url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
+      Result := execJson(url);
+      Result := stripText(Result);
+    end;
+    CMD_JSON_WITH_CACHE:
+    begin
+      convertedMessage := StringReplacement(Message, True);
+      url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
+      Result := execJson(url, True);
+      Result := stripText(Result);
+    end;
+
     _AI_CMD_GET,
     _AI_CMD_URL:
     begin
@@ -406,18 +424,18 @@ begin
       if Result <> '' then
         Result := Result + GetResponse(IntentName + 'Footer');
     end;
-    _AI_CMD_GETJSON:
+    CMD_JSONGET:
     begin
       convertedMessage := StringReplacement(Message, True);
       url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := execJson(url);
+      Result := execJsonGet(url);
       Result := stripText(Result);
     end;
-    CMD_JSON_WITH_CACHE:
+    CMD_JSONGET_WITH_CACHE:
     begin
       convertedMessage := StringReplacement(Message, True);
       url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := execJson(url, True);
+      Result := execJsonGet(url, True);
       Result := stripText(Result);
     end;
   end;
@@ -448,6 +466,7 @@ begin
   with THTTPLib.Create(AURL) do
   begin
     try
+      //TODO: get header from response list
       for i := 0 to FSimpleAILib.Parameters.Count - 1 do
       begin
         FormData[FSimpleAILib.Parameters.Names[i]] :=
@@ -470,6 +489,83 @@ begin
 end;
 
 function TSimpleAI.execJson(AURL: string; ACache: boolean): string;
+var
+  i: integer;
+  s, pathName: string;
+  lst: TStrings;
+  json: TJSONUtil;
+  Response: IHTTPResponse;
+begin
+  Result := '';
+  pathName := 'text';
+  lst := Explode(AURL, '|');
+  if lst.Count > 1 then
+  begin
+    pathName := lst[0];
+    AURL := lst[1];
+    Result := pathName;
+  end;
+  lst.Free;
+
+  if ACache then
+  begin
+    Result := LoadCache(AURL);
+    Result := Trim(Result);
+    if Result <> '' then
+      Exit;
+  end;
+
+  with THTTPLib.Create(AURL) do
+  begin
+    try
+      AddHeader('_source', 'carik');
+      s := GetResponse(IntentName, '', 'header');
+      s := StringReplace(s, ':', '=', [rfReplaceAll]);
+      lst := Explode(s, '|');
+      for i := 0 to lst.Count - 1 do
+      begin
+        if lst.Names[i] <> '' then
+          AddHeader(lst.Names[i], lst.ValueFromIndex[i]);
+      end;
+      lst.Free;
+
+      for i := 0 to FSimpleAILib.Parameters.Count - 1 do
+      begin
+        FormData[FSimpleAILib.Parameters.Names[i]] :=
+          UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
+      end;
+      Response := Post();
+      Result := Response.ResultText;
+    except
+      on e: Exception do
+      begin
+        if Debug then
+        begin
+          Result := e.Message;
+        end;
+      end;
+    end;
+    Free;
+  end;
+
+  if Result = '' then
+    Exit;
+
+  json := TJSONUtil.Create;
+  try
+    json.LoadFromJsonString(Result);
+    Result := json[pathName];
+    if ACache and (Result <> '') then
+    begin
+      SaveCache(AURL, Result);
+    end;
+  except
+    Result := '';
+  end;
+
+end;
+
+function TSimpleAI.execJsonGet(AURL: string; ACache: boolean): string;
 var
   s, pathName: string;
   lst: TStrings;
@@ -688,9 +784,9 @@ begin
   FResponseData.ReadSectionRaw(IntentName, item_list);
 
   // clean up
-  for i := item_list.Count-1 downto 0 do
+  for i := item_list.Count - 1 downto 0 do
   begin
-    if pos( 'say=', item_list[i]) <> 1 then
+    if pos('say=', item_list[i]) <> 1 then
       item_list.Delete(i);
   end;
 
