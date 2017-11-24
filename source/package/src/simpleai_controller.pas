@@ -460,13 +460,26 @@ end;
 function TSimpleAI.execPost(AURL: string): string;
 var
   i: integer;
+  s: string;
+  lst: TStrings;
   Response: IHTTPResponse;
 begin
   Result := '';
   with THTTPLib.Create(AURL) do
   begin
     try
-      //TODO: get header from response list
+      AddHeader('_source', 'carik');
+      //get header from response list
+      s := GetResponse(IntentName, '', 'header');
+      s := StringReplace(s, ':', '=', [rfReplaceAll]);
+      lst := Explode(s, '|');
+      for i := 0 to lst.Count - 1 do
+      begin
+        if lst.Names[i] <> '' then
+          AddHeader(lst.Names[i], lst.ValueFromIndex[i]);
+      end;
+      lst.Free;
+
       for i := 0 to FSimpleAILib.Parameters.Count - 1 do
       begin
         FormData[FSimpleAILib.Parameters.Names[i]] :=
@@ -519,6 +532,7 @@ begin
   begin
     try
       AddHeader('_source', 'carik');
+      //get header from response list
       s := GetResponse(IntentName, '', 'header');
       s := StringReplace(s, ':', '=', [rfReplaceAll]);
       lst := Explode(s, '|');
