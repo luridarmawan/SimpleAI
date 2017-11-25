@@ -547,45 +547,7 @@ begin
       Exit;
   end;
 
-  with THTTPLib.Create(AURL) do
-  begin
-    try
-      AddHeader('_source', 'carik');
-      //get header from response list
-      s := GetResponse(IntentName, '', 'header');
-      s := StringReplace(s, ':', '=', [rfReplaceAll]);
-      lst := Explode(s, '|');
-      for i := 0 to lst.Count - 1 do
-      begin
-        if lst.Names[i] <> '' then
-          AddHeader(lst.Names[i], lst.ValueFromIndex[i]);
-      end;
-      lst.Free;
-
-      for i := 0 to FSimpleAILib.Parameters.Count - 1 do
-      begin
-        FormData[FSimpleAILib.Parameters.Names[i]] :=
-          UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
-      end;
-      Response := Post();
-      Result := Response.ResultText;
-      if Response.ResultCode <> 200 then
-      begin
-        Result := 'FAILED: ' + Result;
-        if not Debug then
-          Result := '';
-      end;
-    except
-      on e: Exception do
-      begin
-        if Debug then
-        begin
-          Result := e.Message;
-        end;
-      end;
-    end;
-    Free;
-  end;
+  Result := execPost( AURL);
 
   if Result = '' then
     Exit;
