@@ -91,6 +91,7 @@ type
     function getIsStemming: boolean;
     function getLastSeen: Cardinal;
     function getOriginalMessage: string;
+    function getResponseText: TStringList;
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
 
@@ -170,6 +171,7 @@ type
     property LastSeen:Cardinal read getLastSeen; // in seconds
     property OriginalMessage: string read getOriginalMessage write setOriginalMessage;
     property AdditionalParameters: TStrings read getAdditionalParameters;
+    property ResponseText: TStringList read getResponseText;
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
@@ -546,6 +548,11 @@ end;
 function TSimpleBotModule.getOriginalMessage: string;
 begin
   Result := SimpleAI.OriginalMessage;
+end;
+
+function TSimpleBotModule.getResponseText: TStringList;
+begin
+  Result := SimpleAI.ResponseText;
 end;
 
 procedure TSimpleBotModule.setIsStemming(AValue: boolean);

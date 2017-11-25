@@ -73,10 +73,12 @@ type
     function getParameters: TStrings;
     function getParameterValue(KeyName: string): string;
     function getPatternString: string;
+
     function generateGetQuery: string;
     function execPost(AURL: string): string;
     function execJson(AURL: string; ACache: boolean = False): string;
     function execJsonGet(AURL: string; ACache: boolean = False): string;
+    function execGet(AURL: string; ACache: boolean = False): string;
 
     procedure setDebug(AValue: boolean);
     function isValidCommand(ACommandString: string): boolean;
@@ -378,7 +380,7 @@ begin
     end;
     CMD_POST_WITH_CACHE:
     begin
-      ;
+      //TODO: post with cache
     end;
 
     CMD_JSON:
@@ -401,26 +403,18 @@ begin
     begin
       convertedMessage := StringReplacement(Message, True);
       Result := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := file_get_contents(Result + generateGetQuery);
+      Result := execGet(Result + generateGetQuery);
       Result := stripText(Result);
+      if Result <> '' then
+        Result := Result + GetResponse(IntentName + 'Footer');
     end;
     CMD_GET_WITH_CACHE,
     CMD_URL_WITH_CACHE:
     begin
       convertedMessage := StringReplacement(Message, True);
-      url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := LoadCache(url);
-      Result := Trim(Result);
-      if Result = '' then
-      begin
-        Result := file_get_contents(url + generateGetQuery);
-        Result := Trim(Result);
-        if Result <> '' then
-        begin
-          Result := stripText(Result);
-          SaveCache(url, Result);
-        end;
-      end;
+      Result := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
+      Result := execGet(Result + generateGetQuery);
+      Result := stripText(Result);
       if Result <> '' then
         Result := Result + GetResponse(IntentName + 'Footer');
     end;
@@ -486,7 +480,8 @@ begin
           UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
       end;
       Response := Post();
-      Result := Response.ResultText;
+      if Response.ResultCode = 200 then
+        Result := Response.ResultText;
     except
       on e: Exception do
       begin
@@ -549,7 +544,8 @@ begin
           UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
       end;
       Response := Post();
-      Result := Response.ResultText;
+      if Response.ResultCode = 200 then
+        Result := Response.ResultText;
     except
       on e: Exception do
       begin
@@ -619,7 +615,64 @@ begin
   except
     Result := '';
   end;
+  json.Free;
+end;
 
+function TSimpleAI.execGet(AURL: string; ACache: boolean): string;
+var
+  i: integer;
+  s: string;
+  lst: TStrings;
+  Response: IHTTPResponse;
+begin
+  Result := '';
+  if ACache then
+  begin
+    Result := LoadCache(AURL);
+    Result := Trim(Result);
+    if Result <> '' then
+      Exit;
+  end;
+
+  with THTTPLib.Create(AURL) do
+  begin
+    try
+      AddHeader('_source', 'carik');
+      //get header from response list
+      s := GetResponse(IntentName, '', 'header');
+      s := StringReplace(s, ':', '=', [rfReplaceAll]);
+      lst := Explode(s, '|');
+      for i := 0 to lst.Count - 1 do
+      begin
+        if lst.Names[i] <> '' then
+          AddHeader(lst.Names[i], lst.ValueFromIndex[i]);
+      end;
+      lst.Free;
+
+      for i := 0 to FSimpleAILib.Parameters.Count - 1 do
+      begin
+        FormData[FSimpleAILib.Parameters.Names[i]] :=
+          UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
+      end;
+      Response := Get();
+      if Response.ResultCode = 200 then
+        Result := Response.ResultText;
+    except
+      on e: Exception do
+      begin
+        if Debug then
+        begin
+          Result := e.Message;
+        end;
+      end;
+    end;
+    Free;
+  end;
+
+  if ACache and (Result <> '') then
+  begin
+    SaveCache(AURL, Result);
+  end;
 end;
 
 function TSimpleAI.getTimeSession: string;
