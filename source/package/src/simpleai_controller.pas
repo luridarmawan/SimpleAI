@@ -403,7 +403,7 @@ begin
     begin
       convertedMessage := StringReplacement(Message, True);
       Result := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := execGet(Result + generateGetQuery);
+      Result := execGet(Result);
       Result := stripText(Result);
       if Result <> '' then
         Result := Result + GetResponse(IntentName + 'Footer');
@@ -413,7 +413,7 @@ begin
     begin
       convertedMessage := StringReplacement(Message, True);
       Result := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
-      Result := execGet(Result + generateGetQuery);
+      Result := execGet(Result, True);
       Result := stripText(Result);
       if Result <> '' then
         Result := Result + GetResponse(IntentName + 'Footer');
@@ -631,7 +631,7 @@ end;
 function TSimpleAI.execGet(AURL: string; ACache: boolean): string;
 var
   i: integer;
-  s: string;
+  s, tempURL: string;
   lst: TStrings;
   Response: IHTTPResponse;
 begin
@@ -644,7 +644,11 @@ begin
       Exit;
   end;
 
-  with THTTPLib.Create(AURL) do
+  tempURL := AURL;
+  if GetResponse(IntentName, '', 'full-query') = 'yes' then
+    tempURL := AURL + generateGetQuery;
+
+  with THTTPLib.Create(tempURL) do
   begin
     try
       AddHeader('_source', 'carik');
