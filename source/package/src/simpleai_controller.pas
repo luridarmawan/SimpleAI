@@ -480,8 +480,13 @@ begin
           UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
       end;
       Response := Post();
-      if Response.ResultCode = 200 then
-        Result := Response.ResultText;
+      Result := Response.ResultText;
+      if Response.ResultCode <> 200 then
+      begin
+        Result := 'FAILED: ' + Result;
+        if not Debug then
+          Result := '';
+      end;
     except
       on e: Exception do
       begin
@@ -544,8 +549,13 @@ begin
           UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
       end;
       Response := Post();
-      if Response.ResultCode = 200 then
-        Result := Response.ResultText;
+      Result := Response.ResultText;
+      if Response.ResultCode <> 200 then
+      begin
+        Result := 'FAILED: ' + Result;
+        if not Debug then
+          Result := '';
+      end;
     except
       on e: Exception do
       begin
@@ -655,8 +665,13 @@ begin
           UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
       end;
       Response := Get();
-      if Response.ResultCode = 200 then
-        Result := Response.ResultText;
+      Result := Response.ResultText;
+      if Response.ResultCode <> 200 then
+      begin
+        Result := 'FAILED: ' + Result;
+        if not Debug then
+          Result := '';
+      end;
     except
       on e: Exception do
       begin
