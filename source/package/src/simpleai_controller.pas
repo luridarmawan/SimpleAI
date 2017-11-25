@@ -75,7 +75,7 @@ type
     function getPatternString: string;
 
     function generateGetQuery: string;
-    function execPost(AURL: string): string;
+    function execPost(AURL: string; ACache: boolean = False): string;
     function execJson(AURL: string; ACache: boolean = False): string;
     function execJsonGet(AURL: string; ACache: boolean = False): string;
     function execGet(AURL: string; ACache: boolean = False): string;
@@ -380,7 +380,10 @@ begin
     end;
     CMD_POST_WITH_CACHE:
     begin
-      //TODO: post with cache
+      convertedMessage := StringReplacement(Message, True);
+      url := Trim(Copy(convertedMessage, Pos(':', convertedMessage) + 1));
+      Result := execPost(url, True);
+      Result := stripText(Result);
     end;
 
     CMD_JSON:
@@ -451,7 +454,7 @@ begin
   end;
 end;
 
-function TSimpleAI.execPost(AURL: string): string;
+function TSimpleAI.execPost(AURL: string; ACache: boolean): string;
 var
   i: integer;
   s: string;
@@ -459,6 +462,15 @@ var
   Response: IHTTPResponse;
 begin
   Result := '';
+
+  if ACache then
+  begin
+    Result := LoadCache(AURL);
+    Result := Trim(Result);
+    if Result <> '' then
+      Exit;
+  end;
+
   with THTTPLib.Create(AURL) do
   begin
     try
@@ -481,7 +493,14 @@ begin
       end;
       Response := Post();
       Result := Response.ResultText;
-      if Response.ResultCode <> 200 then
+      if Response.ResultCode = 200 then
+      begin
+        if ACache and (Result <> '') then
+        begin
+          SaveCache(AURL, Result);
+        end;
+      end
+      else
       begin
         Result := 'FAILED: ' + Result;
         if not Debug then
