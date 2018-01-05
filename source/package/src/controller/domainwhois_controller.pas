@@ -53,6 +53,9 @@ begin
     Exit;
   end;
 
+  DomainName := StringReplace( DomainName, 'http://', '', [rfReplaceAll]);
+  DomainName := StringReplace( DomainName, 'https://', '', [rfReplaceAll]);
+  DomainName := StringReplace( DomainName, 'www.', '', [rfReplaceAll]);
   Result := 'finding ' + domainName;
 
   cacheFile := _WHOIS_CACHE_PATH + domainName + _WHOIS_CACHE_EXTENSION;

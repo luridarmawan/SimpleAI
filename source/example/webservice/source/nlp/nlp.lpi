@@ -33,16 +33,13 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="2">
       <Item1>
         <PackageName Value="simpleai_package"/>
       </Item1>
       <Item2>
         <PackageName Value="LCL"/>
       </Item2>
-      <Item3>
-        <PackageName Value="fastplaz_runtime"/>
-      </Item3>
     </RequiredPackages>
     <Units Count="3">
       <Unit0>
