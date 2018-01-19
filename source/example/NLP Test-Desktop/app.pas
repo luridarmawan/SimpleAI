@@ -30,7 +30,6 @@ type
 
   TfApp = class(TForm)
     btn_Send: TButton;
-    btn_LoadData: TButton;
     editor: TSynEdit;
     edt_Dir: TDirectoryEdit;
     edt: TEdit;
@@ -42,7 +41,6 @@ type
     pnl: TPanel;
     SynJScriptSyn1: TSynJScriptSyn;
     page_Result: TTabSheet;
-    procedure btn_LoadDataClick(Sender: TObject);
     procedure btn_SendClick(Sender: TObject);
     procedure edtKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure edt_DirAcceptDirectory(Sender: TObject; var Value: string);
@@ -74,11 +72,6 @@ begin
   editor.Clear;
   FIsLoaded := False;
   edt_Dir.Directory := ExtractFileDir(Application.ExeName);
-
-  NLP := TSimpleAI.Create;
-  NLP.AIName := BOTNAME;
-  NLP.Stemming := False;
-  //NLP.Debug := True;
 
   //demo
   edt.Text := 'hi';
@@ -122,6 +115,16 @@ begin
   if Trim(edt.Text) = '' then
     Exit;
 
+  NLP := TSimpleAI.Create;
+  NLP.AIName := BOTNAME;
+  NLP.Stemming := False;
+  //NLP.Debug := True;
+  if not loadData then
+  begin
+    editor.Lines.Add(#13'Data can not loaded');
+    exit;
+  end;
+
   if not NLP.Exec(edt.Text) then
   begin
     // if text not exists in nlp data
@@ -132,21 +135,7 @@ begin
   if not FIsLoaded then
     editor.Lines.Add(#13'Data still not loaded');
   edt.Clear;
-end;
-
-procedure TfApp.btn_LoadDataClick(Sender: TObject);
-begin
-  if loadData then
-  begin
-    FIsLoaded := True;
-    editor.Lines.Add('Data loaded');
-    edt.Text := 'Hi';
-  end
-  else
-  begin
-    editor.Text := 'NLP Data not loaded, check your data directory';
-  end;
-  edt.SetFocus;
+  NLP.Free;
 end;
 
 procedure TfApp.edtKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
@@ -179,9 +168,11 @@ end;
 
 function TfApp.loadData: boolean;
 begin
-  Result := False;
+  FIsLoaded := False;
   if (loadDataEntities and loadDataIntents and loadDataResponses) then
-    Result := True;
+    FIsLoaded := True;
+
+  Result := FIsLoaded;
 end;
 
 function TfApp.loadDataEntities: boolean;

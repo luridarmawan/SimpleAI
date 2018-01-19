@@ -25,7 +25,7 @@ object fApp: TfApp
       Left = 174
       Height = 28
       Top = 5
-      Width = 455
+      Width = 537
       OnAcceptDirectory = edt_DirAcceptDirectory
       ShowHidden = False
       ButtonWidth = 23
@@ -40,15 +40,6 @@ object fApp: TfApp
       Width = 134
       Caption = 'NLP Data Directory :'
       ParentColor = False
-    end
-    object btn_LoadData: TButton
-      Left = 632
-      Height = 25
-      Top = 5
-      Width = 75
-      Caption = '&Load Data'
-      OnClick = btn_LoadDataClick
-      TabOrder = 1
     end
   end
   object pnl_Bottom: TPanel
