@@ -48,6 +48,7 @@ type
     FAIName: string;
     FKeyName: string;
     FMsg: string;
+    FNonStandardWordFile: String;
     FOriginalMessage: string;
     FPrefixText: string;
     FRequestText: string;
@@ -57,11 +58,13 @@ type
     FResponseDataAsList: TStringList;
     FStemmedText: string;
     FStemmedJson: string;
+    FStemmedWordCount, FNonStandardWordCount, FUnknownWordCount : Integer;
     FStemmingDictionary: string;
     FSuffixText: string;
     FTrimMessage: boolean;
     FVarName: string;
     FIsStemming: boolean;
+    FStandardWordCheck: Boolean;
 
     function getIsStemming: boolean;
     function getResponseJson: string;
@@ -131,6 +134,9 @@ type
     property StemmingDictionary: string read FStemmingDictionary
       write SetStemmingDictionary;
     property StemmedText: string read FStemmedText;
+
+    property StandardWordCheck: Boolean read FStandardWordCheck write FStandardWordCheck;
+    property NonStandardWordFile: String read FNonStandardWordFile write FNonStandardWordFile;
   end;
 
 implementation
@@ -522,11 +528,9 @@ end;
 
 function TSimpleAI.execJson(AURL: string; ACache: boolean): string;
 var
-  i: integer;
-  s, pathName: string;
+  pathName: string;
   lst: TStrings;
   json: TJSONUtil;
-  Response: IHTTPResponse;
 begin
   Result := '';
   pathName := 'text';
@@ -568,7 +572,7 @@ end;
 
 function TSimpleAI.execJsonGet(AURL: string; ACache: boolean): string;
 var
-  s, pathName: string;
+  pathName: string;
   lst: TStrings;
   json: TJSONUtil;
 begin
@@ -675,7 +679,7 @@ begin
   end;
 end;
 
-function TSimpleAI.getTimeSession: string;
+function TSimpleAI.getTimeSession(): string;
 var
   Hour, Min, Sec, HSec: word;
 begin
@@ -717,6 +721,8 @@ begin
   FIsStemming := False;
   FStemmingDictionary := 'files' + DirectorySeparator + STEMMINGNAZIEF_DICTIONARY_FILE;
   FStemmedText := '';
+  FStandardWordCheck := False;
+  FNonStandardWordFile := 'files' + DirectorySeparator + WORD_NONSTANDARD_FILE;
 end;
 
 destructor TSimpleAI.Destroy;
@@ -735,12 +741,12 @@ end;
 
 function TSimpleAI.AddIntentFromFile(FileName: string): boolean;
 begin
-  FSimpleAILib.AddDataIntentFromFile(FileName);
+  Result := FSimpleAILib.AddDataIntentFromFile(FileName);
 end;
 
 function TSimpleAI.AddEntitiesFromFile(FileName: string): boolean;
 begin
-  FSimpleAILib.AddDataEntitiesFromFile(FileName);
+  Result := FSimpleAILib.AddDataEntitiesFromFile(FileName);
 end;
 
 function TSimpleAI.AddResponFromFile(FileName: string): boolean;
@@ -790,7 +796,13 @@ begin
   begin
     stemmer := TStemmingNazief.Create;
     stemmer.LoadDictionaryFromFile(FStemmingDictionary);
+    stemmer.StandardWordCheck := FStandardWordCheck;
+    if FStandardWordCheck then
+      stemmer.LoadNonStandardWordFromFile( FNonStandardWordFile);
     FStemmedJson := stemmer.ParseSentence(Text);
+    FStemmedWordCount := stemmer.WordCount;
+    FNonStandardWordCount := stemmer.NonStandardWordCount;
+    FUnknownWordCount := stemmer.UnknownWordCount;
     FStemmedText := stemmer.Text;
     FIsStemming := stemmer.IsDictionaryLoaded;
     Stemmer.Free;
@@ -938,6 +950,9 @@ begin
   begin
     json := json + '"stemming" : {';
     json := json + '"text" : "' + FStemmedText + '",';
+    json := json + '"wordcount" : "' + i2s(FStemmedWordCount) + '",';
+    json := json + '"nonstandardword_count" : "' + i2s(FNonStandardWordCount) + '",';
+    json := json + '"unknownword_count" : "' + i2s(FUnknownWordCount) + '",';
     json := json + '"response" : ' + FStemmedJson;
     json := json + '},';
   end;

@@ -92,6 +92,7 @@ type
     function getLastSeen: Cardinal;
     function getOriginalMessage: string;
     function getResponseText: TStringList;
+    function getStandardWordCheck: Boolean;
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
 
@@ -104,6 +105,7 @@ type
     function ErrorHandler(Message: string): string;
     procedure setIsStemming(AValue: boolean);
     procedure setOriginalMessage(AValue: string);
+    procedure setStandardWordCheck(AValue: Boolean);
     procedure setStorageType(AValue: TStorageType);
     procedure setTrimMessage(AValue: boolean);
     procedure setUserData(const KeyName: string; AValue: string);
@@ -175,6 +177,7 @@ type
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
+    property StandardWordCheck: Boolean read getStandardWordCheck write setStandardWordCheck;
   end;
 
 var
@@ -416,7 +419,7 @@ begin
   Result := h(SimpleAI.IntentName, SimpleAI.Parameters);
 end;
 
-function TSimpleBotModule.defineHandlerDefault: string; // for name & email
+function TSimpleBotModule.defineHandlerDefault(): string; // for name & email
 var
   s, keyName, keyValue: string;
   lst: TStrings;
@@ -477,7 +480,7 @@ begin
   Result := StringReplacement(Result);
 end;
 
-function TSimpleBotModule.mathHandlerDefault: string;
+function TSimpleBotModule.mathHandlerDefault(): string;
 var
   mathParser: TFPExpressionParser;
   resultValue: double;
@@ -555,6 +558,11 @@ begin
   Result := SimpleAI.ResponseText;
 end;
 
+function TSimpleBotModule.getStandardWordCheck: Boolean;
+begin
+  Result := SimpleAI.StandardWordCheck;
+end;
+
 procedure TSimpleBotModule.setIsStemming(AValue: boolean);
 begin
     FIsStemming := AValue;
@@ -563,6 +571,11 @@ end;
 procedure TSimpleBotModule.setOriginalMessage(AValue: string);
 begin
   SimpleAI.OriginalMessage := AValue;
+end;
+
+procedure TSimpleBotModule.setStandardWordCheck(AValue: Boolean);
+begin
+  SimpleAI.StandardWordCheck := AValue;
 end;
 
 procedure TSimpleBotModule.setStorageType(AValue: TStorageType);
@@ -955,7 +968,7 @@ begin
   setSession(_AI_SESSION_ASK_VAR, SimpleAI.VarName);
 end;
 
-function TSimpleBotModule.isAnswerOld: boolean;
+function TSimpleBotModule.isAnswerOld(): boolean;
 var
   askIntent: string;
   askVar, askValue, s: string;
