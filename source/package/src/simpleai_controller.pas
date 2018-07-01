@@ -252,6 +252,8 @@ begin
   begin
     DecodeDate(dateTimePosition, y, m, d);
     s := Parameters.Values['Waktu'];
+    if s = '' then
+      s := 'jam';
     t := '';
     case s of
       'jam': t := FormatDateTime('hh:nn', dateTimePosition) + ' ' + getTimeSession;
