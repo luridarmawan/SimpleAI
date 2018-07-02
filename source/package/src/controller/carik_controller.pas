@@ -99,6 +99,7 @@ type
     function IsImageRecognitionDisabled: boolean;
     procedure ImageRecognitionCounting;
 
+    property Data: TIniFile read FData write FData;
     property Ready: boolean read FReady;
     property Path: string read FPath write setPath;
     property UserID: string read FUserID write FUserID;
