@@ -517,11 +517,14 @@ begin
 
   if UserData[_AI_OBJECT] <> '' then
   begin
-    d1 := StrToDateTime(UserData[_AI_OBJECT_DATE]);
-    if HoursBetween(d1, now) < 1 then
-    begin
-      Result := GetResponse('nonewithobject');
-      Exit;
+    try
+      d1 := StrToDateTime(UserData[_AI_OBJECT_DATE]);
+      if HoursBetween(d1, now) < 1 then
+      begin
+        Result := GetResponse('nonewithobject');
+        Exit;
+      end;
+    except
     end;
   end;
   Result := GetResponse('none');
@@ -901,10 +904,13 @@ begin
     json['response/object/name'] := UserData[_AI_OBJECT];
     s := UserData[_AI_CONTEXT_DATE];
 //    --- is not a valid date format
-    if MinutesBetween(Now, StrToDateTime(s)) <= CONTEXT_DISCUSSION_MAXTIME then
-    begin
-      json['response/context/name'] := UserData[_AI_CONTEXT];
-      json['response/context/datetime'] := UserData[_AI_CONTEXT_DATE];
+    try
+      if MinutesBetween(Now, StrToDateTime(s)) <= CONTEXT_DISCUSSION_MAXTIME then
+      begin
+        json['response/context/name'] := UserData[_AI_CONTEXT];
+        json['response/context/datetime'] := UserData[_AI_CONTEXT_DATE];
+      end;
+    except
     end;
     json['response/context/language'] := UserData['language'];
     text_response := json.AsJSONFormated;
