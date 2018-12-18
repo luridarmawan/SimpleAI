@@ -44,6 +44,7 @@ type
 
   TSimpleAI = class
   private
+    FActionCallback: string;
     FAdditionalParameters: TStrings;
     FAIName: string;
     FKeyName: string;
@@ -118,6 +119,7 @@ type
     property AdditionalParameters: TStrings
       read FAdditionalParameters write FAdditionalParameters;
     property Values[KeyValue: string]: string read getParameterValue; default;
+    property ActionCallback: string read FActionCallback;
     property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
     property ResponData: TMemIniFile read FResponseData;
@@ -294,6 +296,11 @@ begin
         else
           Result := SimpleAILib.Intent.Entities.preg_replace(
             '%' + s + '%', FSimpleAILib.Parameters.Values[s], Result, True);
+      end
+      else
+      begin
+        Result := SimpleAILib.Intent.Entities.preg_replace(
+          '%' + s + '%', '', Result, True);
       end;
     end;
 
@@ -717,6 +724,7 @@ begin
   FAdditionalParameters := TStringList.Create;
   FMsg := '';
   FOriginalMessage := '';
+  FActionCallback := '';
   FTrimMessage := False;
 
   // Stemming
@@ -820,10 +828,14 @@ begin
   if Result then
   begin
     FResponseText.Add(GetResponse(IntentName, Action, ''));
+    FActionCallback := GetResponse(IntentName, '', 'action');
+    if FActionCallback = '._' then
+      FActionCallback := '';
   end
   else
   begin
     FResponseText.Add(GetResponse('none', '', ''));
+    FActionCallback := '';
   end;
 
   FResponseText.Text := FPrefixText + FResponseText.Text + FSuffixText;
@@ -924,6 +936,8 @@ var
   i: integer;
   json, actionName, txt, v: string;
   lst: TStrings;
+  o: TJSONUtil;
+  cmdAction, parameterAction, fieldAction : TStrings;
 begin
   Result := '';
   actionName := Action;
@@ -988,6 +1002,33 @@ begin
   json := json + '}';
 
   lst.Free;
+
+  if FActionCallback <> '' then
+  begin
+    FActionCallback := StringReplacement(FActionCallback);
+    parameterAction := Explode(FActionCallback, '|');
+    cmdAction := Explode(parameterAction[0], '.');
+
+    o := TJSONUtil.Create;
+    o.LoadFromJsonString( json);
+    o['response/action/callback_string'] := FActionCallback;
+    o['response/action/callback_name'] := cmdAction[0];
+    if cmdAction.Count > 1 then
+      o['response/action/callback_method'] := cmdAction[1];
+    for i := 1 to parameterAction.count - 1 do
+    begin
+      fieldAction := Explode(parameterAction[i], '=');
+      o['response/action/parameter_' + i2s(i)] := parameterAction[i];
+      o['response/action/' + fieldAction[0]] := fieldAction[1];
+      fieldAction.Free;
+    end;
+
+    json := o.AsJSON;
+    o.Free;
+    cmdAction.Free;
+    parameterAction.Free;
+  end;// FActionCallback
+
   Result := json;
 end;
 

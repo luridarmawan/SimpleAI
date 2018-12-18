@@ -230,6 +230,8 @@ const
   _AI_CONTEXT = 'CONTEXT';
   _AI_CONTEXT_DATE = 'CONTEXT_DATE';
 
+  CONTEXT_DISCUSSION_MAXTIME = 30; //30 minutes
+
   _TELEGRAM_API_URL = 'https://api.telegram.org/bot';
   //_TELEGRAM_CONFIG_TOKEN = 'telegram/token';
 
@@ -897,8 +899,13 @@ begin
     json['response/user/fullname'] := UserData['FullName'];
     json['response/user/email'] := UserData['Email'];
     json['response/object/name'] := UserData[_AI_OBJECT];
-    json['response/context/name'] := UserData[_AI_CONTEXT];
-    json['response/context/datetime'] := UserData[_AI_CONTEXT_DATE];
+    s := UserData[_AI_CONTEXT_DATE];
+//    --- is not a valid date format
+    if MinutesBetween(Now, StrToDateTime(s)) <= CONTEXT_DISCUSSION_MAXTIME then
+    begin
+      json['response/context/name'] := UserData[_AI_CONTEXT];
+      json['response/context/datetime'] := UserData[_AI_CONTEXT_DATE];
+    end;
     json['response/context/language'] := UserData['language'];
     text_response := json.AsJSONFormated;
   end
