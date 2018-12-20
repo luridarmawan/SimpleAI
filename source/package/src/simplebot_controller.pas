@@ -488,15 +488,21 @@ var
   resultValue: double;
 begin
   Result := SimpleAI.Parameters.Values['Formula_value'];
+  Result := StringReplace(Result, ':', '/', [rfReplaceAll]);
+  Result := StringReplace(Result, 'x', '*', [rfReplaceAll]);
+  Result := StringReplace(Result, 'dibagi', '/', [rfReplaceAll]);
+  Result := StringReplace(Result, 'bagi', '/', [rfReplaceAll]);
+  Result := StringReplace(Result, 'dikali', '*', [rfReplaceAll]);
+  Result := StringReplace(Result, 'kali', '*', [rfReplaceAll]);
+  Result := StringReplace(Result, 'ditambah', '+', [rfReplaceAll]);
+  Result := StringReplace(Result, 'tambah', '+', [rfReplaceAll]);
+  Result := '(' + Result + ')';
   if not preg_match(REGEX_EQUATION, Result) then
   begin
     Result := '..... :( ';
     Exit;
   end;
 
-  Result := StringReplace(Result, ':', '/', [rfReplaceAll]);
-  Result := StringReplace(Result, 'x', '*', [rfReplaceAll]);
-  Result := '(' + Result + ')';
   mathParser := TFPExpressionParser.Create(nil);
   try
     mathParser.BuiltIns := [bcMath, bcBoolean];
