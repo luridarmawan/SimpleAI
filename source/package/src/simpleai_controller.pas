@@ -934,7 +934,7 @@ end;
 function TSimpleAI.getResponseJson: string;
 var
   i: integer;
-  json, actionName, txt, v: string;
+  s, json, actionName, txt, v: string;
   lst: TStrings;
   o: TJSONUtil;
   cmdAction, parameterAction, fieldAction : TStrings;
@@ -1018,8 +1018,13 @@ begin
     for i := 1 to parameterAction.count - 1 do
     begin
       fieldAction := Explode(parameterAction[i], '=');
+      s := '';
+      try
+        s := fieldAction[1];
+      except
+      end;
       o['response/action/parameter_' + i2s(i)] := parameterAction[i];
-      o['response/action/' + fieldAction[0]] := fieldAction[1];
+      o['response/action/' + fieldAction[0]] := s;
       fieldAction.Free;
     end;
 
