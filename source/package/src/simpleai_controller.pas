@@ -47,6 +47,7 @@ type
     FActionCallback: string;
     FAdditionalParameters: TStrings;
     FAIName: string;
+    FIsURLEncoded: boolean;
     FKeyName: string;
     FMsg: string;
     FNonStandardWordFile: String;
@@ -120,6 +121,7 @@ type
       read FAdditionalParameters write FAdditionalParameters;
     property Values[KeyValue: string]: string read getParameterValue; default;
     property ActionCallback: string read FActionCallback;
+    property IsURLEncoded: Boolean read FIsURLEncoded;
     property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
     property ResponData: TMemIniFile read FResponseData;
@@ -725,6 +727,7 @@ begin
   FMsg := '';
   FOriginalMessage := '';
   FActionCallback := '';
+  FIsURLEncoded := false;
   FTrimMessage := False;
 
   // Stemming
@@ -829,6 +832,7 @@ begin
   begin
     FResponseText.Add(GetResponse(IntentName, Action, ''));
     FActionCallback := GetResponse(IntentName, '', 'action');
+    FIsURLEncoded := s2b( GetResponse(IntentName, '', 'urlencoded'));
     if FActionCallback = '._' then
       FActionCallback := '';
   end
@@ -841,7 +845,7 @@ begin
   FResponseText.Text := FPrefixText + FResponseText.Text + FSuffixText;
   if FSimpleAILib.Intent.Entities.preg_match('%(.*)%', FResponseText.Text) then
   begin
-    FResponseText.Text := StringReplacement(FResponseText.Text);
+    FResponseText.Text := StringReplacement(FResponseText.Text, FIsURLEncoded);
   end;
 
   // is Command
