@@ -496,6 +496,8 @@ begin
   Result := StringReplace(Result, 'kali', '*', [rfReplaceAll]);
   Result := StringReplace(Result, 'ditambah', '+', [rfReplaceAll]);
   Result := StringReplace(Result, 'tambah', '+', [rfReplaceAll]);
+  Result := StringReplace(Result, 'rp.', '', [rfReplaceAll]);
+  Result := StringReplace(Result, 'rp', '', [rfReplaceAll]);
   Result := '(' + Result + ')';
   if not preg_match(REGEX_EQUATION, Result) then
   begin
