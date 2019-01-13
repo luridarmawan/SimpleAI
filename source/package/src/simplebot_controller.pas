@@ -134,7 +134,7 @@ type
     function Exec(Message: string): string;
     function GetResponse(IntentName: string; Action: string = '';
       EntitiesKey: string = ''): string;
-    function StringReplacement(Message: string): string;
+    function StringReplacement(Message: string; ForceWithSpace: boolean = True): string;
     procedure ClearQuestions;
     procedure SetQuestions(IntentName: string;
       MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME);
@@ -1042,7 +1042,8 @@ begin
   Result := StringReplacement(Result);
 end;
 
-function TSimpleBotModule.StringReplacement(Message: string): string;
+function TSimpleBotModule.StringReplacement(Message: string;
+  ForceWithSpace: boolean): string;
 var
   regex: TRegExpr;
   s: string;
@@ -1057,12 +1058,16 @@ begin
   if regex.Exec(Message) then
   begin
     s := UserData[regex.Match[1]];
+    if ForceWithSpace then
+     s := s.Replace('_', ' ').Trim;
     if s <> '' then
       Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
         '%(.*)%', s, Message, True);
     while regex.ExecNext do
     begin
       s := UserData[regex.Match[1]];
+      if ForceWithSpace then
+       s := s.Replace('_', ' ').Trim;
       if s <> '' then
         Result := SimpleAI.SimpleAILib.Intent.Entities.preg_replace(
           '%(.*)%', s, Message, True);
