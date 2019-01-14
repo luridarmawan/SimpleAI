@@ -527,7 +527,7 @@ begin
   begin
     try
       d1 := StrToDateTime(UserData[_AI_OBJECT_DATE]);
-      if HoursBetween(d1, now) < 1 then
+      if MinutesBetween(d1, now) < 10 then
       begin
         Result := GetResponse('nonewithobject');
         Exit;
