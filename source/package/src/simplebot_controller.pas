@@ -121,6 +121,7 @@ type
 
     function isAnswerOld(): boolean;
     function isMentioned: boolean;
+    function isFormula: boolean;
   public
     {$ifdef AI_REDIS}
     SimpleAI: TSimpleAIRedis;
@@ -498,6 +499,7 @@ begin
   Result := StringReplace(Result, 'tambah', '+', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp.', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp', '', [rfReplaceAll]);
+  Result := StringHumanToNominal(Result);
   Result := '(' + Result + ')';
   if not preg_match(REGEX_EQUATION, Result) then
   begin
@@ -522,6 +524,13 @@ var
 begin
   Result := '';
   LogUtil.Add(Message, _AL_LOG_LEARN);
+
+  if isFormula then
+  begin
+    SimpleAI.Parameters.Values['Formula_value'] := Text;
+    Result := mathHandlerDefault();
+    Exit;
+  end;
 
   if UserData[_AI_OBJECT] <> '' then
   begin
@@ -1033,6 +1042,44 @@ begin
   Result := False;
   if pos('@' + FBotName, Text) > 0 then
     Result := True;
+end;
+
+function TSimpleBotModule.isFormula: boolean;
+var
+  i: integer;
+  s: String;
+const
+  Allowed = ['0'..'9', '+', '-', '/', '*', ' '];
+begin
+  if Text.IsEmpty then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  s := StringHumanToNominal(Text);
+  s := s.Replace('ditambah', '+');
+  s := s.Replace('dibagi', '/');
+  s := s.Replace('dikali', '*');
+  s := s.Replace('dikurangi', '-');
+  s := s.Replace('minus', '-');
+  s := s.Replace('plus', '+');
+  s := s.Replace('tambah', '+');
+  s := s.Replace('bagi', '/');
+  s := s.Replace('kali', '*');
+  s := s.Replace('rp.', '');
+  s := s.Replace('rp', '');
+  s := s.Replace(':', '/');
+  s := s.Replace('x', '*');
+
+  Result := True;
+  for i:=1 to Length(s) do
+  begin
+    if not (s[i] in Allowed) then
+    begin
+      Result := False;
+    end;
+  end;
 end;
 
 function TSimpleBotModule.GetResponse(IntentName: string; Action: string;
