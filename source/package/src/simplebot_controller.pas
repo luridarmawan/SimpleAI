@@ -488,6 +488,8 @@ function TSimpleBotModule.mathHandlerDefault(): string;
 var
   mathParser: TFPExpressionParser;
   resultValue: double;
+const
+  AllowedOperator = ['+', '-', '/', '*', '^'];
 begin
   Result := SimpleAI.Parameters.Values['Formula_value'];
   Result := StringReplace(Result, ':', '/', [rfReplaceAll]);
@@ -504,6 +506,15 @@ begin
   Result := Result.Replace('berapa', '');
   Result := Result.Trim;
   Result := StringHumanToNominal(Result);
+  if (Result[1] in AllowedOperator) then
+  begin
+    if UserData['math_result'].IsEmpty then
+    begin
+      Result := '..... :( ';
+      Exit;
+    end;
+    Result := UserData['math_result'] + Result;
+  end;
   Result := '(' + Result + ')';
   if not preg_match(REGEX_EQUATION, Result) then
   begin
@@ -516,7 +527,7 @@ begin
     mathParser.BuiltIns := [bcMath, bcBoolean];
     mathParser.Expression := Result;
     resultValue := ArgToFloat(mathParser.Evaluate);
-
+    UserData['math_result'] := f2s(resultValue);
     ThousandSeparator:='.';
     DecimalSeparator:=',';
     Result := FloatToStr(resultValue);
