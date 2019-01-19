@@ -143,6 +143,7 @@ type
 
     procedure SetSession(Key, Value: string);
     function GetSession(Key: string): string;
+    function IterationHandler(const ActionName:String; const AMessage: String): String;
 
     property BotName: string read FBotName write FBotName;
     property ChatID: string read FChatID write FChatID;
@@ -229,7 +230,9 @@ const
   _AI_OBJECT = 'OBJECT';
   _AI_OBJECT_DATE = 'OBJECT_DATE';
   _AI_CONTEXT = 'CONTEXT';
+  _AI_CONTEXT_ACTION = 'CONTEXT_ACTION';
   _AI_CONTEXT_DATE = 'CONTEXT_DATE';
+  _AI_CONTEXT_PARAM = 'CONTEXT_PARAM';
 
   CONTEXT_DISCUSSION_MAXTIME = 30; //30 minutes
 
@@ -738,6 +741,12 @@ begin
   Result := _SESSION[sessionKey];
 end;
 
+function TSimpleBotModule.IterationHandler(const ActionName: String;
+  const AMessage: String): String;
+begin
+  Result := handlerProcessing(ActionName, AMessage);
+end;
+
 function TSimpleBotModule.Example_Handler(const IntentName: string;
   Params: TStrings): string;
 begin
@@ -753,6 +762,7 @@ var
   messageCount: integer;
   s, text_response, askIntent: string;
   lst: TStrings;
+  context_params: TStringList;
 
   lastvisit_time, lastvisit_length: cardinal;
 begin
@@ -865,8 +875,18 @@ begin
     end;
     if SimpleAI.SimpleAILib.Intent.Context <> '' then
     begin
+      context_params := TStringList.Create;
+      context_params.Text := SimpleAI.SimpleAILib.Intent.Parameters.Text;
+      context_params.Values['pattern'] := '';
+      context_params.Values['action'] := SimpleAI.Action;
+      context_params.Values['intent_name'] := SimpleAI.IntentName;
+      context_params.Text := context_params.Text.Replace(#13,'|');
+      context_params.Text := context_params.Text.Replace(#10,'|');
       UserData[_AI_CONTEXT] := SimpleAI.SimpleAILib.Intent.Context;
+      UserData[_AI_CONTEXT_ACTION] := SimpleAI.Action;
       UserData[_AI_CONTEXT_DATE] := DateTimeToStr(Now);
+      UserData[_AI_CONTEXT_PARAM] := context_params.Text;
+      context_params.Free;
     end;
 
     {
@@ -928,7 +948,9 @@ begin
       if MinutesBetween(Now, StrToDateTime(s)) <= CONTEXT_DISCUSSION_MAXTIME then
       begin
         json['response/context/name'] := UserData[_AI_CONTEXT];
+        json['response/context/action'] := UserData[_AI_CONTEXT_ACTION];
         json['response/context/datetime'] := UserData[_AI_CONTEXT_DATE];
+        json['response/context/params'] := UserData[_AI_CONTEXT_PARAM];
       end;
     except
     end;
