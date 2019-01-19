@@ -500,6 +500,8 @@ begin
   Result := StringReplace(Result, 'rp.', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp', '', [rfReplaceAll]);
   Result := Result.Replace('sama dengan', '');
+  Result := Result.Replace('berapa', '');
+  Result := Result.Trim;
   Result := StringHumanToNominal(Result);
   Result := '(' + Result + ')';
   if not preg_match(REGEX_EQUATION, Result) then
@@ -1050,7 +1052,7 @@ var
   i: integer;
   s: String;
 const
-  Allowed = ['0'..'9', '+', '-', '/', '*', ' ', '^', '%', '(', ')'];
+  Allowed = ['0'..'9', '+', '-', '/', '*', ' ', '^', '%', '(', ')', '.', ','];
 begin
   if Text.IsEmpty then
   begin
@@ -1073,6 +1075,8 @@ begin
   s := s.Replace(':', '/');
   s := s.Replace('x', '*');
   s := s.Replace('sama dengan', '');
+  s := s.Replace('berapa', '');
+  s := s.Trim;
 
   Result := True;
   for i:=1 to Length(s) do
