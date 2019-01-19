@@ -110,7 +110,6 @@ type
     procedure setTrimMessage(AValue: boolean);
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
-    function jadwalSholatHandler(const IntentName: string; Params: TStrings): string;
     function domainWhoisHandler(const IntentName: string; Params: TStrings): string;
     function kamusHandler(const IntentName: string; Params: TStrings): string;
     function prepareQuestion: boolean;
@@ -270,7 +269,6 @@ begin
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
-  Handler['jadwal_sholat'] := @jadwalSholatHandler;
   Handler['domain_whois'] := @domainWhoisHandler;
   Handler['kamus'] := @kamusHandler;
 end;
@@ -518,7 +516,11 @@ begin
     mathParser.BuiltIns := [bcMath, bcBoolean];
     mathParser.Expression := Result;
     resultValue := ArgToFloat(mathParser.Evaluate);
+
+    ThousandSeparator:='.';
+    DecimalSeparator:=',';
     Result := FloatToStr(resultValue);
+    Result := Format('%5.2N',[resultValue]);
   except
   end;
   mathParser.Free;
@@ -678,16 +680,6 @@ begin
     Result := httpResponse.ResultText;
 
   httpClient.Free;
-end;
-
-function TSimpleBotModule.jadwalSholatHandler(const IntentName: string;
-  Params: TStrings): string;
-begin
-  with TJadwalSholatController.Create do
-  begin
-    Result := Find(Params.Values['kota_value'], s2i(FormatDateTime('d', now)));
-    Free;
-  end;
 end;
 
 function TSimpleBotModule.domainWhoisHandler(const IntentName: string;
