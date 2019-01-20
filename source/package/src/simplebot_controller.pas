@@ -506,6 +506,7 @@ begin
   Result := Result.Replace('berapa', '');
   Result := Result.Trim;
   Result := StringHumanToNominal(Result);
+  Result := Result.Replace(' ' , '');
   if (Result[1] in AllowedOperator) then
   begin
     if UserData['math_result'].IsEmpty then
@@ -1101,6 +1102,7 @@ begin
   s := s.Replace('x', '*');
   s := s.Replace('sama dengan', '');
   s := s.Replace('berapa', '');
+  s := s.Replace(' ', '');
   s := s.Trim;
 
   Result := True;
