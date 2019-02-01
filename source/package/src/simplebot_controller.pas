@@ -533,6 +533,7 @@ begin
     DecimalSeparator:=',';
     Result := FloatToStr(resultValue);
     Result := Format('%5.2N',[resultValue]);
+    Result := Result.Replace(',00','');
   except
   end;
   mathParser.Free;
