@@ -70,6 +70,7 @@ type
     FBotName: string;
     FCLI: Boolean;
     FFirstSessionResponse: boolean;
+    FIsExternal: Boolean;
     FLastVisit: Cardinal;
     FSecondSessionResponse: boolean;
     FSessionUserID: string;
@@ -175,6 +176,7 @@ type
     property OriginalMessage: string read getOriginalMessage write setOriginalMessage;
     property AdditionalParameters: TStrings read getAdditionalParameters;
     property ResponseText: TStringList read getResponseText;
+    property IsExternal: Boolean read FIsExternal;
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
@@ -257,6 +259,7 @@ begin
   Suggestion := TBotSuggestion.Create;
   Suggestion.FileName := Config[_AI_CONFIG_BASEDIR] + 'suggestion.txt';
 
+  FIsExternal := False;
   FIsStemming := False;
   FChatID := '';
   FAskCountdown := 0;
@@ -771,6 +774,7 @@ var
 
   lastvisit_time, lastvisit_length: cardinal;
 begin
+  FIsExternal := False;
   if not CLI then
   begin
     if _GET['_DEBUG'] <> '' then
@@ -846,6 +850,7 @@ begin
   SimpleAI.Stemming := FIsStemming;
   if SimpleAI.Exec(Text) then
   begin
+    FIsExternal := SimpleAI.IsExternal;
     SimpleAI.ResponseText.Text := trim(SimpleAI.ResponseText.Text);
     text_response := SimpleAI.ResponseText.Text;
 

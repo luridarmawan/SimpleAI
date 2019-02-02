@@ -47,6 +47,7 @@ type
     FActionCallback: string;
     FAdditionalParameters: TStrings;
     FAIName: string;
+    FIsExternal: Boolean;
     FIsURLEncoded: boolean;
     FKeyName: string;
     FMsg: string;
@@ -122,6 +123,7 @@ type
     property Values[KeyValue: string]: string read getParameterValue; default;
     property ActionCallback: string read FActionCallback;
     property IsURLEncoded: Boolean read FIsURLEncoded;
+    property IsExternal: Boolean read FIsExternal;
     property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
     property ResponData: TMemIniFile read FResponseData;
@@ -729,6 +731,7 @@ begin
   FActionCallback := '';
   FIsURLEncoded := false;
   FTrimMessage := False;
+  FIsExternal := False;
 
   // Stemming
   FIsStemming := False;
@@ -796,6 +799,7 @@ var
 begin
   FMsg := '';
   Result := False;
+  FIsExternal := False;
   if Text = '' then
     Exit;
 
@@ -913,6 +917,7 @@ begin
   item_list.Free;
   if isCommand(Result) then
   begin
+    FIsExternal := True;
     Result := execCommand(Result);
   end;
 end;
@@ -1000,6 +1005,8 @@ begin
   json := json + '}';
   json := json + '},';
   json := json + '"text" : [' + txt + ']';
+  if FIsExternal then
+    json := json + ',"external" : true';
   if FMsg <> '' then
     json := json + ',"msg" : "' + FMsg + '"';
   json := json + '}';
