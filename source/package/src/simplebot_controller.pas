@@ -503,8 +503,12 @@ begin
   Result := StringReplace(Result, 'kali', '*', [rfReplaceAll]);
   Result := StringReplace(Result, 'ditambah', '+', [rfReplaceAll]);
   Result := StringReplace(Result, 'tambah', '+', [rfReplaceAll]);
+  Result := StringReplace(Result, 'dikurangi', '-', [rfReplaceAll]);
+  Result := StringReplace(Result, 'dikurang', '-', [rfReplaceAll]);
+  Result := StringReplace(Result, 'koma', '.', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp.', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp', '', [rfReplaceAll]);
+  Result := StringReplace(Result, 'nol', '0', [rfReplaceAll]);
   Result := Result.Replace('sama dengan', '');
   Result := Result.Replace('berapa', '');
   Result := Result.Trim;
@@ -1102,12 +1106,15 @@ begin
   s := s.Replace('tambah', '+');
   s := s.Replace('bagi', '/');
   s := s.Replace('kali', '*');
+  s := s.Replace('koma', '.');
+  s := s.Replace('nol', '0');
   s := s.Replace('rp.', '');
   s := s.Replace('rp', '');
   s := s.Replace(':', '/');
   s := s.Replace('x', '*');
   s := s.Replace('sama dengan', '');
   s := s.Replace('berapa', '');
+  s := s.Replace(',', '.');
   s := s.Replace(' ', '');
   s := s.Trim;
 
