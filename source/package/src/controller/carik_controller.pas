@@ -981,7 +981,9 @@ begin
     if FGroupName <> '' then
     begin
       if lst[i] = FGroupName then
+      begin
         return.Add(getGroupInfo(lst[i], True));
+      end;
     end
     else
     begin
@@ -992,8 +994,8 @@ begin
     end;
   end;
 
-  //Result := lastGroup + #10#10'*Group List:*'#10 + return.Text;
-  Result := lastGroup + ' ';
+  Result := lastGroup + #10#10'*Group Info:*'#10 + return.Text;
+  //Result := lastGroup + ' ';
   Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, '_', '\_', [rfReplaceAll]);
