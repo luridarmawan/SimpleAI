@@ -994,8 +994,9 @@ begin
     end;
   end;
 
-  Result := lastGroup + #10#10'*Group Info:*'#10 + return.Text;
-  //Result := lastGroup + ' ';
+  Result := lastGroup + ' ';
+  if FGroupName <> '' then
+    Result := lastGroup + #10#10'*Group Info:*'#10 + return.Text;
   Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
   Result := StringReplace(Result, '_', '\_', [rfReplaceAll]);
