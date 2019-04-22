@@ -1,3 +1,4 @@
+# SimpleAI
 
 ## What is it?
 
@@ -16,40 +17,79 @@ Untuk meningkatkan performat, telah disediakan juga fitur untuk koneksi ke [Redi
 
 SimpleAI dibuat dengan sederhana, simple dan ringan. SimpleAI adalah _binary application_ sehingga diharapkan akan lebih cepat dan ringan. 
 
-
 ## How to use it
 
-SimpleAI terbagi dalam 2 (dua) _package_ utama :
-
-1. SimpleAI Package
-2. SimpleBOT Package
-
-### SimpleAI Package
-
-Merupakan **package utama** dari SimpleAI ini. Berisi pustaka _entities_ dan _intents_ yang digunakan untuk kebutuhan AI secara sederhana.
-
-Package ini bisa digunakan baik untuk _desktop application_ maupun _web application_ yang berbasis [FastPlaz](http://www.fastplaz.com)
-
-Informasi penggunaan secara lengkap bisa dibaca dari dokumen [README SimpleAI](README-simpleai.md)
-
-### SimpleBOT Package
-
-Merupakan _package_ pendukung yang siap digunakan untuk membuat AI sederhana berbasis web. Package ini dikhususkan untuk aplikasi-aplikasi berbasis web yang menggunakan [FastPlaz](http://www.fastplaz.com).
-
-SimpleBOT merupakan salah satu contoh penggunaan SimpleAI yang dipergunakan untuk membuat BOT.
-Memiliki fitur menjawab otomatis, dan belajar suatu definisi kata sederhana.
-Kecerdasan Bot ini tergantung dari data entities dan intent yang Anda miliki, serta logic handler yang bisa dibuat _custom_ sesuai kebutuhan.
-
-SimpleBOT package sudah mendukung juga untuk digunakan sebagai Telegram BOT.
-
-Contoh penggunaan bot sederhana dengan SimpleBOT ini bisa anda coba dari situs [ai.fastplaz.com](http://ai.fastplaz.com) atau bisa melalu aplikasi chat **Telegram**, silahkan hubungi contact *'Fastplaz Bot'*.
 
 ### Requirements
 
-- FastPlaz_runtime
-- SimpleAI package
+- Kesabaran dan Ketekunan
+- [Free Pascal](http://www.freepascal.org/)
 
-Informasi penggunaan secara lengkap bisa dibaca dari dokumen [README SimpleBOT](README-simplebot.md)
+### Instalation
+
+Jika menggunakan Lazarus, buka file "simpleai_package.lpk" dan install file tersebut.
+
+
+### SimpleAI USAGE
+
+```delphi
+SimpleAI := TSimpleAI.Create;
+SimpleAI.AddEntitiesFromFile( 'entities-pulsa.txt');
+SimpleAI.AddEntitiesFromFile( 'entities-hotel.txt');
+SimpleAI.AddEntitiesFromFile( 'entities.txt');
+SimpleAI.AddIntentFromFile( 'intents-pulsa.txt');
+SimpleAI.AddIntentFromFile( 'intents-hotel.txt');
+SimpleAI.AddIntentFromFile( 'intents-danlainlain.txt');
+SimpleAI.AddIntentFromFile( 'intents.txt');
+SimpleAI.AddResponFromFile( 'response.txt');
+
+.
+.
+.
+
+Text := 'hi apa kabar?';
+
+if SimpleAI.Exec(Text) then
+begin
+
+  // output dalam format text (result saja)
+  ResponseString := SimpleAPI.SimpleAI.ResponseText;
+  
+  // output dalam json format
+  json := SimpleAPI.SimpleAI.ResponseJson;
+
+  //
+  Action := SimpleAI.Action;
+  IntentName := SimpleAI.IntentName;
+  Params := SimpleAI.Parameters;
+  
+  // do something
+  .
+  .
+  .
+
+end;
+```
+
+
+### Format JSON Output
+
+```
+{
+	"code": 0,
+	"request": {
+		"text": ""
+	},
+	"response": {
+		"intents": {
+			"action": "",
+			"name": "",
+			"parameters": {}
+		},
+		"text": []
+	}
+}
+```
 
 
 ## Documentation
@@ -84,8 +124,3 @@ which this project is licensed under.
 Credit list in [CREDITS](CREDITS)
 
 [Carik Bot](http://www.carik.id/)
-=======
-[![Stories in Ready](https://badge.waffle.io/luridarmawan/SimpleAI.png?label=ready&title=Ready)](https://waffle.io/luridarmawan/SimpleAI)
-# SimpleAI
-Simple AI with Pascal
-

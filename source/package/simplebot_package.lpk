@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <Name Value="simplebot_package"/>
+    <Type Value="RunAndDesignTime"/>
+    <Author Value="Luri Darmawan"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <OtherUnitFiles Value="src;src/controller"/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Description Value="SimpleBOT package"/>
+    <Files Count="8">
+      <Item1>
+        <Filename Value="src/simplebot_controller.pas"/>
+        <UnitName Value="simplebot_controller"/>
+      </Item1>
+      <Item2>
+        <Filename Value="src/simpleairedis_controller.pas"/>
+        <UnitName Value="simpleairedis_controller"/>
+      </Item2>
+      <Item3>
+        <Filename Value="src/suggestion_controller.pas"/>
+        <UnitName Value="suggestion_controller"/>
+      </Item3>
+      <Item4>
+        <Filename Value="src/controller/domainwhois_controller.pas"/>
+        <UnitName Value="domainwhois_controller"/>
+      </Item4>
+      <Item5>
+        <Filename Value="src/controller/kamus_controller.pas"/>
+        <UnitName Value="kamus_controller"/>
+      </Item5>
+      <Item6>
+        <Filename Value="src/controller/carik_controller.pas"/>
+        <UnitName Value="carik_controller"/>
+      </Item6>
+      <Item7>
+        <Filename Value="src/controller/movie_controller.pas"/>
+        <UnitName Value="movie_controller"/>
+      </Item7>
+      <Item8>
+        <Filename Value="src/controller/jadwalsholat_controller.pas"/>
+        <UnitName Value="jadwalsholat_controller"/>
+      </Item8>
+    </Files>
+    <i18n>
+      <EnableI18N Value="True"/>
+      <OutDir Value="locale"/>
+    </i18n>
+    <RequiredPkgs Count="4">
+      <Item1>
+        <PackageName Value="fastplaz_integration"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="fastplaz_runtime"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="simpleai_package"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="FCL"/>
+      </Item4>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <CustomOptions Items="ExternHelp" Version="2">
+      <_ExternHelp Items="Count"/>
+    </CustomOptions>
+  </Package>
+</CONFIG>
