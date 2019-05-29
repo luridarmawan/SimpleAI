@@ -18,8 +18,10 @@ uses
 
 const
   _AI_NAME = 'CarikBot';
+
   _AI_COUNT__MINIMAL_ASKNAME = 5;
   _AI_ACTION_SEPARATOR = '|';
+
   _AI_CMD_OPENFILE = 'file';
   _AI_CMD_URL = 'url';
   _AI_CMD_GET = 'get';

@@ -39,7 +39,7 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
-  suggestion_controller, domainwhois_controller, jadwalsholat_controller,
+  suggestion_controller, domainwhois_controller,
   resiibacor_integration,
   kamus_controller,
   fastplaz_handler, logutil_lib, http_lib,
@@ -200,10 +200,10 @@ const
   _AI_CONFIG_INTENTS = 'ai/default/intents';
   _AI_CONFIG_RESPONSE = 'ai/default/response';
   _AI_CONFIG_DEBUG = 'ai/default/debug';
-  //_AI_CONFIG_DATASOURCE = 'ai/default/datasource';
+  _AI_CONFIG_DATASOURCE = 'ai/default/datasource';
 
-  //_AI_DATASOURCE_REDIS = 'redis';
-  //_AI_DATASOURCE_FILE = 'file';
+  _AI_DATASOURCE_REDIS = 'redis';
+  _AI_DATASOURCE_FILE = 'file';
   _AI_RESPONSE_INTRODUCTION = 'introduction';
   _AI_RESPONSE_FIRSTSESSION = 'firstsession';
   _AI_RESPONSE_ABOUTME = 'aboutme';
@@ -285,6 +285,8 @@ begin
 end;
 
 procedure TSimpleBotModule.LoadConfig(DataName: string);
+var
+  s: String;
 begin
 
   try
@@ -508,6 +510,7 @@ begin
   Result := StringReplace(Result, 'koma', '.', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp.', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp', '', [rfReplaceAll]);
+  Result := StringReplace(Result, '?', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'nol', '0', [rfReplaceAll]);
   Result := Result.Replace('sama dengan', '');
   Result := Result.Replace('berapa', '');
@@ -1115,6 +1118,7 @@ begin
   s := s.Replace('sama dengan', '');
   s := s.Replace('berapa', '');
   s := s.Replace(',', '.');
+  s := s.Replace('?', '');
   s := s.Replace(' ', '');
   s := s.Trim;
 
