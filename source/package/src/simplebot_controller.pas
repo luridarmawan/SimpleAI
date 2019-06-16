@@ -510,6 +510,7 @@ begin
   Result := StringReplace(Result, 'koma', '.', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp.', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp', '', [rfReplaceAll]);
+  Result := StringReplace(Result, '=', '', [rfReplaceAll]);
   Result := StringReplace(Result, '?', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'nol', '0', [rfReplaceAll]);
   Result := Result.Replace('sama dengan', '');
@@ -1119,6 +1120,7 @@ begin
   s := s.Replace('berapa', '');
   s := s.Replace(',', '.');
   s := s.Replace('?', '');
+  s := s.Replace('=', '');
   s := s.Replace(' ', '');
   s := s.Trim;
 
