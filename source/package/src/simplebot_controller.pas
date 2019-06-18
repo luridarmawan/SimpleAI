@@ -516,6 +516,11 @@ begin
   Result := Result.Replace('sama dengan', '');
   Result := Result.Replace('berapa', '');
   Result := Result.Trim;
+  if Result[1] = ',' then
+    Result := Copy(Result, 2);
+  if Result[1] = '.' then
+    Result := Copy(Result, 2);
+  Result := Result.Trim;
   Result := StringHumanToNominal(Result);
   Result := Result.Replace(' ' , '');
   if (Result[1] in AllowedOperator) then
