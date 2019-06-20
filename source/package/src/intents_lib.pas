@@ -45,6 +45,7 @@ type
     FObjectName: string;
     FParameters: TStringList;
     FPattern: string;
+    LogUtil : TLogUtil;
 
   public
     constructor Create; virtual;
@@ -118,10 +119,13 @@ begin
   FIntentKey := '';
   FDebug := False;
   FBoundary := True;
+  //LogUtil := TLogUtil.Create;
 end;
 
 destructor TIntentsFAI.Destroy;
 begin
+  if Assigned(LogUtil) then
+    LogUtil.Free;
   if Assigned(FData) then
     FData.Free;
 
@@ -210,6 +214,12 @@ begin
           key_used := '';
           entity_name := Copy(s, p);
           entity_name := StringReplace(entity_name, '@', '', [rfReplaceAll]);
+
+          // # parentheses handling: (@SomeIntent)someword
+          p := Pos(')', entity_name);
+          if p > 0  then
+            entity_name := copy(entity_name, 0, p - 1);
+
           p := Pos(':', entity_name);
           if p > 0 then
           begin
