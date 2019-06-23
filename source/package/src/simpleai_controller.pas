@@ -873,9 +873,14 @@ function TSimpleAI.GetResponse(IntentName: string; Action: string;
   EntitiesKey: string): string;
 var
   i: integer;
+  link: string;
   item_list: TStringList;
 begin
   Result := '';
+
+  link := FResponseData.ReadString(IntentName, 'link', '');
+  if link <> '' then
+    IntentName := link;
 
   if EntitiesKey <> '' then
   begin
