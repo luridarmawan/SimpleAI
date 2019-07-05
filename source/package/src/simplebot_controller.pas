@@ -121,7 +121,6 @@ type
 
     function isAnswerOld(): boolean;
     function isMentioned: boolean;
-    function isFormula: boolean;
   public
     {$ifdef AI_REDIS}
     SimpleAI: TSimpleAIRedis;
@@ -141,6 +140,8 @@ type
       MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME);
     procedure Answered;
 
+    function isFormula: boolean;
+    function Formula( AText: string): string;
     procedure SetSession(Key, Value: string);
     function GetSession(Key: string): string;
     function IterationHandler(const ActionName:String; const AMessage: String): String;
@@ -1137,6 +1138,12 @@ begin
       Result := False;
     end;
   end;
+end;
+
+function TSimpleBotModule.Formula(AText: string): string;
+begin
+  SimpleAI.Parameters.Values['Formula_value'] := Text;
+  Result := mathHandlerDefault();
 end;
 
 function TSimpleBotModule.GetResponse(IntentName: string; Action: string;
