@@ -1,4 +1,3 @@
-
 ## What is it?
 
 SimpleAI adalah _package code_ yang bisa digunakan untuk menerapkan AI (_Artificial Intelligence_) secara sederhana, khususnya untuk implementasi NLP (_Natural Language Processing_).
@@ -84,8 +83,3 @@ which this project is licensed under.
 Credit list in [CREDITS](CREDITS)
 
 [Carik Bot](http://www.carik.id/)
-=======
-[![Stories in Ready](https://badge.waffle.io/luridarmawan/SimpleAI.png?label=ready&title=Ready)](https://waffle.io/luridarmawan/SimpleAI)
-# SimpleAI
-Simple AI with Pascal
-

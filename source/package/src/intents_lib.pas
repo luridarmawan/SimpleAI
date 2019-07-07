@@ -23,7 +23,9 @@ const
   _SIMPLEAI_CONTEXT = 'context';
   _SIMPLEAI_VARIABLE = 'var';
   _SIMPLEAI_BOUNDARY = 'boundary';
+  _SIMPLEAI_LINK = 'link';
   _AI_VARKEY = 'varkey';
+  _AI_LINKFROM = 'linkFrom';
 
 type
 
@@ -45,6 +47,7 @@ type
     FObjectName: string;
     FParameters: TStringList;
     FPattern: string;
+    LogUtil : TLogUtil;
 
   public
     constructor Create; virtual;
@@ -118,10 +121,13 @@ begin
   FIntentKey := '';
   FDebug := False;
   FBoundary := True;
+  //LogUtil := TLogUtil.Create;
 end;
 
 destructor TIntentsFAI.Destroy;
 begin
+  if Assigned(LogUtil) then
+    LogUtil.Free;
   if Assigned(FData) then
     FData.Free;
 
@@ -133,6 +139,7 @@ end;
 function TIntentsFAI.Exec(Text: string): boolean;
 var
   i, j, k, v, p, match_index: integer;
+  linkName: string;
   Source, s, pattern, entity_name, intent_name, key_used, section_name: string;
   intent_list, item_list, pattern_str: TStrings;
   varsIndex: TStringList;
@@ -162,6 +169,7 @@ begin
     FData.ReadSectionRaw(intent_name, item_list);
 
     FBoundary := True;
+    linkName := '';
     for j := 0 to item_list.Count - 1 do
     begin
       tmp := Explode(item_list[j], '=');
@@ -179,6 +187,11 @@ begin
       end;
       if tmp[0] = _SIMPLEAI_VARIABLE then
         Continue;
+      if tmp[0] = _SIMPLEAI_LINK then
+      begin
+        linkName := tmp[1];
+        Continue;
+      end;
       pattern := tmp[1];
 
       // if there are '=' in text
@@ -210,6 +223,12 @@ begin
           key_used := '';
           entity_name := Copy(s, p);
           entity_name := StringReplace(entity_name, '@', '', [rfReplaceAll]);
+
+          // # parentheses handling: (@SomeIntent)someword
+          p := Pos(')', entity_name);
+          if p > 0  then
+            entity_name := copy(entity_name, 0, p - 1);
+
           p := Pos(':', entity_name);
           if p > 0 then
           begin
@@ -278,6 +297,12 @@ begin
           begin
             FIntentKeySpecific := copy(FIntentKey, k + 1);
             FParameters.Add(_AI_VARKEY + '=' + FIntentKeySpecific);
+          end;
+
+          if not linkName.IsEmpty then
+          begin
+            FParameters.Add(_AI_LINKFROM + '=' + intent_name);
+            FIntentName := linkName;
           end;
 
           regex.Free;

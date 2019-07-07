@@ -121,7 +121,6 @@ type
 
     function isAnswerOld(): boolean;
     function isMentioned: boolean;
-    function isFormula: boolean;
   public
     {$ifdef AI_REDIS}
     SimpleAI: TSimpleAIRedis;
@@ -141,6 +140,8 @@ type
       MsgCount: integer = _AI_COUNT__MINIMAL_ASKNAME);
     procedure Answered;
 
+    function isFormula: boolean;
+    function Formula( AText: string): string;
     procedure SetSession(Key, Value: string);
     function GetSession(Key: string): string;
     function IterationHandler(const ActionName:String; const AMessage: String): String;
@@ -323,28 +324,32 @@ begin
   // load Entities
   s := Config[_AI_CONFIG_ENTITIES];
   jData := GetJSON(s);
-  for i := 0 to jData.Count - 1 do
-  begin
-    SimpleAI.AddEntitiesFromFile(basedir + jData.Items[i].AsString);
-  end;
+  if jData.Count > 0 then
+    for i := 0 to jData.Count - 1 do
+    begin
+      SimpleAI.AddEntitiesFromFile(basedir + jData.Items[i].AsString);
+    end;
+
   jData.Free;
 
   // load Intents
   s := Config[_AI_CONFIG_INTENTS];
   jData := GetJSON(s);
-  for i := 0 to jData.Count - 1 do
-  begin
-    SimpleAI.AddIntentFromFile(basedir + jData.Items[i].AsString);
-  end;
+  if jData.Count > 0 then
+    for i := 0 to jData.Count - 1 do
+    begin
+      SimpleAI.AddIntentFromFile(basedir + jData.Items[i].AsString);
+    end;
   jData.Free;
 
   // load Response
   s := Config[_AI_CONFIG_RESPONSE];
   jData := GetJSON(s);
-  for i := 0 to jData.Count - 1 do
-  begin
-    SimpleAI.AddResponFromFile(basedir + jData.Items[i].AsString);
-  end;
+  if jData.Count > 0 then
+    for i := 0 to jData.Count - 1 do
+    begin
+      SimpleAI.AddResponFromFile(basedir + jData.Items[i].AsString);
+    end;
   jData.Free;
 
   FDataLoaded := True;
@@ -510,10 +515,16 @@ begin
   Result := StringReplace(Result, 'koma', '.', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp.', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp', '', [rfReplaceAll]);
+  Result := StringReplace(Result, '=', '', [rfReplaceAll]);
   Result := StringReplace(Result, '?', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'nol', '0', [rfReplaceAll]);
   Result := Result.Replace('sama dengan', '');
   Result := Result.Replace('berapa', '');
+  Result := Result.Trim;
+  if Result[1] = ',' then
+    Result := Copy(Result, 2);
+  if Result[1] = '.' then
+    Result := Copy(Result, 2);
   Result := Result.Trim;
   Result := StringHumanToNominal(Result);
   Result := Result.Replace(' ' , '');
@@ -1119,6 +1130,7 @@ begin
   s := s.Replace('berapa', '');
   s := s.Replace(',', '.');
   s := s.Replace('?', '');
+  s := s.Replace('=', '');
   s := s.Replace(' ', '');
   s := s.Trim;
 
@@ -1130,6 +1142,12 @@ begin
       Result := False;
     end;
   end;
+end;
+
+function TSimpleBotModule.Formula(AText: string): string;
+begin
+  SimpleAI.Parameters.Values['Formula_value'] := Text;
+  Result := mathHandlerDefault();
 end;
 
 function TSimpleBotModule.GetResponse(IntentName: string; Action: string;
