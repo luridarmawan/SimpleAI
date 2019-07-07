@@ -324,28 +324,32 @@ begin
   // load Entities
   s := Config[_AI_CONFIG_ENTITIES];
   jData := GetJSON(s);
-  for i := 0 to jData.Count - 1 do
-  begin
-    SimpleAI.AddEntitiesFromFile(basedir + jData.Items[i].AsString);
-  end;
+  if jData.Count > 0 then
+    for i := 0 to jData.Count - 1 do
+    begin
+      SimpleAI.AddEntitiesFromFile(basedir + jData.Items[i].AsString);
+    end;
+
   jData.Free;
 
   // load Intents
   s := Config[_AI_CONFIG_INTENTS];
   jData := GetJSON(s);
-  for i := 0 to jData.Count - 1 do
-  begin
-    SimpleAI.AddIntentFromFile(basedir + jData.Items[i].AsString);
-  end;
+  if jData.Count > 0 then
+    for i := 0 to jData.Count - 1 do
+    begin
+      SimpleAI.AddIntentFromFile(basedir + jData.Items[i].AsString);
+    end;
   jData.Free;
 
   // load Response
   s := Config[_AI_CONFIG_RESPONSE];
   jData := GetJSON(s);
-  for i := 0 to jData.Count - 1 do
-  begin
-    SimpleAI.AddResponFromFile(basedir + jData.Items[i].AsString);
-  end;
+  if jData.Count > 0 then
+    for i := 0 to jData.Count - 1 do
+    begin
+      SimpleAI.AddResponFromFile(basedir + jData.Items[i].AsString);
+    end;
   jData.Free;
 
   FDataLoaded := True;
