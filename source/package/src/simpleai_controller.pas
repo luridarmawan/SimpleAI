@@ -71,6 +71,7 @@ type
     FIsStemming: boolean;
     FStandardWordCheck: Boolean;
 
+    function getIsMarkUp: boolean;
     function getIsStemming: boolean;
     function getResponseJson: string;
     function getTimeSession(): string;
@@ -117,6 +118,7 @@ type
     property SimpleAILib: TSimpleAILib read FSimpleAILib;
     property Action: string read getAction;
     property IntentName: string read getIntentName;
+    property IsMarkUp: boolean read GetIsMarkUp;
     property KeyName: string read FKeyName;
     property VarName: string read FVarName;
     property Parameters: TStrings read getParameters;
@@ -1070,6 +1072,16 @@ end;
 function TSimpleAI.getIsStemming: boolean;
 begin
   Result := FIsStemming;
+end;
+
+function TSimpleAI.getIsMarkUp: boolean;
+var
+  s: string;
+begin
+  Result := True;
+  s := FSimpleAILib.Intent.Data.ReadString(FSimpleAILib.IntentName, 'markdown', 'true');
+  if s = 'false' then
+    Result := False;
 end;
 
 

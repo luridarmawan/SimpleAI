@@ -89,6 +89,7 @@ type
     function getAdditionalParameters: TStrings;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
+    function getIsMarkup: Boolean;
     function getIsStemming: boolean;
     function getLastSeen: Cardinal;
     function getOriginalMessage: string;
@@ -178,6 +179,7 @@ type
     property AdditionalParameters: TStrings read getAdditionalParameters;
     property ResponseText: TStringList read getResponseText;
     property IsExternal: Boolean read FIsExternal;
+    property IsMarkup: Boolean read getIsMarkup;
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
@@ -378,6 +380,11 @@ end;
 function TSimpleBotModule.getHandler(const TagName: string): THandlerCallback;
 begin
   Result := ___HandlerCallbackMap[TagName];
+end;
+
+function TSimpleBotModule.getIsMarkup: Boolean;
+begin
+  Result := SimpleAI.IsMarkUp;
 end;
 
 function TSimpleBotModule.getTrimMessage: boolean;
