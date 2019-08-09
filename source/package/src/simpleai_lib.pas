@@ -28,6 +28,8 @@ type
     function getParameters: TStrings;
     function getParameterValue(KeyName: string): string;
     function getPattern: string;
+    function getPrefix: string;
+    function getSuffix: string;
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
@@ -46,6 +48,8 @@ type
     property IntentName: string read getIntentName;
     property Parameters: TStrings read getParameters;
     property Pattern: string read getPattern;
+    property Prefix: string read getPrefix;
+    property Suffix: string read getSuffix;
     property isLoaded: boolean read FisLoaded;
 
   end;
@@ -79,6 +83,16 @@ end;
 function TSimpleAILib.getPattern: string;
 begin
   Result := FIntents.PatternString;
+end;
+
+function TSimpleAILib.getPrefix: string;
+begin
+  Result := FIntents.Prefix;
+end;
+
+function TSimpleAILib.getSuffix: string;
+begin
+  Result := FIntents.Suffix;
 end;
 
 constructor TSimpleAILib.Create;

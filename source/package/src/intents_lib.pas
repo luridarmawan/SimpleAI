@@ -24,6 +24,8 @@ const
   _SIMPLEAI_VARIABLE = 'var';
   _SIMPLEAI_BOUNDARY = 'boundary';
   _SIMPLEAI_LINK = 'link';
+  _SIMPLEAI_PREFIX = 'prefix';
+  _SIMPLEAI_SUFFIX = 'suffix';
   _AI_VARKEY = 'varkey';
   _AI_LINKFROM = 'linkFrom';
 
@@ -47,6 +49,8 @@ type
     FObjectName: string;
     FParameters: TStringList;
     FPattern: string;
+    FPrefix: string;
+    FSuffix: string;
     LogUtil : TLogUtil;
 
   public
@@ -72,6 +76,8 @@ type
     property ObjectName: string read FObjectName;
     property IntentName: string read FIntentName;
     property IntentKey: string read FIntentKey;
+    property Prefix: string read FPrefix;
+    property Suffix: string read FSuffix;
     property IntentKeySpecific: string read FIntentKeySpecific;
     property Entity: TEntitiesFAI read FEntities;
 
@@ -149,6 +155,8 @@ begin
   Result := False;
   FIntentName := '';
   FIntentKey := '';
+  FPrefix := '';
+  FSuffix := '';
   FParameters.Clear;
   FIntentKeySpecific := '';
   Text := Trim(Text);
@@ -259,6 +267,8 @@ begin
           FAction := FData.ReadString(FIntentName, _SIMPLEAI_INTENT_ACTIONKEY, '');
           FContext := FData.ReadString(FIntentName, _SIMPLEAI_CONTEXT, '');
           FObjectName := FData.ReadString(FIntentName, _SIMPLEAI_OBJECT, '');
+          FPrefix := FData.ReadString(FIntentName, _SIMPLEAI_PREFIX, '');
+          FSuffix := FData.ReadString(FIntentName, _SIMPLEAI_SUFFIX, '');
 
           key_used := '';
           match_index := 1;

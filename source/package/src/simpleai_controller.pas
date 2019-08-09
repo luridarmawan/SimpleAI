@@ -838,6 +838,8 @@ begin
 
   if Result then
   begin
+    FPrefixText := FSimpleAILib.Prefix;
+    FSuffixText := FSimpleAILib.Suffix;
     FResponseText.Add(GetResponse(IntentName, Action, ''));
     FActionCallback := GetResponse(IntentName, '', 'action');
     FIsURLEncoded := s2b( GetResponse(IntentName, '', 'urlencoded'));
@@ -850,7 +852,7 @@ begin
     FActionCallback := '';
   end;
 
-  FResponseText.Text := FPrefixText + FResponseText.Text + FSuffixText;
+  FResponseText.Text := FPrefixText + trim(FResponseText.Text) + FSuffixText;
   if FSimpleAILib.Intent.Entities.preg_match('%(.*)%', FResponseText.Text) then
   begin
     FResponseText.Text := StringReplacement(FResponseText.Text, FIsURLEncoded);
