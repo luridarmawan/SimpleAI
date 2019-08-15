@@ -34,7 +34,7 @@ interface
 
 uses
   common, fastplaz_handler, telegram_integration, logutil_lib, mailer_lib,
-  simpleai_controller,
+  simpleai_controller, http_lib, json_lib,
   IniFiles, fpjson, Classes, SysUtils;
 
 const
@@ -62,6 +62,7 @@ type
     FRecordNumber: integer;
     FUserName: string;
     function getCustomMessage(const KeyName: string): string;
+    function getisCollectiveWelcomeGreeting: boolean;
     function getIsPermiited: boolean;
     function getIsRecording: boolean;
     function SaveToFile(Text: string): boolean;
@@ -112,6 +113,7 @@ type
     property RecordNumber: integer read FRecordNumber;
     property IsGroup: boolean read FIsGroup write FIsGroup;
     property IsPermitted: boolean read getIsPermiited;
+    property isCollectiveWelcomeGreeting: boolean read getisCollectiveWelcomeGreeting;
     property CustomMessage[const KeyName: string]: string
       read getCustomMessage write setCustomMessage;
 
@@ -171,6 +173,7 @@ const
   _NOTULEN_HTML_VIDEO = '<video controls><source src="%s" type="video/mp4"></video>';
 
   _NOTULEN_SUPERADMIN = 'luridarmawan';
+  GROUPADDLOG_URL = 'services/groupinfo_url';
 
 //_NOTULEN_MIME_VIDEO = 'video/mp4';
 
@@ -286,6 +289,46 @@ end;
 function TCarikController.getCustomMessage(const KeyName: string): string;
 begin
   Result := FGroupData.ReadString(FGroupName, 'MSG_' + KeyName, '');
+end;
+
+function TCarikController.getisCollectiveWelcomeGreeting: boolean;
+var
+  i: Integer;
+  serviceUrl: string;
+  http_response: IHTTPResponse;
+  json: TJSONUtil;
+begin
+  Result := False;
+  serviceUrl := Config[GROUPADDLOG_URL];
+  if serviceUrl.IsEmpty then
+    Exit;
+  serviceUrl := serviceUrl + '?channel=telegram&id=' + FGroupChatID;
+  with THTTPLib.Create do
+  begin
+    URL := serviceUrl;
+    http_response := Get;
+    if http_response.ResultCode <> 200 then
+    begin
+      Free;
+      Exit;
+    end;
+    if http_response.ResultText.IsEmpty then
+    begin
+      Free;
+      Exit;
+    end;
+    Free;
+  end;
+  json := TJSONUtil.Create;
+  json.LoadFromJsonString(http_response.ResultText);
+  i := s2i(json['code']);
+  if i <> 0 then
+  begin
+    json.Free;
+    Exit;
+  end;
+  Result := s2b(json['data/options/welcome_member_collective']);
+  json.Free;
 end;
 
 procedure TCarikController.setCustomMessage(const KeyName: string; AValue: string);
