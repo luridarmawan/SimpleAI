@@ -960,8 +960,8 @@ begin
     if (FOnError <> nil) and (not FisAnswered) then
     begin
       s := FOnError(Text);
-      if s <> '' then
-        SimpleAI.ResponseText.Text := s;
+      //if s <> '' then
+      SimpleAI.ResponseText.Text := s;
     end;
   end;
 
