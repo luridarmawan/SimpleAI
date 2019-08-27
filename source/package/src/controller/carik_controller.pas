@@ -65,6 +65,7 @@ type
     function getisCollectiveWelcomeGreeting: boolean;
     function getIsPermiited: boolean;
     function getIsRecording: boolean;
+    function getisSpamChecking: boolean;
     function SaveToFile(Text: string): boolean;
     function SaveToFileCSV(Text: string): boolean;
     function getDirPath(IndexRecording: integer): string;
@@ -114,6 +115,7 @@ type
     property IsGroup: boolean read FIsGroup write FIsGroup;
     property IsPermitted: boolean read getIsPermiited;
     property isCollectiveWelcomeGreeting: boolean read getisCollectiveWelcomeGreeting;
+    property isSpamChecking: boolean read getisSpamChecking;
     property CustomMessage[const KeyName: string]: string
       read getCustomMessage write setCustomMessage;
 
@@ -184,6 +186,46 @@ begin
   Result := False;
   if FGroupData.ReadString(FGroupName, _NOTULEN_RECORDING, '0') = '1' then
     Result := True;
+end;
+
+function TCarikController.getisSpamChecking: boolean;
+var
+  i: Integer;
+  serviceUrl: string;
+  http_response: IHTTPResponse;
+  json: TJSONUtil;
+begin
+  Result := False;
+  serviceUrl := Config[GROUPADDLOG_URL];
+  if serviceUrl.IsEmpty then
+    Exit;
+  serviceUrl := serviceUrl + '?channel=telegram&id=' + FGroupChatID;
+  with THTTPLib.Create do
+  begin
+    URL := serviceUrl;
+    http_response := Get;
+    if http_response.ResultCode <> 200 then
+    begin
+      Free;
+      Exit;
+    end;
+    if http_response.ResultText.IsEmpty then
+    begin
+      Free;
+      Exit;
+    end;
+    Free;
+  end;
+  json := TJSONUtil.Create;
+  json.LoadFromJsonString(http_response.ResultText);
+  i := s2i(json['code']);
+  if i <> 0 then
+  begin
+    json.Free;
+    Exit;
+  end;
+  Result := s2b(json['data/options/spam_checking']);
+  json.Free;
 end;
 
 function TCarikController.getIsPermiited: boolean;

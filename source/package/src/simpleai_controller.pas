@@ -498,6 +498,7 @@ begin
   begin
     try
       AddHeader('_source', 'carik');
+      AddHeader('User-Agent', 'carik/nlp');
       //get header from response list
       s := GetResponse(IntentName, '', 'header');
       s := StringReplace(s, ':', '=', [rfReplaceAll]);
