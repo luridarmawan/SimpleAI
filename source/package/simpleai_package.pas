@@ -4,18 +4,12 @@
 
 unit simpleai_package;
 
+{$warn 5023 off : no warning about unused units}
 interface
 
 uses
-  entities_lib, intents_lib, simpleai_controller, simpleai_lib, 
-  LazarusPackageIntf;
+  entities_lib, intents_lib, simpleai_controller, simpleai_lib;
 
 implementation
 
-procedure Register;
-begin
-end;
-
-initialization
-  RegisterPackage('simpleai_package', @Register);
 end.

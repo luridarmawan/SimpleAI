@@ -4,19 +4,14 @@
 
 unit simplebot_package;
 
+{$warn 5023 off : no warning about unused units}
 interface
 
 uses
   simplebot_controller, simpleairedis_controller, suggestion_controller, 
   domainwhois_controller, kamus_controller, carik_controller, 
-  movie_controller, jadwalsholat_controller, LazarusPackageIntf;
+  movie_controller, jadwalsholat_controller;
 
 implementation
 
-procedure Register;
-begin
-end;
-
-initialization
-  RegisterPackage('simplebot_package', @Register);
 end.

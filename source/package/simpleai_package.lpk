@@ -2,7 +2,6 @@
 <CONFIG>
   <Package Version="4">
     <Name Value="simpleai_package"/>
-    <Type Value="RunAndDesignTime"/>
     <Author Value="Luri Darmawan"/>
     <CompilerOptions>
       <Version Value="11"/>
@@ -10,6 +9,13 @@
         <OtherUnitFiles Value=".;src"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Linking>
+        <Debugging>
+          <UseHeaptrc Value="True"/>
+          <TrashVariables Value="True"/>
+          <GenGProfCode Value="True"/>
+        </Debugging>
+      </Linking>
     </CompilerOptions>
     <Description Value="Simple NLP package"/>
     <Files Count="4">

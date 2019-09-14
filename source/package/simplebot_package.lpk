@@ -2,7 +2,6 @@
 <CONFIG>
   <Package Version="4">
     <Name Value="simplebot_package"/>
-    <Type Value="RunAndDesignTime"/>
     <Author Value="Luri Darmawan"/>
     <CompilerOptions>
       <Version Value="11"/>

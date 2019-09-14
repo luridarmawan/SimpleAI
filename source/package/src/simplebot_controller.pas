@@ -310,7 +310,7 @@ begin
   end;
   {$endif}
 
-  //-- sementar buat test
+  //-- sementara buat test
   LoadAIDataFromFile;
 
 end;

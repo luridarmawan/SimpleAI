@@ -129,7 +129,6 @@ begin
   Result := False;
   if not FileExists(FileName) then
     exit;
-  ;
 
   if Assigned(FData) then
     FData.Free;
