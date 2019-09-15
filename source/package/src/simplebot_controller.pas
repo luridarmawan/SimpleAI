@@ -797,7 +797,7 @@ var
   lst: TStrings;
   context_params: TStringList;
 
-  lastvisit_time, lastvisit_length: cardinal;
+  lastvisit_time, lastvisit_length: Int64;
 begin
   FIsExternal := False;
   if not CLI then
@@ -844,7 +844,8 @@ begin
   s := UserData[_AI_SESSION_LASTVISIT];
   try
     lastvisit_time := _GetTickCount;
-    lastvisit_time := StrToInt64(s);
+    //lastvisit_time := StrToInt64(s);
+    TryStrToInt64(s,lastvisit_time);
     FLastVisit := lastvisit_time;
   except
   end;

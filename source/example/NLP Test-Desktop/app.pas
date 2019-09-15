@@ -5,6 +5,7 @@ unit app;
 interface
 
 uses
+  fastplaz_handler,
   simpleai_controller, fpjson, jsonparser, jsonscanner,
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterJScript, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, StdCtrls, EditBtn, ComCtrls;
@@ -79,7 +80,8 @@ end;
 
 procedure TfApp.FormDestroy(Sender: TObject);
 begin
-  NLP.Free;
+  if Assigned(NLP) then
+    NLP.Free;
 end;
 
 function jsonFormatter(JsonString: string): string;
@@ -118,7 +120,7 @@ begin
   NLP := TSimpleAI.Create;
   NLP.AIName := BOTNAME;
   NLP.Stemming := False;
-  //NLP.Debug := True;
+  NLP.Debug := False;
   if not loadData then
   begin
     editor.Lines.Add(#13'Data can not loaded');

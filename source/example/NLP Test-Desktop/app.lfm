@@ -11,7 +11,7 @@ object fApp: TfApp
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '2.0.4.0'
   object pnl_Top: TPanel
     Left = 0
     Height = 36
@@ -23,7 +23,7 @@ object fApp: TfApp
     TabOrder = 1
     object edt_Dir: TDirectoryEdit
       Left = 174
-      Height = 28
+      Height = 21
       Top = 5
       Width = 537
       OnAcceptDirectory = edt_DirAcceptDirectory
@@ -35,9 +35,9 @@ object fApp: TfApp
     end
     object Label1: TLabel
       Left = 14
-      Height = 20
+      Height = 16
       Top = 8
-      Width = 134
+      Width = 124
       Caption = 'NLP Data Directory :'
       ParentColor = False
     end
@@ -102,13 +102,13 @@ object fApp: TfApp
       TabOrder = 0
       object page_Result: TTabSheet
         Caption = 'Result'
-        ClientHeight = 437
-        ClientWidth = 719
+        ClientHeight = 440
+        ClientWidth = 721
         inline editor: TSynEdit
           Left = 0
-          Height = 437
+          Height = 440
           Top = 0
-          Width = 719
+          Width = 721
           Align = alClient
           Font.Height = -13
           Font.Name = 'Courier New'

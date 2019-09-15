@@ -13,7 +13,6 @@
         <Debugging>
           <UseHeaptrc Value="True"/>
           <TrashVariables Value="True"/>
-          <GenGProfCode Value="True"/>
         </Debugging>
       </Linking>
     </CompilerOptions>
