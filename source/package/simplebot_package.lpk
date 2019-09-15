@@ -9,12 +9,6 @@
         <OtherUnitFiles Value="src;src/controller"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
-      <Linking>
-        <Debugging>
-          <UseHeaptrc Value="True"/>
-          <TrashVariables Value="True"/>
-        </Debugging>
-      </Linking>
     </CompilerOptions>
     <Description Value="SimpleBOT package"/>
     <Files Count="8">

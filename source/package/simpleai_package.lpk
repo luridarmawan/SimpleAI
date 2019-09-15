@@ -9,12 +9,6 @@
         <OtherUnitFiles Value=".;src"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
-      <Linking>
-        <Debugging>
-          <UseHeaptrc Value="True"/>
-          <TrashVariables Value="True"/>
-        </Debugging>
-      </Linking>
     </CompilerOptions>
     <Description Value="Simple NLP package"/>
     <Files Count="4">
