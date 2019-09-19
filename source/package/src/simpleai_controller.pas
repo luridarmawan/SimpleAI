@@ -49,6 +49,7 @@ type
     FActionCallback: string;
     FAdditionalParameters: TStrings;
     FAIName: string;
+    FImageCaption: string;
     FImageURL: string;
     FIsExternal: Boolean;
     FIsURLEncoded: boolean;
@@ -139,6 +140,7 @@ type
     property Msg: string read FMsg;
     property TrimMessage: boolean read FTrimMessage write FTrimMessage;
     property ImageURL: string read FImageURL;
+    property ImageCaption: string read FImageCaption;
     property OriginalMessage: string read FOriginalMessage write FOriginalMessage;
 
     // Stemming
@@ -581,6 +583,7 @@ begin
     json.LoadFromJsonString(Result);
     Result := json[pathName];
     FImageURL := json['image'];
+    FImageCaption := json['image_caption'];
     if ACache and (Result <> '') then
     begin
       SaveCache(AURL, Result);
@@ -628,6 +631,7 @@ begin
     json.LoadFromJsonString(Result);
     Result := json[pathName];
     FImageURL := json['image'];
+    FImageCaption := json['image_caption'];
     if ACache and (Result <> '') then
     begin
       SaveCache(AURL, Result);
@@ -742,6 +746,7 @@ begin
   FOriginalMessage := '';
   FActionCallback := '';
   FImageURL := '';
+  FImageCaption := '';
   FIsURLEncoded := false;
   FTrimMessage := False;
   FIsExternal := False;
