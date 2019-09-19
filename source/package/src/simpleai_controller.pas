@@ -49,6 +49,7 @@ type
     FActionCallback: string;
     FAdditionalParameters: TStrings;
     FAIName: string;
+    FImageURL: string;
     FIsExternal: Boolean;
     FIsURLEncoded: boolean;
     FKeyName: string;
@@ -137,6 +138,7 @@ type
     property Pattern: string read getPatternString;
     property Msg: string read FMsg;
     property TrimMessage: boolean read FTrimMessage write FTrimMessage;
+    property ImageURL: string read FImageURL;
     property OriginalMessage: string read FOriginalMessage write FOriginalMessage;
 
     // Stemming
@@ -578,12 +580,16 @@ begin
   try
     json.LoadFromJsonString(Result);
     Result := json[pathName];
+    FImageURL := json['image'];
     if ACache and (Result <> '') then
     begin
       SaveCache(AURL, Result);
     end;
   except
-    Result := '';
+    on e: Exception do
+    begin
+      Result := '';
+    end;
   end;
 
 end;
@@ -621,6 +627,7 @@ begin
   try
     json.LoadFromJsonString(Result);
     Result := json[pathName];
+    FImageURL := json['image'];
     if ACache and (Result <> '') then
     begin
       SaveCache(AURL, Result);
@@ -734,6 +741,7 @@ begin
   FMsg := '';
   FOriginalMessage := '';
   FActionCallback := '';
+  FImageURL := '';
   FIsURLEncoded := false;
   FTrimMessage := False;
   FIsExternal := False;
@@ -1025,6 +1033,12 @@ begin
   json := json + '}';
 
   lst.Free;
+
+  //image view
+  if not FImageURL.IsEmpty then
+  begin
+    FActionCallback := 'image.view|url='+FImageURL;
+  end;
 
   if FActionCallback <> '' then
   begin
