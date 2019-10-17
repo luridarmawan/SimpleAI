@@ -527,6 +527,7 @@ begin
   Result := StringReplace(Result, 'nol', '0', [rfReplaceAll]);
   Result := Result.Replace('sama dengan', '');
   Result := Result.Replace('berapa', '');
+  Result := Result.Replace('sama', '+');
   Result := Result.Trim;
   if Result[1] = ',' then
     Result := Copy(Result, 2);
@@ -1136,6 +1137,7 @@ begin
   s := s.Replace('x', '*');
   s := s.Replace('sama dengan', '');
   s := s.Replace('berapa', '');
+  s := s.Replace('sama', '+');
   s := s.Replace(',', '.');
   s := s.Replace('?', '');
   s := s.Replace('=', '');
