@@ -1101,7 +1101,10 @@ var
   s: string;
 begin
   Result := True;
-  s := FSimpleAILib.Intent.Data.ReadString(FSimpleAILib.IntentName, 'markdown', 'true');
+  try
+    s := FSimpleAILib.Intent.Data.ReadString(FSimpleAILib.IntentName, 'markdown', 'true');
+  except
+  end;
   if s = 'false' then
     Result := False;
 end;
