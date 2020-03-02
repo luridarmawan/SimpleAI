@@ -440,6 +440,8 @@ begin
   FGroupData := TIniFile.Create(FPath + _NOTULEN_GROUP_DATA_FILE);
   FData := TIniFile.Create(FPath + _NOTULEN_DATA_FILE);
   FUserPrefix := '';
+  FGroupChatID := '';
+  FGroupName := '';
 end;
 
 destructor TCarikController.Destroy;
