@@ -394,7 +394,7 @@ end;
 
 procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
 begin
-  SetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName, AValue);
+  SetSession(_AI_SESSION_USER + KeyName, AValue);
 
   if (FStorageType = stFile)and(FStorageFileName<>'') then
   begin
@@ -763,7 +763,7 @@ procedure TSimpleBotModule.SetSession(Key, Value: string);
 var
   sessionKey: string;
 begin
-  sessionKey := ChatID + '_' + Key;
+  sessionKey := FSessionUserID + '_' + Key;
   _SESSION[sessionKey] := Value;
 end;
 
@@ -771,7 +771,7 @@ function TSimpleBotModule.GetSession(Key: string): string;
 var
   sessionKey: string;
 begin
-  sessionKey := ChatID + '_' + Key;
+  sessionKey := FSessionUserID + '_' + Key;
   Result := _SESSION[sessionKey];
 end;
 
