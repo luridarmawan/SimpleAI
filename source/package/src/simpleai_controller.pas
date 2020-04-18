@@ -1089,6 +1089,12 @@ begin
       fieldAction.Free;
     end;
 
+    if IsCustomAction then
+    begin
+      o['response/action/type'] := CustomReplyType;
+      o.ValueArray['response/action/data'] := TJSONArray(CustomReplyData.Data);
+    end;
+
     json := o.AsJSON;
     o.Free;
     cmdAction.Free;
