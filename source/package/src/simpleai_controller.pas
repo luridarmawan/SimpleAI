@@ -990,6 +990,7 @@ var
   s, json, actionName, txt, v: string;
   lst: TStrings;
   o: TJSONUtil;
+  customReplyDataAsArray: TJSONArray;
   cmdAction, parameterAction, fieldAction : TStrings;
 begin
   Result := '';
@@ -1092,7 +1093,11 @@ begin
     if IsCustomAction then
     begin
       o['response/action/type'] := CustomReplyType;
-      o.ValueArray['response/action/data'] := TJSONArray(CustomReplyData.Data);
+      try
+        customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON));
+        o.ValueArray['response/action/data'] := customReplyDataAsArray;
+      except
+      end;
     end;
 
     json := o.AsJSON;
