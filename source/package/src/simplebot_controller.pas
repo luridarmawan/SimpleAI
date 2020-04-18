@@ -42,7 +42,7 @@ uses
   suggestion_controller, domainwhois_controller,
   resiibacor_integration,
   kamus_controller,
-  fastplaz_handler, logutil_lib, http_lib,
+  fastplaz_handler, logutil_lib, http_lib, json_lib,
   fpexprpars, // formula
   dateutils, IniFiles,
   RegExpr, fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
@@ -87,12 +87,16 @@ type
     Text: string;
     FIsStemming : boolean;
     function getAdditionalParameters: TStrings;
+    function getCustomReplayData: TJSONUtil;
+    function getCustomReplayType: string;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
+    function getIsCustomAction: boolean;
     function getIsMarkup: Boolean;
     function getIsStemming: boolean;
     function getLastSeen: Cardinal;
     function getOriginalMessage: string;
+    function getReplyType: string;
     function getResponseText: TStringList;
     function getStandardWordCheck: Boolean;
     function getTrimMessage: boolean;
@@ -169,6 +173,13 @@ type
     property TrimMessage: boolean read getTrimMessage write setTrimMessage;
 
     property SessionUserID:string read FSessionUserID write FSessionUserID;
+
+    // CustomAction
+    property IsCustomAction: boolean read getIsCustomAction;
+    property ReplayType: string read getReplyType;
+    property CustomReplayType: string read getCustomReplayType;
+    property CustomReplayData: TJSONUtil read getCustomReplayData;
+
   published
     property CLI:Boolean read FCLI write FCLI;
     property StorageType:TStorageType read FStorageType write setStorageType;
@@ -184,6 +195,7 @@ type
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
     property StandardWordCheck: Boolean read getStandardWordCheck write setStandardWordCheck;
+
   end;
 
 var
@@ -192,7 +204,7 @@ var
 implementation
 
 uses
-  json_lib, common;
+  common;
 
 const
   REGEX_EQUATION =
@@ -372,6 +384,16 @@ begin
   Result := SimpleAI.AdditionalParameters;
 end;
 
+function TSimpleBotModule.getCustomReplayData: TJSONUtil;
+begin
+  Result := SimpleAI.CustomReplyData;
+end;
+
+function TSimpleBotModule.getCustomReplayType: string;
+begin
+  Result := SimpleAI.CustomReplyType;
+end;
+
 procedure TSimpleBotModule.setHandler(const TagName: string; AValue: THandlerCallback);
 begin
   ___HandlerCallbackMap[TagName] := AValue;
@@ -380,6 +402,11 @@ end;
 function TSimpleBotModule.getHandler(const TagName: string): THandlerCallback;
 begin
   Result := ___HandlerCallbackMap[TagName];
+end;
+
+function TSimpleBotModule.getIsCustomAction: boolean;
+begin
+  Result := SimpleAI.IsCustomAction;
 end;
 
 function TSimpleBotModule.getIsMarkup: Boolean;
@@ -623,6 +650,11 @@ end;
 function TSimpleBotModule.getOriginalMessage: string;
 begin
   Result := SimpleAI.OriginalMessage;
+end;
+
+function TSimpleBotModule.getReplyType: string;
+begin
+  Result := SimpleAI.ReplyType;
 end;
 
 function TSimpleBotModule.getResponseText: TStringList;

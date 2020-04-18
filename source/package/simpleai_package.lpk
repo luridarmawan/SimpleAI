@@ -10,7 +10,9 @@
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Description Value="Simple NLP package"/>
+    <Description Value="Simple NLP package
+"/>
+    <Version Minor="1" Release="5"/>
     <Files Count="4">
       <Item1>
         <Filename Value="src/entities_lib.pas"/>
@@ -32,6 +34,7 @@
     <i18n>
       <EnableI18N Value="True"/>
       <OutDir Value="locale"/>
+      <EnableI18NForLFM Value="True"/>
     </i18n>
     <RequiredPkgs Count="2">
       <Item1>

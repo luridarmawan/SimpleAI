@@ -86,7 +86,7 @@ begin
     redis_text := UrlEncode(lst.Text);
     FRedis[_AI_REDIS_INTENTS] := redis_text;
 
-    ResponData.GetStrings(lst);
+    ResponseData.GetStrings(lst);
     redis_text := UrlEncode(lst.Text);
     FRedis[_AI_REDIS_RESPONSES] := redis_text;
 

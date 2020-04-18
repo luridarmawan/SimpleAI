@@ -49,6 +49,8 @@ type
     FActionCallback: string;
     FAdditionalParameters: TStrings;
     FAIName: string;
+    FCustomReplyData: TJSONUtil;
+    FCustomReplyType: string;
     FImageCaption: string;
     FImageURL: string;
     FIsExternal: Boolean;
@@ -58,6 +60,7 @@ type
     FNonStandardWordFile: String;
     FOriginalMessage: string;
     FPrefixText: string;
+    FReplyType: string;
     FRequestText: string;
     FResponseText: TStringList;
     FSimpleAILib: TSimpleAILib;
@@ -73,6 +76,7 @@ type
     FIsStemming: boolean;
     FStandardWordCheck: Boolean;
 
+    function getIsCustomAction: boolean;
     function getIsMarkUp: boolean;
     function getIsStemming: boolean;
     function getResponseJson: string;
@@ -98,6 +102,7 @@ type
     function openFile(FileName: string): string;
     procedure setIsStemming(AValue: boolean);
     procedure SetStemmingDictionary(AValue: string);
+    procedure parseReply(AText:string);
   public
     StartTime, StopTime, ElapsedTime: cardinal;
     constructor Create; virtual;
@@ -132,7 +137,7 @@ type
     property IsExternal: Boolean read FIsExternal;
     property ResponseText: TStringList read FResponseText write FResponseText;
     property ResponseJson: string read getResponseJson;
-    property ResponData: TMemIniFile read FResponseData;
+    property ResponseData: TMemIniFile read FResponseData;
     property PrefixText: string read FPrefixText write FPrefixText;
     property SuffixText: string read FSuffixText write FSuffixText;
     property Debug: boolean read getDebug write setDebug;
@@ -142,6 +147,7 @@ type
     property ImageURL: string read FImageURL;
     property ImageCaption: string read FImageCaption;
     property OriginalMessage: string read FOriginalMessage write FOriginalMessage;
+    property ReplyType: string read FReplyType;
 
     // Stemming
     property Stemming: boolean read getIsStemming write setIsStemming;
@@ -151,6 +157,11 @@ type
 
     property StandardWordCheck: Boolean read FStandardWordCheck write FStandardWordCheck;
     property NonStandardWordFile: String read FNonStandardWordFile write FNonStandardWordFile;
+
+    // CustomAction
+    property IsCustomAction: boolean read getIsCustomAction;
+    property CustomReplyType: string read FCustomReplyType;
+    property CustomReplyData: TJSONUtil read FCustomReplyData;
   end;
 
 implementation
@@ -374,6 +385,8 @@ var
   end;
 
 begin
+  FReplyType := 'text';
+  ResponseText.Text := '';
   Result := Message;
   convertedMessage := StringReplacement(Message);
   lst := Explode(convertedMessage, ':');
@@ -578,6 +591,7 @@ begin
   if Result = '' then
     Exit;
 
+  parseReply(Result);
   json := TJSONUtil.Create;
   try
     json.LoadFromJsonString(Result);
@@ -594,6 +608,7 @@ begin
       Result := '';
     end;
   end;
+  json.Free;
 
 end;
 
@@ -757,10 +772,14 @@ begin
   FStemmedText := '';
   FStandardWordCheck := False;
   FNonStandardWordFile := 'files' + DirectorySeparator + WORD_NONSTANDARD_FILE;
+
+  FReplyType := '';
+  FCustomReplyData := TJSONUtil.Create;
 end;
 
 destructor TSimpleAI.Destroy;
 begin
+  FCustomReplyData.Free;
   FAdditionalParameters.Free;
   FResponseText.Free;
   FResponseDataAsList.Free;
@@ -1091,6 +1110,27 @@ begin
   FStemmingDictionary := AValue;
 end;
 
+procedure TSimpleAI.parseReply(AText: string);
+var
+  o: TJSONUtil;
+
+begin
+  FCustomReplyType := '';
+  o := TJSONUtil.Create;
+  o.LoadFromJsonString(AText);
+  FReplyType := o['type'];
+  if (FReplyType = '') or (FReplyType = 'text') then
+  begin
+    FReplyType := 'text';
+    Exit;
+  end;
+
+  FCustomReplyType := o['action/type'];
+  FCustomReplyData.LoadFromJsonString(o.ValueArray['action/data'].AsJSON);
+
+  o.Free;
+end;
+
 function TSimpleAI.getIsStemming: boolean;
 begin
   Result := FIsStemming;
@@ -1107,6 +1147,13 @@ begin
   end;
   if s = 'false' then
     Result := False;
+end;
+
+function TSimpleAI.getIsCustomAction: boolean;
+begin
+  Result := False;
+  if FReplyType = 'action' then
+    Result := True;
 end;
 
 
