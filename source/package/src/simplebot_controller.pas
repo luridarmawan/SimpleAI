@@ -87,8 +87,9 @@ type
     Text: string;
     FIsStemming : boolean;
     function getAdditionalParameters: TStrings;
-    function getCustomReplayData: TJSONUtil;
-    function getCustomReplayType: string;
+    function getCustomReplyData: TJSONUtil;
+    function getCustomReplyMode: string;
+    function getCustomReplyType: string;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
     function getIsCustomAction: boolean;
@@ -177,8 +178,9 @@ type
     // CustomAction
     property IsCustomAction: boolean read getIsCustomAction;
     property ReplayType: string read getReplyType;
-    property CustomReplayType: string read getCustomReplayType;
-    property CustomReplayData: TJSONUtil read getCustomReplayData;
+    property CustomReplyType: string read getCustomReplyType;
+    property CustomReplyMode: string read getCustomReplyMode;
+    property CustomReplyData: TJSONUtil read getCustomReplyData;
 
   published
     property CLI:Boolean read FCLI write FCLI;
@@ -384,12 +386,17 @@ begin
   Result := SimpleAI.AdditionalParameters;
 end;
 
-function TSimpleBotModule.getCustomReplayData: TJSONUtil;
+function TSimpleBotModule.getCustomReplyData: TJSONUtil;
 begin
   Result := SimpleAI.CustomReplyData;
 end;
 
-function TSimpleBotModule.getCustomReplayType: string;
+function TSimpleBotModule.getCustomReplyMode: string;
+begin
+  Result := SimpleAI.CustomReplyMode;
+end;
+
+function TSimpleBotModule.getCustomReplyType: string;
 begin
   Result := SimpleAI.CustomReplyType;
 end;

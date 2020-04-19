@@ -50,6 +50,7 @@ type
     FAdditionalParameters: TStrings;
     FAIName: string;
     FCustomReplyData: TJSONUtil;
+    FCustomReplyMode: string;
     FCustomReplyType: string;
     FImageCaption: string;
     FImageURL: string;
@@ -161,6 +162,7 @@ type
     // CustomAction
     property IsCustomAction: boolean read getIsCustomAction;
     property CustomReplyType: string read FCustomReplyType;
+    property CustomReplyMode: string read FCustomReplyMode;
     property CustomReplyData: TJSONUtil read FCustomReplyData;
   end;
 
@@ -774,6 +776,7 @@ begin
   FNonStandardWordFile := 'files' + DirectorySeparator + WORD_NONSTANDARD_FILE;
 
   FReplyType := '';
+  FCustomReplyMode := '';
   FCustomReplyData := TJSONUtil.Create;
 end;
 
@@ -1092,7 +1095,8 @@ begin
 
     if IsCustomAction then
     begin
-      o['response/action/type'] := CustomReplyType;
+      o['response/action/type'] := FCustomReplyType;
+      o['response/action/mode'] := FCustomReplyMode;
       try
         customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON));
         o.ValueArray['response/action/data'] := customReplyDataAsArray;
@@ -1127,6 +1131,7 @@ var
 
 begin
   FCustomReplyType := '';
+  FCustomReplyMode := '';
   o := TJSONUtil.Create;
   o.LoadFromJsonString(AText);
   FReplyType := o['type'];
@@ -1137,6 +1142,7 @@ begin
   end;
 
   FCustomReplyType := o['action/type'];
+  FCustomReplyMode := o['action/mode'];
   FCustomReplyData.LoadFromJsonString(o.ValueArray['action/data'].AsJSON);
 
   o.Free;
