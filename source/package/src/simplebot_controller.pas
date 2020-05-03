@@ -104,6 +104,7 @@ type
     function getUserData(const KeyName: string): string;
 
     procedure LoadAIDataFromFile;
+    procedure setBotName(AValue: string);
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
     function handlerProcessing(ActionName, Message: string): string;
@@ -152,7 +153,7 @@ type
     function GetSession(Key: string): string;
     function IterationHandler(const ActionName:String; const AMessage: String): String;
 
-    property BotName: string read FBotName write FBotName;
+    property BotName: string read FBotName write setBotName;
     property ChatID: string read FChatID write FChatID;
     property AskCountdown: integer read FAskCountdown;
     property FirstSessionResponse: boolean read FFirstSessionResponse
@@ -369,6 +370,13 @@ begin
   jData.Free;
 
   FDataLoaded := True;
+end;
+
+procedure TSimpleBotModule.setBotName(AValue: string);
+begin
+  if FBotName=AValue then Exit;
+  FBotName := AValue;
+  SimpleAI.AIName := AValue;
 end;
 
 procedure TSimpleBotModule.setDebug(AValue: boolean);
