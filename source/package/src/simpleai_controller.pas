@@ -55,6 +55,7 @@ type
     FImageCaption: string;
     FImageURL: string;
     FIsExternal: Boolean;
+    FIsSuccesfull: boolean;
     FIsURLEncoded: boolean;
     FKeyName: string;
     FMsg: string;
@@ -122,6 +123,7 @@ type
     function SetResponseData(List: TStrings): boolean;
     function StringReplacement(Text: string; BURLEncode: boolean = False): string;
 
+    property IsSuccessfull: boolean read FIsSuccesfull;
     property AIName: string read FAIName write FAIName;
     property SimpleAILib: TSimpleAILib read FSimpleAILib;
     property Action: string read getAction;
@@ -504,6 +506,7 @@ var
   Response: IHTTPResponse;
 begin
   Result := '';
+  FIsSuccesfull := False;
 
   if ACache then
   begin
@@ -538,6 +541,7 @@ begin
       Result := Response.ResultText;
       if Response.ResultCode = 200 then
       begin
+        FIsSuccesfull := True;
         if ACache and (Result <> '') then
         begin
           SaveCache(AURL, Result);
@@ -589,6 +593,14 @@ begin
   end;
 
   Result := execPost( AURL);
+  if not FIsSuccesfull then
+  begin
+    if Debug then
+    begin
+      //TODO: log debug;
+    end;
+    Result := '';
+  end;
 
   if Result = '' then
     Exit;
@@ -667,6 +679,7 @@ var
   Response: IHTTPResponse;
 begin
   Result := '';
+  FIsSuccesfull := False;
   if ACache then
   begin
     Result := LoadCache(AURL);
@@ -703,6 +716,7 @@ begin
       Result := Response.ResultText;
       if Response.ResultCode <> 200 then
       begin
+        FIsSuccesfull := True;
         Result := 'FAILED: ' + Result;
         if not Debug then
           Result := '';
@@ -767,6 +781,7 @@ begin
   FIsURLEncoded := false;
   FTrimMessage := False;
   FIsExternal := False;
+  FIsSuccesfull := False;
 
   // Stemming
   FIsStemming := False;
