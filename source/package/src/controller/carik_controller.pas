@@ -35,7 +35,7 @@ interface
 uses
   common, fastplaz_handler, telegram_integration, logutil_lib, mailer_lib,
   simpleai_controller, http_lib, json_lib,
-  IniFiles, fpjson, Classes, SysUtils;
+  IniFiles, fpjson, Classes, SysUtils, string_helpers;
 
 const
   _GROUP_MEMBERBARU_ABAIKAN = 'group_memberbaru_abaikan';
@@ -191,15 +191,17 @@ end;
 function TCarikController.getisSpamChecking: boolean;
 var
   i: Integer;
-  serviceUrl: string;
+  separator, serviceUrl: string;
   http_response: IHTTPResponse;
   json: TJSONUtil;
 begin
   Result := False;
   serviceUrl := Config[GROUPADDLOG_URL];
+  separator := '?';
+  if serviceUrl.IsExists('?') then separator:= '&';
   if serviceUrl.IsEmpty then
     Exit;
-  serviceUrl := serviceUrl + '?channel=telegram&id=' + FGroupChatID;
+  serviceUrl := serviceUrl + separator + 'channel=telegram&id=' + FGroupChatID;
   with THTTPLib.Create do
   begin
     URL := serviceUrl;
@@ -217,7 +219,10 @@ begin
     Free;
   end;
   json := TJSONUtil.Create;
-  json.LoadFromJsonString(http_response.ResultText);
+  try
+    json.LoadFromJsonString(http_response.ResultText);
+  except
+  end;
   i := s2i(json['code']);
   if i <> 0 then
   begin
