@@ -175,7 +175,7 @@ const
   _NOTULEN_HTML_VIDEO = '<video controls><source src="%s" type="video/mp4"></video>';
 
   _NOTULEN_SUPERADMIN = 'luridarmawan';
-  GROUPADDLOG_URL = 'services/groupinfo_url';
+  GROUPINFO_URL = 'services/groupinfo_url';
 
 //_NOTULEN_MIME_VIDEO = 'video/mp4';
 
@@ -196,7 +196,7 @@ var
   json: TJSONUtil;
 begin
   Result := False;
-  serviceUrl := Config[GROUPADDLOG_URL];
+  serviceUrl := Config[GROUPINFO_URL];
   separator := '?';
   if serviceUrl.IsExists('?') then separator:= '&';
   if serviceUrl.IsEmpty then
@@ -346,7 +346,7 @@ var
   json: TJSONUtil;
 begin
   Result := False;
-  serviceUrl := Config[GROUPADDLOG_URL];
+  serviceUrl := Config[GROUPINFO_URL];
   if serviceUrl.IsEmpty then
     Exit;
   serviceUrl := serviceUrl + '?channel=telegram&id=' + FGroupChatID;
