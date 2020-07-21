@@ -8,7 +8,7 @@ unit simpleai_package;
 interface
 
 uses
-  entities_lib, intents_lib, simpleai_controller, simpleai_lib;
+  entities_lib, intents_lib, simpleai_controller, simpleai_lib, similarity_lib;
 
 implementation
 

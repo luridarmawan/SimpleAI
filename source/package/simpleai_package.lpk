@@ -13,7 +13,7 @@
     <Description Value="Simple NLP package
 "/>
     <Version Minor="1" Release="5"/>
-    <Files Count="4">
+    <Files Count="5">
       <Item1>
         <Filename Value="src/entities_lib.pas"/>
         <UnitName Value="entities_lib"/>
@@ -30,6 +30,10 @@
         <Filename Value="src/simpleai_lib.pas"/>
         <UnitName Value="simpleai_lib"/>
       </Item4>
+      <Item5>
+        <Filename Value="src/library/similarity_lib.pas"/>
+        <UnitName Value="similarity_lib"/>
+      </Item5>
     </Files>
     <i18n>
       <EnableI18N Value="True"/>

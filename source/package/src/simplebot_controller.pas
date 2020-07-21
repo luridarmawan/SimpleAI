@@ -69,6 +69,7 @@ type
     FAskName: boolean;
     FBotName: string;
     FCLI: Boolean;
+    FErrorCount: integer;
     FFirstSessionResponse: boolean;
     FIsExternal: Boolean;
     FLastVisit: Cardinal;
@@ -184,6 +185,7 @@ type
     property CustomReplyData: TJSONUtil read getCustomReplyData;
 
   published
+    property ErrorCount: integer read FErrorCount;
     property CLI:Boolean read FCLI write FCLI;
     property StorageType:TStorageType read FStorageType write setStorageType;
     property StorageFileName:string read FStorageFileName write FStorageFileName;
@@ -287,6 +289,7 @@ begin
   FFirstSessionResponse := False;
   FSessionUserID := '';
   FLastVisit := 0;
+  FErrorCount := 0;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
@@ -615,6 +618,13 @@ var
   d1: TDateTime;
 begin
   Result := '';
+  FErrorCount := FErrorCount + 1;
+
+  if (FErrorCount > 2) then //ERROR_COUNT_MAX
+  begin
+    FOnError := nil;
+    Exit;
+  end;
   LogUtil.Add(Message, _AL_LOG_LEARN);
 
   if isFormula then
@@ -1005,7 +1015,7 @@ begin
     end;
 
 
-    SimpleAI.ResponseText.Text := ErrorHandler(Text);
+    //SimpleAI.ResponseText.Text := ErrorHandler(Text);
     if (FOnError <> nil) and (not FisAnswered) then
     begin
       s := FOnError(Text);
