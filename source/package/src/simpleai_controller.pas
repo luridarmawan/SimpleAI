@@ -13,7 +13,7 @@ interface
 
 uses
   common, stemmingnazief_lib, json_lib, http_lib,
-  simpleai_lib, dateutils, Dos, RegExpr, fpjson,
+  simpleai_lib, dateutils, Dos, RegExpr, fpjson, opensslsockets,
   IniFiles, Classes, SysUtils;
 
 const
