@@ -35,6 +35,9 @@ interface
 uses
   common, fastplaz_handler, telegram_integration, logutil_lib, mailer_lib,
   simpleai_controller, http_lib, json_lib,
+  {$if FPC_FULlVERSION >= 30200}
+  opensslsockets,
+  {$endif}
   IniFiles, fpjson, Classes, SysUtils, string_helpers;
 
 const
