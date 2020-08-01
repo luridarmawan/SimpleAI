@@ -13,7 +13,10 @@ interface
 
 uses
   common, stemmingnazief_lib, json_lib, http_lib,
-  simpleai_lib, dateutils, Dos, RegExpr, fpjson, opensslsockets,
+  simpleai_lib, dateutils, Dos, RegExpr, fpjson,
+  {$if FPC_FULlVERSION >= 30200}
+  opensslsockets,
+  {$endif}
   IniFiles, Classes, SysUtils;
 
 const
