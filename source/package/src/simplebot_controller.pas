@@ -1231,6 +1231,8 @@ var
   s: string;
 begin
   Result := Message;
+  if Message.IsEmpty then
+    Exit;
 
   Message := SimpleAI.StringReplacement(Message);
 
