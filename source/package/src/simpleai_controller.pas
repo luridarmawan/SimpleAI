@@ -65,6 +65,7 @@ type
     FNonStandardWordFile: String;
     FOriginalMessage: string;
     FPrefixText: string;
+    FReplySuffix: string;
     FReplyType: string;
     FRequestText: string;
     FResponseText: TStringList;
@@ -154,6 +155,7 @@ type
     property ImageCaption: string read FImageCaption;
     property OriginalMessage: string read FOriginalMessage write FOriginalMessage;
     property ReplyType: string read FReplyType;
+    property ReplySuffix: string read FReplySuffix;
 
     // Stemming
     property Stemming: boolean read getIsStemming write setIsStemming;
@@ -393,6 +395,7 @@ var
 
 begin
   FReplyType := 'text';
+  FReplySuffix := '';
   ResponseText.Text := '';
   Result := Message;
   convertedMessage := StringReplacement(Message);
@@ -794,6 +797,7 @@ begin
   FNonStandardWordFile := 'files' + DirectorySeparator + WORD_NONSTANDARD_FILE;
 
   FReplyType := '';
+  FReplySuffix := '';
   FCustomReplyMode := '';
   FCustomReplyData := TJSONUtil.Create;
 end;
@@ -1153,6 +1157,7 @@ begin
   o := TJSONUtil.Create;
   o.LoadFromJsonString(AText);
   FReplyType := o['type'];
+  FReplySuffix := o['suffix'];
   if (FReplyType = '') or (FReplyType = 'text') then
   begin
     FReplyType := 'text';
