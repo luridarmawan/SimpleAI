@@ -352,7 +352,7 @@ begin
   serviceUrl := Config[GROUPINFO_URL];
   if serviceUrl.IsEmpty then
     Exit;
-  serviceUrl := serviceUrl + '?channel=telegram&id=' + FGroupChatID;
+  serviceUrl := serviceUrl + '&channel=telegram&id=' + FGroupChatID;
   with THTTPLib.Create do
   begin
     URL := serviceUrl;
