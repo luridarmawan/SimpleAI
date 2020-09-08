@@ -616,8 +616,8 @@ begin
   try
     json.LoadFromJsonString(Result, False);
 
-    Result := json[pathName];
-    Result := json.Data.FindPath(pathName).AsString;//ulil: check lagi json.getValue
+    //Result := json[pathName];
+    Result := json.Data.FindPath(pathName).AsString;
 
     FImageURL := json['image'];
     FImageCaption := json['image_caption'];
