@@ -1029,7 +1029,7 @@ begin
 
   text_response := SimpleAI.ResponseJson;
   json := TJSONUtil.Create;
-  json.LoadFromJsonString(text_response);
+  json.LoadFromJsonString(text_response, false);
   if SimpleAI.Debug then
   begin
     json['response/user/name'] := UserData['Name'];

@@ -614,8 +614,11 @@ begin
   parseReply(Result);
   json := TJSONUtil.Create;
   try
-    json.LoadFromJsonString(Result);
+    json.LoadFromJsonString(Result, False);
+
     Result := json[pathName];
+    Result := json.Data.FindPath(pathName).AsString;//ulil: check lagi json.getValue
+
     FImageURL := json['image'];
     FImageCaption := json['image_caption'];
     if ACache and (Result <> '') then
@@ -663,7 +666,7 @@ begin
 
   json := TJSONUtil.Create;
   try
-    json.LoadFromJsonString(Result);
+    json.LoadFromJsonString(Result, False);
     Result := json[pathName];
     FImageURL := json['image'];
     FImageCaption := json['image_caption'];
@@ -1097,7 +1100,7 @@ begin
     cmdAction := Explode(parameterAction[0], '.');
 
     o := TJSONUtil.Create;
-    o.LoadFromJsonString( json);
+    o.LoadFromJsonString( json, False);
     o['response/action/callback_string'] := FActionCallback;
     o['response/action/callback_name'] := cmdAction[0];
     if cmdAction.Count > 1 then
@@ -1120,7 +1123,7 @@ begin
       o['response/action/type'] := FCustomReplyType;
       o['response/action/mode'] := FCustomReplyMode;
       try
-        customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON));
+        customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON, False));
         o.ValueArray['response/action/data'] := customReplyDataAsArray;
       except
       end;
@@ -1155,7 +1158,7 @@ begin
   FCustomReplyType := '';
   FCustomReplyMode := '';
   o := TJSONUtil.Create;
-  o.LoadFromJsonString(AText);
+  o.LoadFromJsonString(AText, False);
   FReplyType := o['type'];
   FReplySuffix := o['suffix'];
   if (FReplyType = '') or (FReplyType = 'text') then
@@ -1166,7 +1169,7 @@ begin
 
   FCustomReplyType := o['action/type'];
   FCustomReplyMode := o['action/mode'];
-  FCustomReplyData.LoadFromJsonString(o.ValueArray['action/data'].AsJSON);
+  FCustomReplyData.LoadFromJsonString(o.ValueArray['action/data'].AsJSON, False);
 
   o.Free;
 end;
