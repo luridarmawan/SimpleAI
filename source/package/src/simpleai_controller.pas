@@ -1087,6 +1087,9 @@ begin
 
   lst.Free;
 
+  o := TJSONUtil.Create;
+  o.LoadFromJsonString( json, False);
+
   //image view
   if not FImageURL.IsEmpty then
   begin
@@ -1099,8 +1102,6 @@ begin
     parameterAction := Explode(FActionCallback, '|');
     cmdAction := Explode(parameterAction[0], '.');
 
-    o := TJSONUtil.Create;
-    o.LoadFromJsonString( json, False);
     o['response/action/callback_string'] := FActionCallback;
     o['response/action/callback_name'] := cmdAction[0];
     if cmdAction.Count > 1 then
@@ -1118,23 +1119,23 @@ begin
       fieldAction.Free;
     end;
 
-    if IsCustomAction then
-    begin
-      o['response/action/type'] := FCustomReplyType;
-      o['response/action/mode'] := FCustomReplyMode;
-      try
-        customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON, False));
-        o.ValueArray['response/action/data'] := customReplyDataAsArray;
-      except
-      end;
-    end;
-
-    json := o.AsJSON;
-    o.Free;
     cmdAction.Free;
     parameterAction.Free;
   end;// FActionCallback
 
+  if IsCustomAction then
+  begin
+    o['response/action/type'] := FCustomReplyType;
+    o['response/action/mode'] := FCustomReplyMode;
+    try
+      customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON, False));
+      o.ValueArray['response/action/data'] := customReplyDataAsArray;
+    except
+    end;
+  end;
+
+  json := o.AsJSON;
+  o.Free;
   Result := json;
 end;
 
