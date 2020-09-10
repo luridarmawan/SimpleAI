@@ -1125,11 +1125,11 @@ begin
 
   if IsCustomAction then
   begin
-    o['response/action/type'] := FCustomReplyType;
-    o['response/action/mode'] := FCustomReplyMode;
+    o['action/action/type'] := FCustomReplyType;
+    o['action/action/mode'] := FCustomReplyMode;
     try
       customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON, False));
-      o.ValueArray['response/action/data'] := customReplyDataAsArray;
+      o.ValueArray['action/action/data'] := customReplyDataAsArray;
     except
     end;
   end;
