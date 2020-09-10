@@ -439,6 +439,7 @@ end;
 
 procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
 begin
+  if FSessionUserID.IsEmpty then Exit;
   SetSession(_AI_SESSION_USER + KeyName, AValue);
 
   if (FStorageType = stFile)and(FStorageFileName<>'') then
@@ -459,6 +460,7 @@ end;
 
 function TSimpleBotModule.getUserData(const KeyName: string): string;
 begin
+  if FSessionUserID.IsEmpty then Exit;
   Result := GetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName);
 
   if (FStorageType = stFile)and(FStorageFileName<>'') then
