@@ -223,7 +223,7 @@ begin
   end;
   json := TJSONUtil.Create;
   try
-    json.LoadFromJsonString(http_response.ResultText);
+    json.LoadFromJsonString(http_response.ResultText, False);
   except
   end;
   i := s2i(json['code']);
@@ -370,7 +370,7 @@ begin
     Free;
   end;
   json := TJSONUtil.Create;
-  json.LoadFromJsonString(http_response.ResultText);
+  json.LoadFromJsonString(http_response.ResultText, False);
   i := s2i(json['code']);
   if i <> 0 then
   begin
