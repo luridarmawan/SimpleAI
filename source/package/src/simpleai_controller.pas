@@ -1035,7 +1035,7 @@ begin
   txt := '';
   for i := 0 to FResponseText.Count - 1 do
   begin
-    txt := txt + '"' + StringToJSONString(FResponseText[i]) + '"';
+    txt := txt + '"' + StringToJSONString(FResponseText[i], False) + '"';
     if i < FResponseText.Count - 1 then
       txt := txt + ',';
   end;
@@ -1044,9 +1044,9 @@ begin
   json := json + '{';
   json := json + '"code" : 0,';
   json := json + '"request" : {';
-  json := json + '"text" : "' + StringToJSONString(FRequestText) + '"';
+  json := json + '"text" : "' + StringToJSONString(FRequestText, False) + '"';
   if FOriginalMessage <> '' then
-    json := json + ',"original_text" : "' + StringToJSONString(FOriginalMessage) + '"';
+    json := json + ',"original_text" : "' + StringToJSONString(FOriginalMessage, False) + '"';
   json := json + '},';
   if FIsStemming then
   begin
@@ -1065,7 +1065,7 @@ begin
   if Debug then
   begin
     json := json + '"key" : "' + FSimpleAILib.Intent.IntentKey + '",';
-    json := json + '"pattern" : "' + StringToJSONString(FSimpleAILib.Pattern) + '",';
+    json := json + '"pattern" : "' + StringToJSONString(FSimpleAILib.Pattern, False) + '",';
     //json := json + '"time_usage" : "' + IntToStr(ElapsedTime) + '",';
   end;
   json := json + '"parameters" : {';
@@ -1073,7 +1073,7 @@ begin
   for i := 0 to FSimpleAILib.Parameters.Count - 1 do
   begin
     v := FSimpleAILib.Parameters.ValueFromIndex[i];
-    v := StringToJSONString(v);
+    v := StringToJSONString(v, False);
     json := json + '"' + FSimpleAILib.Parameters.Names[i] + '" : "' + v + '"';
 
     if i < FSimpleAILib.Parameters.Count - 1 then
