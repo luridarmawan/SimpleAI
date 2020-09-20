@@ -52,6 +52,7 @@ type
     FActionCallback: string;
     FAdditionalParameters: TStrings;
     FAIName: string;
+    FCustomReply: TJSONUtil;
     FCustomReplyData: TJSONUtil;
     FCustomReplyMode: string;
     FCustomReplyType: string;
@@ -168,6 +169,7 @@ type
 
     // CustomAction
     property IsCustomAction: boolean read getIsCustomAction;
+    property CustomReply: TJSONUtil read FCustomReply;
     property CustomReplyType: string read FCustomReplyType;
     property CustomReplyMode: string read FCustomReplyMode;
     property CustomReplyData: TJSONUtil read FCustomReplyData;
@@ -802,12 +804,14 @@ begin
   FReplyType := '';
   FReplySuffix := '';
   FCustomReplyMode := '';
+  FCustomReply := TJSONUtil.Create;
   FCustomReplyData := TJSONUtil.Create;
 end;
 
 destructor TSimpleAI.Destroy;
 begin
   FCustomReplyData.Free;
+  FCustomReply.Free;
   FAdditionalParameters.Free;
   FResponseText.Free;
   FResponseDataAsList.Free;
@@ -1152,27 +1156,21 @@ begin
 end;
 
 procedure TSimpleAI.parseReply(AText: string);
-var
-  o: TJSONUtil;
-
 begin
   FCustomReplyType := '';
   FCustomReplyMode := '';
-  o := TJSONUtil.Create;
-  o.LoadFromJsonString(AText, False);
-  FReplyType := o['type'];
-  FReplySuffix := o['suffix'];
+  FCustomReply.LoadFromJsonString(AText, False);
+  FReplyType := FCustomReply['type'];
+  FReplySuffix := FCustomReply['suffix'];
   if (FReplyType = '') or (FReplyType = 'text') then
   begin
     FReplyType := 'text';
     Exit;
   end;
 
-  FCustomReplyType := o['action/type'];
-  FCustomReplyMode := o['action/mode'];
-  FCustomReplyData.LoadFromJsonString(o.ValueArray['action/data'].AsJSON, False);
-
-  o.Free;
+  FCustomReplyType := FCustomReply['action/type'];
+  FCustomReplyMode := FCustomReply['action/mode'];
+  FCustomReplyData.LoadFromJsonString(FCustomReply.ValueArray['action/data'].AsJSON, False);
 end;
 
 function TSimpleAI.getIsStemming: boolean;
