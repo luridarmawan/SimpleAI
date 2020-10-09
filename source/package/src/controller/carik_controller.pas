@@ -36,7 +36,7 @@ uses
   common, fastplaz_handler, telegram_integration, logutil_lib, mailer_lib,
   simpleai_controller, http_lib, json_lib,
   {$if FPC_FULlVERSION >= 30200}
-  opensslsockets,
+  opensslsockets, fpopenssl,
   {$endif}
   IniFiles, fpjson, Classes, SysUtils, string_helpers;
 
@@ -207,6 +207,7 @@ begin
   serviceUrl := serviceUrl + separator + 'channel=telegram&id=' + FGroupChatID;
   with THTTPLib.Create do
   begin
+    AllowRedirect := True;
     URL := serviceUrl;
     http_response := Get;
     if http_response.ResultCode <> 200 then
@@ -355,6 +356,7 @@ begin
   serviceUrl := serviceUrl + '&channel=telegram&id=' + FGroupChatID;
   with THTTPLib.Create do
   begin
+    AllowRedirect := True;
     URL := serviceUrl;
     http_response := Get;
     if http_response.ResultCode <> 200 then

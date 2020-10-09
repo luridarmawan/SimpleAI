@@ -26,7 +26,7 @@ file that was distributed with this source code.
 unit simplebot_controller;
 
 {$mode objfpc}{$H+}
-
+{x$define AI_REDIS}
 {$ifdef AI_REDIS}
 {$else}
 {$endif}
@@ -39,17 +39,25 @@ uses
   {$else}
   simpleai_controller,
   {$endif}
+  redis_controller,
   suggestion_controller, domainwhois_controller,
   resiibacor_integration,
   kamus_controller,
   fastplaz_handler, logutil_lib, http_lib, json_lib,
   fpexprpars, // formula
   dateutils, IniFiles,
+  {$if FPC_FULlVERSION >= 30200}
+  opensslsockets, fpopenssl,
+  {$endif}
   RegExpr, fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
 
 const
   _AI_BOTNAME_DEFAULT = 'bot';
   _AI_CONFIG_NAME = 'ai/default/name';
+
+  _NLP_REDIS_ENTITIES = '/nlp/entities';
+  _NLP_REDIS_INTENTS = '/nlp/intents';
+  _NLP_REDIS_RESPONSES = '/nlp/responses';
 
 type
 
@@ -60,12 +68,13 @@ type
 
   TOnErrorCallback = function(const Text: string): string of object;
 
-  TStorageType = (stFile, stDatabase);
+  TStorageType = (stFile, stDatabase, stRedis);
 
   { TSimpleBotModule }
 
   TSimpleBotModule = class
   private
+    FRedis: TRedisConstroller;
     FAskName: boolean;
     FBotName: string;
     FCLI: Boolean;
@@ -78,6 +87,7 @@ type
     FStorageFileName: string;
     FStorageType: TStorageType;
     FUserData: TIniFile;
+    FUseRedis: boolean;
     Suggestion: TBotSuggestion;
     FAskCountdown: integer;
     FAskEmail: boolean;
@@ -104,7 +114,6 @@ type
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
 
-    procedure LoadAIDataFromFile;
     procedure setBotName(AValue: string);
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
@@ -137,7 +146,9 @@ type
     {$endif}
     constructor Create; virtual;
     destructor Destroy; virtual;
-    procedure LoadConfig(DataName: string);
+    function LoadNLPDataFromRedis: boolean;
+    procedure LoadNLPDataFromFile;
+    procedure LoadConfig(DataName: string = '');
 
     function Exec(Message: string): string;
     function GetResponse(IntentName: string; Action: string = '';
@@ -185,6 +196,7 @@ type
     property CustomReplyData: TJSONUtil read getCustomReplyData;
 
   published
+    property UseRedis: boolean read FUseRedis write FUseRedis;
     property ErrorCount: integer read FErrorCount;
     property CLI:Boolean read FCLI write FCLI;
     property StorageType:TStorageType read FStorageType write setStorageType;
@@ -266,6 +278,7 @@ begin
   FOnError := nil;
   ___HandlerCallbackMap := THandlerCallbackMap.Create;
 
+  FUseRedis := False;
   FDataLoaded := False;
   FStorageType := stFile;
   FStorageFileName := '';
@@ -274,7 +287,6 @@ begin
   {$else}
   SimpleAI := TSimpleAI.Create;
   {$endif}
-  LoadConfig('');
   FBotName := _AI_BOTNAME_DEFAULT;
   Suggestion := TBotSuggestion.Create;
   Suggestion.FileName := Config[_AI_CONFIG_BASEDIR] + 'suggestion.txt';
@@ -303,11 +315,15 @@ begin
   ___HandlerCallbackMap.Free;
   if Assigned(SimpleAI) then
     SimpleAI.Free;
+  if Assigned(FRedis) then
+    FRedis.Free;
 end;
 
 procedure TSimpleBotModule.LoadConfig(DataName: string);
 var
   s: String;
+  lst: TStrings;
+  json: TJSONUtil;
 begin
 
   try
@@ -316,24 +332,82 @@ begin
   except
   end;
 
+  s := Config[_AI_CONFIG_DATASOURCE];
+  if s.IsEmpty then s := _AI_DATASOURCE_FILE;
   // redis
   {$ifdef AI_REDIS}
   SimpleAI.UseRedis := False;
-  s := Config[_AI_CONFIG_DATASOURCE];
   if s = _AI_DATASOURCE_REDIS then
   begin
     SimpleAI.UseRedis := True;
     if SimpleAI.LoadDataFromRedis then
+    begin
       Exit;
+    end;
   end;
   {$endif}
 
-  //-- sementara buat test
-  LoadAIDataFromFile;
+  if s = _AI_DATASOURCE_REDIS then
+  begin
+    if LoadNLPDataFromRedis then
+    begin
+      FUseRedis := True;
+      Exit;
+    end;
+  end;
+
+  if s = _AI_DATASOURCE_FILE then
+  begin
+    LoadNLPDataFromFile;
+  end;
 
 end;
 
-procedure TSimpleBotModule.LoadAIDataFromFile;
+function TSimpleBotModule.LoadNLPDataFromRedis: boolean;
+var
+  defaultBotName: string;
+  lst: TStrings;
+  json: TJSONUtil;
+begin
+  Result := False;
+  FRedis := TRedisConstroller.Create;
+  defaultBotName := BotName;
+  if defaultBotName.IsEmpty then
+    defaultBotName := 'generic';
+  if not FRedis.Ping then
+  begin
+    Exit;
+  end;
+
+  lst := TStringList.Create;
+  json := TJSONUtil.Create;
+
+  lst.Text := FRedis[defaultBotName + _NLP_REDIS_ENTITIES];
+  if lst.Text.Trim = '-1' then Exit;
+  json.LoadFromJsonString(lst.Text);
+  lst.Text:= base64_decode(json['data']);
+  SimpleAI.SimpleAILib.Intent.Entities.SetData(lst);
+
+  lst.Text := FRedis[defaultBotName + _NLP_REDIS_INTENTS];
+  if lst.Text.Trim = '-1' then Exit;
+  json.LoadFromJsonString(lst.Text);
+  lst.Text:= base64_decode(json['data']);
+  SimpleAI.SimpleAILib.Intent.SetData(lst);
+
+  lst.Text := FRedis[defaultBotName + _NLP_REDIS_RESPONSES];
+  if lst.Text.Trim = '-1' then Exit;
+  json.LoadFromJsonString(lst.Text);
+  lst.Text:= base64_decode(json['data']);
+  SimpleAI.SetResponseData(lst);
+
+  json.Free;
+  lst.Free;
+
+  FDataLoaded := True;
+  Result := True;
+end;
+
+procedure TSimpleBotModule.LoadNLPDataFromFile;
 var
   i: integer;
   s, basedir: string;
@@ -752,6 +826,7 @@ begin
     url := url + '?';
 
   httpClient := THTTPLib.Create;
+  httpClient.AllowRedirect := True;
   parameters := '';
   for i := 0 to SimpleAI.Parameters.Count - 1 do
   begin
@@ -1278,6 +1353,7 @@ begin
 
   try
     httpClient := THTTPLib.Create;
+    httpClient.AllowRedirect := True;
     httpClient.URL := _TELEGRAM_API_URL + Token + '/sendMessage' +
       '?chat_id=' + ChatIDRef + '&reply_to_message_id=' + ReplyToMessageID +
       '&parse_mode=Markdown' + '&text=' + trim(Message);

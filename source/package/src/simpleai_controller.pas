@@ -15,7 +15,7 @@ uses
   common, stemmingnazief_lib, json_lib, http_lib,
   simpleai_lib, dateutils, Dos, RegExpr, fpjson,
   {$if FPC_FULlVERSION >= 30200}
-  opensslsockets,
+  opensslsockets, fpopenssl,
   {$endif}
   IniFiles, Classes, SysUtils;
 
@@ -526,6 +526,7 @@ begin
 
   with THTTPLib.Create(AURL) do
   begin
+    AllowRedirect := True;
     try
       AddHeader('_source', 'carik');
       AddHeader('User-Agent', 'carik/nlp');
@@ -705,6 +706,7 @@ begin
 
   with THTTPLib.Create(tempURL) do
   begin
+    AllowRedirect := True;
     try
       AddHeader('_source', 'carik');
       //get header from response list
@@ -1082,6 +1084,7 @@ begin
   json := json + '}';
   json := json + '},';
   json := json + '"text" : [' + txt + ']';
+  json := json + ',"elapsed_time" : ' + ElapsedTime.ToString;
   if FIsExternal then
     json := json + ',"external" : true';
   if FMsg <> '' then

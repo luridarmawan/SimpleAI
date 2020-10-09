@@ -8,17 +8,17 @@ uses
   {$IFNDEF Windows}
   cthreads,
   {$ENDIF}
-  common,
+  common, json_lib,
   fpcgi, simpleai_controller, redis_controller,
   Classes, SysUtils;
 
 const
-  _AI_COUNT__MINIMAL_ASKNAME = 5;
-  _AI_ACTION_SEPARATOR = '|';
+  //_AI_COUNT__MINIMAL_ASKNAME = 5;
+  //_AI_ACTION_SEPARATOR = '|';
 
-  _AI_REDIS_ENTITIES = 'AI_ENTITIES';
-  _AI_REDIS_INTENTS = 'AI_INTENTS';
-  _AI_REDIS_RESPONSES = 'AI_RESPONSES';
+  _AI_REDIS_ENTITIES = 'nlp/entities';
+  _AI_REDIS_INTENTS = 'nlp/intents';
+  _AI_REDIS_RESPONSES = 'nlp/responses';
 
 type
 
@@ -46,19 +46,8 @@ implementation
 constructor TSimpleAIRedis.Create;
 begin
   inherited Create;
-end;
-
-destructor TSimpleAIRedis.Destroy;
-begin
-  inherited Destroy;
-end;
-
-{
-constructor TSimpleAIRedis.Create;
-begin
-  inherited Create;
   FUseRedis := False;
-  //FRedis := TRedisConstroller.Create;
+  FRedis := TRedisConstroller.Create;
 end;
 
 destructor TSimpleAIRedis.Destroy;
@@ -67,7 +56,7 @@ begin
     FRedis.Free;
   inherited Destroy;
 end;
-}
+
 function TSimpleAIRedis.RedisInit: boolean;
 var
   redis_text: WideString;
@@ -99,8 +88,8 @@ end;
 function TSimpleAIRedis.LoadDataFromRedis: boolean;
 var
   erri: integer;
-  redis_text: WideString;
   lst: TStrings;
+  json: TJSONUtil;
 begin
   Result := False;
   if not FRedis.Ping then
@@ -108,23 +97,29 @@ begin
 
   erri := 0;
   lst := TStringList.Create;
+  json := TJSONUtil.Create;
 
-  redis_text := FRedis[_AI_REDIS_ENTITIES];
-  lst.Text := UrlDecode(redis_text);
+  lst.Text := FRedis[_AI_REDIS_ENTITIES];
+  json.LoadFromJsonString(lst.Text);
+  lst.Text:= base64_decode(json['data']);
   if not SimpleAILib.Intent.Entities.SetData(lst) then
     erri := erri + 1;
 
-  redis_text := FRedis[_AI_REDIS_INTENTS];
-  lst.Text := UrlDecode(redis_text);
+  lst.Text := FRedis[_AI_REDIS_INTENTS];
+  json.LoadFromJsonString(lst.Text);
+  lst.Text:= base64_decode(json['data']);
   if not SimpleAILib.Intent.SetData(lst) then
     erri := erri + 2;
 
-  redis_text := FRedis[_AI_REDIS_RESPONSES];
-  lst.Text := UrlDecode(redis_text);
+  lst.Text := FRedis[_AI_REDIS_RESPONSES];
+  json.LoadFromJsonString(lst.Text);
+  lst.Text:= base64_decode(json['data']);
   if not SetResponseData(lst) then
     erri := erri + 8;
 
+  json.Free;
   lst.Free;
+  Result := True;
 end;
 
 end.
