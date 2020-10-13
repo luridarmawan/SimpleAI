@@ -54,6 +54,7 @@ uses
 const
   _AI_BOTNAME_DEFAULT = 'bot';
   _AI_CONFIG_NAME = 'ai/default/name';
+  _NLP_CONFIG_USERDATA_STORAGE = 'ai/default/userdata_storage';
 
   _NLP_REDIS_ENTITIES = '/nlp/entities';
   _NLP_REDIS_INTENTS = '/nlp/intents';
@@ -332,6 +333,12 @@ begin
   except
   end;
 
+  s := Config[_NLP_CONFIG_USERDATA_STORAGE];
+  if s = _AI_DATASOURCE_REDIS then
+  begin
+    FStorageType := stRedis;
+  end;
+
   s := Config[_AI_CONFIG_DATASOURCE];
   if s.IsEmpty then s := _AI_DATASOURCE_FILE;
   // redis
@@ -370,7 +377,8 @@ var
   json: TJSONUtil;
 begin
   Result := False;
-  FRedis := TRedisConstroller.Create;
+  if not Assigned(FRedis) then
+    FRedis := TRedisConstroller.Create;
   defaultBotName := BotName;
   if defaultBotName.IsEmpty then
     defaultBotName := 'generic';
@@ -381,12 +389,6 @@ begin
 
   lst := TStringList.Create;
   json := TJSONUtil.Create;
-
-  lst.Text := FRedis[defaultBotName + _NLP_REDIS_ENTITIES];
-  if lst.Text.Trim = '-1' then Exit;
-  json.LoadFromJsonString(lst.Text);
-  lst.Text:= base64_decode(json['data']);
-  SimpleAI.SimpleAILib.Intent.Entities.SetData(lst);
 
   lst.Text := FRedis[defaultBotName + _NLP_REDIS_INTENTS];
   if lst.Text.Trim = '-1' then Exit;
@@ -399,6 +401,12 @@ begin
   json.LoadFromJsonString(lst.Text);
   lst.Text:= base64_decode(json['data']);
   SimpleAI.SetResponseData(lst);
+
+  lst.Text := FRedis[defaultBotName + _NLP_REDIS_ENTITIES];
+  if lst.Text.Trim = '-1' then Exit;
+  json.LoadFromJsonString(lst.Text);
+  lst.Text:= base64_decode(json['data']);
+  SimpleAI.SimpleAILib.Intent.Entities.SetData(lst);
 
   json.Free;
   lst.Free;
@@ -512,6 +520,8 @@ begin
 end;
 
 procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
+var
+  redisKey: string;
 begin
   if FSessionUserID.IsEmpty then Exit;
   SetSession(_AI_SESSION_USER + KeyName, AValue);
@@ -530,9 +540,18 @@ begin
     end;
     FUserData.Free;
   end;
+
+  if FStorageType = stRedis then
+  begin
+    redisKey := FBotName + '/user/' + FSessionUserID + '/' + KeyName;
+    FRedis[redisKey] := AValue;
+  end;
+
 end;
 
 function TSimpleBotModule.getUserData(const KeyName: string): string;
+var
+  redisKey: string;
 begin
   if FSessionUserID.IsEmpty then Exit;
   Result := GetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName);
@@ -545,6 +564,15 @@ begin
     except
     end;
     FUserData.Free;
+  end;
+  if FStorageType = stRedis then
+  begin
+    redisKey := FBotName + '/user/' + FSessionUserID + '/' + KeyName;
+    Result := FRedis[redisKey];
+    if Result = '-1' then
+      Result := '';
+    if FRedis.LastError <> 0 then
+      Result := '';
   end;
 end;
 
@@ -792,6 +820,13 @@ begin
   begin
 
   end;
+
+  if FStorageType = stRedis then
+  begin
+    if not Assigned(FRedis) then
+      FRedis := TRedisConstroller.Create;
+  end;
+
 end;
 
 procedure TSimpleBotModule.setTrimMessage(AValue: boolean);
