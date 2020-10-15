@@ -57,9 +57,9 @@ const
   _AI_CONFIG_NAME = 'ai/default/name';
   _NLP_CONFIG_USERDATA_STORAGE = 'ai/default/userdata_storage';
 
-  _NLP_REDIS_ENTITIES = '/nlp/entities';
-  _NLP_REDIS_INTENTS = '/nlp/intents';
-  _NLP_REDIS_RESPONSES = '/nlp/responses';
+  _NLP_REDIS_ENTITIES = '_nlp_entities';
+  _NLP_REDIS_INTENTS = '_nlp_intents';
+  _NLP_REDIS_RESPONSES = '_nlp_responses';
   _MLP_REDIS_DELIMITER = '_';
 
 type
