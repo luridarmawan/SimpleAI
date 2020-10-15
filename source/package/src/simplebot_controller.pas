@@ -49,7 +49,8 @@ uses
   {$if FPC_FULlVERSION >= 30200}
   opensslsockets, fpopenssl,
   {$endif}
-  RegExpr, fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs;
+  RegExpr, fgl, fpjson, Classes, SysUtils, fpcgi, HTTPDefs,
+  datetime_helpers;
 
 const
   _AI_BOTNAME_DEFAULT = 'bot';
@@ -85,7 +86,6 @@ type
     FErrorCount: integer;
     FFirstSessionResponse: boolean;
     FIsExternal: Boolean;
-    FLastVisit: Cardinal;
     FSecondSessionResponse: boolean;
     FSessionUserID: string;
     FStorageFileName: string;
@@ -206,7 +206,6 @@ type
     property CLI:Boolean read FCLI write FCLI;
     property StorageType:TStorageType read FStorageType write setStorageType;
     property StorageFileName:string read FStorageFileName write FStorageFileName;
-    property LastVisit:Cardinal read FLastVisit;
     property LastSeen:Cardinal read getLastSeen; // in seconds
     property OriginalMessage: string read getOriginalMessage write setOriginalMessage;
     property AdditionalParameters: TStrings read getAdditionalParameters;
@@ -241,7 +240,7 @@ const
 
   _AI_DATASOURCE_REDIS = 'redis';
   _AI_DATASOURCE_FILE = 'file';
-  _AI_RESPONSE_INTRODUCTION = 'introduction';
+  _AI_RESPONSE_INTRODUCTION = 'Introduction';
   _AI_RESPONSE_FIRSTSESSION = 'firstsession';
   _AI_RESPONSE_ABOUTME = 'aboutme';
   _AI_RESPONSE_SECONDSESSION = 'secondsession';
@@ -306,7 +305,6 @@ begin
   FFirstSessionResponse := False;
   FForceUserData := False;
   FSessionUserID := '';
-  FLastVisit := 0;
   FErrorCount := 0;
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
@@ -563,6 +561,7 @@ begin
     end;
     FUserDataAsJson[KeyName] := AValue;
     FRedis[redisKey] := FUserDataAsJson.AsJSON;
+    //LogUtil.Add('SET: ' + KeyName + ' <- ' + AValue, 'REDIS');
   end;
 
 end;
@@ -598,6 +597,7 @@ begin
       end;
     end;
     Result := FUserDataAsJson[KeyName];
+    //LogUtil.Add('GET: ' + KeyName + ' -> ' + Result, 'REDIS');
   end;
 end;
 
@@ -794,11 +794,16 @@ end;
 
 function TSimpleBotModule.getLastSeen: Cardinal;
 var
-  s: string;
+  lastVisit: string;
+  dt: TDateTime;
 begin
   Result := 0;
-  //Result := (_GetTickCount - FLastVisit) div 3600000; // jam
-  Result := (_GetTickCount - FLastVisit) div 1000;
+  lastVisit := UserData[_AI_SESSION_LASTVISIT];
+  if not lastVisit.IsEmpty then
+  begin
+    dt.FromString(lastVisit);
+    Result:= dt.SecondsDiff(Now);
+  end;
 end;
 
 function TSimpleBotModule.getOriginalMessage: string;
@@ -988,11 +993,12 @@ function TSimpleBotModule.Exec(Message: string): string;
 var
   json: TJSONUtil;
   messageCount: integer;
-  s, text_response, askIntent: string;
+  s, text_response, askIntent, lastVisit, greetingResponse: string;
   lst: TStrings;
   context_params: TStringList;
 
-  lastvisit_time, lastvisit_length: Int64;
+  lastvisit_length: Int64;
+  dt: TDateTime;
 begin
   FIsExternal := False;
   if not CLI then
@@ -1010,12 +1016,13 @@ begin
   FisAnswered := False;
   Text := LowerCase(Message);
   text_response := '';
+  greetingResponse := '';
   SimpleAI.PrefixText := '';
   SimpleAI.SuffixText := '';
 
   // is firsttime ?
-  s := getSession(_AI_SESSION_VISITED);
-  if s = '' then
+  lastVisit := UserData[_AI_SESSION_LASTVISIT];
+  if lastVisit = '' then
   begin
     if FFirstSessionResponse then
     begin
@@ -1023,28 +1030,24 @@ begin
         _AI_RESPONSE_FIRSTSESSION);
       s := s + SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
         _AI_RESPONSE_ABOUTME);
-      SimpleAI.SuffixText := s;
+      if not s.IsEmpty then
+        greetingResponse := s;
     end;
 
     //SimpleAI.ResponseText.Add(s);
     setSession(_AI_SESSION_VISITED, '1');
-    setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
-    UserData[_AI_SESSION_LASTVISIT] := i2s(_GetTickCount);
+    setSession(_AI_SESSION_LASTVISIT, Now.AsString);
+    UserData[_AI_SESSION_LASTVISIT] := Now.AsString;
     if FAskName then
       if UserData['Name'] = '' then
         SetQuestions(_AI_ASK_NAME);
   end;
 
-  //s := getSession(_AI_SESSION_LASTVISIT);
-  s := UserData[_AI_SESSION_LASTVISIT];
-  try
-    lastvisit_time := _GetTickCount;
-    //lastvisit_time := StrToInt64(s);
-    TryStrToInt64(s,lastvisit_time);
-    FLastVisit := lastvisit_time;
-  except
-  end;
-  lastvisit_length := (_GetTickCount - lastvisit_time) div 3600000; // jam
+  lastVisit := UserData[_AI_SESSION_LASTVISIT];
+  if lastVisit.IsEmpty then
+    lastVisit := Now.AsString;
+  dt.FromString(lastVisit);
+  lastvisit_length:= dt.DaysDiff(Now);
   if lastvisit_length > 1 then
   begin
     if FSecondSessionResponse then
@@ -1052,8 +1055,8 @@ begin
       s := SimpleAI.GetResponse(_AI_RESPONSE_INTRODUCTION, '',
         _AI_RESPONSE_SECONDSESSION);
       s := StringReplacement(s);
-      if s <> '' then
-        SimpleAI.ResponseText.Add(s);
+      if not s.IsEmpty then
+        greetingResponse := s;
     end;
     setSession(_AI_SESSION_MESSAGECOUNT, '0');
     UserData[_AI_OBJECT] := '';
@@ -1072,6 +1075,8 @@ begin
   if SimpleAI.Exec(Text) then
   begin
     FIsExternal := SimpleAI.IsExternal;
+    if not greetingResponse.IsEmpty then
+      SimpleAI.ResponseText.Insert(0, greetingResponse);
     SimpleAI.ResponseText.Text := trim(SimpleAI.ResponseText.Text);
     text_response := SimpleAI.ResponseText.Text;
 
@@ -1099,7 +1104,7 @@ begin
         SimpleAI.ResponseText.add(text_response);
     end; //SimpleAI.Action;
 
-    if SimpleAI.SimpleAILib.Intent.ObjectName <> '' then
+    if not SimpleAI.SimpleAILib.Intent.ObjectName.IsEmpty then
     begin
       UserData[_AI_OBJECT] := SimpleAI.SimpleAILib.Intent.ObjectName;
       UserData[_AI_OBJECT_DATE] := DateTimeToStr(Now);
@@ -1195,8 +1200,8 @@ begin
   //---
   Result := text_response;
   setSession(_AI_SESSION_MESSAGECOUNT, i2s(messageCount));
-  setSession(_AI_SESSION_LASTVISIT, i2s(_GetTickCount));
-  UserData[_AI_SESSION_LASTVISIT] := i2s(_GetTickCount);
+  setSession(_AI_SESSION_LASTVISIT, Now.AsString);
+  UserData[_AI_SESSION_LASTVISIT] := Now.AsString;
 end;
 
 function TSimpleBotModule.prepareQuestion: boolean;
