@@ -60,7 +60,7 @@ const
   _NLP_REDIS_ENTITIES = '_nlp_entities';
   _NLP_REDIS_INTENTS = '_nlp_intents';
   _NLP_REDIS_RESPONSES = '_nlp_responses';
-  _MLP_REDIS_DELIMITER = '_';
+  _NLP_REDIS_DELIMITER = '_';
 
 type
 
@@ -550,7 +550,7 @@ begin
   begin
     if not Assigned(FUserDataAsJson) then
       FUserDataAsJson := TJSONUtil.Create;
-    redisKey := FBotName + _MLP_REDIS_DELIMITER + 'user' + _MLP_REDIS_DELIMITER + FSessionUserID;
+    redisKey := FBotName + _NLP_REDIS_DELIMITER + 'user' + _NLP_REDIS_DELIMITER + FSessionUserID;
     if FUserDataAsJson.Data.Count = 0 then
     begin
       redisData := FRedis[redisKey];
@@ -587,7 +587,7 @@ begin
     Result := '';
     if not Assigned(FUserDataAsJson) then
       FUserDataAsJson := TJSONUtil.Create;
-    redisKey := FBotName + _MLP_REDIS_DELIMITER + 'user' + _MLP_REDIS_DELIMITER + FSessionUserID;
+    redisKey := FBotName + _NLP_REDIS_DELIMITER + 'user' + _NLP_REDIS_DELIMITER + FSessionUserID;
     if FForceUserData or (FUserDataAsJson.Data.Count=0) then
     begin
       redisData := FRedis[redisKey];
