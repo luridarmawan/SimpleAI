@@ -59,6 +59,7 @@ const
   _NLP_REDIS_ENTITIES = '/nlp/entities';
   _NLP_REDIS_INTENTS = '/nlp/intents';
   _NLP_REDIS_RESPONSES = '/nlp/responses';
+  _MLP_REDIS_DELIMITER = '_';
 
 type
 
@@ -75,6 +76,8 @@ type
 
   TSimpleBotModule = class
   private
+    FForceUserData: boolean;
+    FUserDataAsJson: TJSONUtil;
     FRedis: TRedisConstroller;
     FAskName: boolean;
     FBotName: string;
@@ -181,6 +184,7 @@ type
     property AskEmail: boolean read FAskEmail write FAskEmail;
     procedure TelegramSend(Token, ChatIDRef, ReplyToMessageID, Message: string);
 
+    property ForceUserData: boolean read FForceUserData write FForceUserData;
     property UserData[const KeyName: string]: string read getUserData write setUserData;
     property Handler[const TagName: string]: THandlerCallback
       read getHandler write setHandler;
@@ -243,23 +247,23 @@ const
   _AI_RESPONSE_SECONDSESSION = 'secondsession';
 
   _AL_LOG_LEARN = 'learn';
-  _AI_SESSION_VISITED = 'AI_VISITED';
-  _AI_SESSION_LASTVISIT = 'AI_VISITLAST';
-  _AI_SESSION_LASTACTION = 'AI_ACTIONLAST';
-  _AI_SESSION_MESSAGECOUNT = 'AI_MESSAGECOUNT';
-  //_AI_MESSAGEWAITINGLIMIT = 'AI_MESSAGEWAITINGLIMIT';
+  _AI_SESSION_VISITED = 'NLP_VISITED';
+  _AI_SESSION_LASTVISIT = 'NLP_VISITLAST';
+  _AI_SESSION_LASTACTION = 'NLP_ACTIONLAST';
+  _AI_SESSION_MESSAGECOUNT = 'NLP_MESSAGECOUNT';
+  //_AI_MESSAGEWAITINGLIMIT = 'NLP_MESSAGEWAITINGLIMIT';
 
-  _AI_SESSION_ASK_INTENT = 'AI_ASK_INTENT';
-  _AI_SESSION_ASK_KEY = 'AI_ASK_KEY';
-  _AI_SESSION_ASK_VAR = 'AI_ASK_VAR';
-  _AI_SESSION_ASK_COUNTDOWN = 'AI_ASK_COUNTDOWN';
+  _AI_SESSION_ASK_INTENT = 'NLP_ASK_INTENT';
+  _AI_SESSION_ASK_KEY = 'NLP_ASK_KEY';
+  _AI_SESSION_ASK_VAR = 'NLP_ASK_VAR';
+  _AI_SESSION_ASK_COUNTDOWN = 'NLP_ASK_COUNTDOWN';
   _AI_ASK_NAME = 'TanyaNama';
   _AI_ASK_EMAIL = 'TanyaEmail';
   _AI_ASK_COUNTDOWN = 'askCount';
 
   _AI_DEFINE = 'define';
   _AI_MATH = 'math';
-  _AI_SESSION_USER = 'AI_USER_';
+  _AI_SESSION_USER = 'NLP_USER_';
   //_AI_VARKEY = 'varkey';
   _AI_OBJECT = 'OBJECT';
   _AI_OBJECT_DATE = 'OBJECT_DATE';
@@ -300,6 +304,7 @@ begin
   FAskEmail := False;
   FSecondSessionResponse := False;
   FFirstSessionResponse := False;
+  FForceUserData := False;
   FSessionUserID := '';
   FLastVisit := 0;
   FErrorCount := 0;
@@ -318,6 +323,8 @@ begin
     SimpleAI.Free;
   if Assigned(FRedis) then
     FRedis.Free;
+  if Assigned(FUserDataAsJson) then
+    FUserDataAsJson.Free;
 end;
 
 procedure TSimpleBotModule.LoadConfig(DataName: string);
@@ -521,7 +528,7 @@ end;
 
 procedure TSimpleBotModule.setUserData(const KeyName: string; AValue: string);
 var
-  redisKey: string;
+  redisKey, redisData: string;
 begin
   if FSessionUserID.IsEmpty then Exit;
   SetSession(_AI_SESSION_USER + KeyName, AValue);
@@ -543,15 +550,26 @@ begin
 
   if FStorageType = stRedis then
   begin
-    redisKey := FBotName + '/user/' + FSessionUserID + '/' + KeyName;
-    FRedis[redisKey] := AValue;
+    if not Assigned(FUserDataAsJson) then
+      FUserDataAsJson := TJSONUtil.Create;
+    redisKey := FBotName + _MLP_REDIS_DELIMITER + 'user' + _MLP_REDIS_DELIMITER + FSessionUserID;
+    if FUserDataAsJson.Data.Count = 0 then
+    begin
+      redisData := FRedis[redisKey];
+      if IsJsonValid(redisData) and (redisData <> '-1')then
+      begin
+        FUserDataAsJson.LoadFromJsonString(redisData, False);
+      end;
+    end;
+    FUserDataAsJson[KeyName] := AValue;
+    FRedis[redisKey] := FUserDataAsJson.AsJSON;
   end;
 
 end;
 
 function TSimpleBotModule.getUserData(const KeyName: string): string;
 var
-  redisKey: string;
+  redisKey, redisData: string;
 begin
   if FSessionUserID.IsEmpty then Exit;
   Result := GetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName);
@@ -567,12 +585,19 @@ begin
   end;
   if FStorageType = stRedis then
   begin
-    redisKey := FBotName + '/user/' + FSessionUserID + '/' + KeyName;
-    Result := FRedis[redisKey];
-    if Result = '-1' then
-      Result := '';
-    if FRedis.LastError <> 0 then
-      Result := '';
+    Result := '';
+    if not Assigned(FUserDataAsJson) then
+      FUserDataAsJson := TJSONUtil.Create;
+    redisKey := FBotName + _MLP_REDIS_DELIMITER + 'user' + _MLP_REDIS_DELIMITER + FSessionUserID;
+    if FForceUserData or (FUserDataAsJson.Data.Count=0) then
+    begin
+      redisData := FRedis[redisKey];
+      if IsJsonValid(redisData) and (redisData <> '-1')then
+      begin
+        FUserDataAsJson.LoadFromJsonString(redisData, False);
+      end;
+    end;
+    Result := FUserDataAsJson[KeyName];
   end;
 end;
 
