@@ -43,6 +43,17 @@ uses
 const
   _GROUP_MEMBERBARU_ABAIKAN = 'group_memberbaru_abaikan';
 
+  _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ... ✍ ...';
+  _NOTULEN_MSG_STOP = '... catetan sudah dihentikan.';
+  _NOTULEN_MSG_RECORDNUMBER = '\nini notulen ke %d';
+  _NOTULEN_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
+  _NOTULEN_MSG_NOTPERMITTED = 'Sepertinya anda belum masuk sebagai admin';
+  _NOTULEN_MSG_SECRET = 'rahasia ...';
+  _NOTULEN_MSG_NORECORDING = 'saat ini tidak ada yang dicatat di sini.';
+  _NOTULEN_MSG_RECORDING = 'Sekarang sedang mencatat diskusi:';
+  _NOTULEN_MSG_TERKIRIM = '🎁 terkirim ... ';
+  _NOTULEN_MSG_NOTFOUND = 'Catatan tidak tersedia';
+
 type
 
   { TCarikController }
@@ -129,6 +140,8 @@ type
     function AdminDel(ValidUserName: string): boolean;
     function GroupInfo: string;
     procedure Invited;
+  published
+    property GroupData: TIniFile read FGroupData;
   end;
 
 
@@ -158,16 +171,6 @@ const
   _NOTULEN_IMAGERECOGNITION_DISABLED = 'image_recognition_disabled';
 
   _NOTULEN_SECTION_GROUP_LIST = 'GroupList';
-
-  _NOTULEN_MSG_START = 'Ok, saya mulai mencatat ... ✍ ...';
-  _NOTULEN_MSG_RECORDNUMBER = '\nini notulen ke %d';
-  _NOTULEN_MSG_CANNOT_START = 'Maaf, sepertinya saya tidak bisa mencatat diskusi ini';
-  _NOTULEN_MSG_NOTPERMITTED = 'Sepertinya anda belum masuk sebagai admin';
-  _NOTULEN_MSG_SECRET = 'rahasia ...';
-  _NOTULEN_MSG_NORECORDING = 'saat ini tidak ada yang dicatat di sini.';
-  _NOTULEN_MSG_RECORDING = 'Sekarang sedang mencatat diskusi:';
-  _NOTULEN_MSG_TERKIRIM = '🎁 terkirim ... ';
-  _NOTULEN_MSG_NOTFOUND = 'Catatan tidak tersedia';
 
   _NOTULEN_HTML_STYLE =
     '<style>body{font-family:Tahoma,"Lucida Grande","Trebuchet MS"}span.username{border-bottom:1px solid #c2d1f0;font-size:small;display:block;background:#e6f5ff;padding:2px 2px 2px 5px}span.message{padding:0 0 0 10px}table{min-width:300px}table,td,th{border:1px solid #00134d}td{border:0;border-bottom:1px solid #668cff}</style>' + '<style>span {white-space: pre;font-family: monospace;display: block;unicode-bidi: embed}</style>';
