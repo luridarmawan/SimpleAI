@@ -1113,6 +1113,8 @@ begin
     o['response/action/callback_name'] := cmdAction[0];
     if cmdAction.Count > 1 then
       o['response/action/callback_method'] := cmdAction[1];
+    if not FImageCaption.IsEmpty then
+      o['response/action/caption'] := FImageCaption;
     for i := 1 to parameterAction.count - 1 do
     begin
       fieldAction := Explode(parameterAction[i], '=');

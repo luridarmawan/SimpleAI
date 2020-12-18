@@ -12,7 +12,7 @@
     </CompilerOptions>
     <Description Value="Simple NLP package
 "/>
-    <Version Minor="1" Release="5"/>
+    <Version Minor="12" Release="18"/>
     <Files Count="5">
       <Item1>
         <Filename Value="src/entities_lib.pas"/>
