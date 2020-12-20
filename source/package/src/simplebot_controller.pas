@@ -41,7 +41,6 @@ uses
   {$endif}
   redis_controller,
   suggestion_controller, domainwhois_controller,
-  resiibacor_integration,
   kamus_controller,
   fastplaz_handler, logutil_lib, http_lib, json_lib,
   fpexprpars, // formula
@@ -947,7 +946,6 @@ begin
   Result := '...';
   try
     kamus := TKamusController.Create;
-    kamus.Token := Config['ibacor/default/token'];
     s := Params.Values['Text_value'];
     if Params.Values['word_value'] <> '' then
       Result := kamus.Find(Params.Values['word_value'])
