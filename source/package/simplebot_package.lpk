@@ -9,6 +9,12 @@
         <OtherUnitFiles Value="src;src/controller"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <Verbosity>
+          <ShowWarn Value="False"/>
+          <ShowHints Value="False"/>
+        </Verbosity>
+      </Other>
     </CompilerOptions>
     <Description Value="SimpleBOT package
 "/>
