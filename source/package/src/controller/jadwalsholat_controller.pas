@@ -65,9 +65,7 @@ function TJadwalSholatController.getJadwalSholatData(CityName: string;
   Day: integer): string;
 var
   s, return: string;
-  json: TJSONUtil;
   jsonData: TJSONData;
-  i: integer;
   httpClient: THTTPLib;
 begin
   Result := '';

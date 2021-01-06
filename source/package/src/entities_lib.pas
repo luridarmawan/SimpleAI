@@ -216,7 +216,7 @@ begin
     end;
   end;
   if Result = '' then
-    Result := '.*';
+    Result := '?P<'+EntityName+'>.*';
   Result := '(' + Result + ')';
 
   str.Free;

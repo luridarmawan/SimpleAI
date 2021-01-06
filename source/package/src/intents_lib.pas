@@ -13,8 +13,8 @@ interface
 
 uses
   common, logutil_lib,
-  entities_lib,
-  RegExpr, IniFiles, Classes, SysUtils;
+  entities_lib, regexpr_lib,
+  IniFiles, Classes, SysUtils;
 
 const
   _SIMPLEAI_INTENT_DATA_FILENAME = 'files/intents.txt';
@@ -144,8 +144,8 @@ end;
 
 function TIntentsFAI.Exec(Text: string): boolean;
 var
-  i, j, k, v, p, match_index: integer;
-  linkName: string;
+  i, j, k, v, p, match_index, groupIndex: integer;
+  linkName, groupName: string;
   Source, s, pattern, entity_name, intent_name, key_used, section_name: string;
   intent_list, item_list, pattern_str: TStrings;
   varsIndex: TStringList;
@@ -289,6 +289,13 @@ begin
             varsIndex.Values['$' + i2s(match_index)] := regex.Match[match_index];
             Inc(match_index);
           until regex.Match[match_index] = '';
+          for groupIndex := 1 to regex.GroupCount do
+          begin
+            groupName := regex.GroupName[groupIndex];
+            if groupName.IsEmpty then
+              Continue;
+            FParameters.Values[groupName] := regex.MatchFromName(groupName);
+          end;
           if varsIndex.Count > 0 then
           begin
             for v := 0 to varsIndex.Count - 1 do
