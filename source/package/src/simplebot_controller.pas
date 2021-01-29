@@ -1375,6 +1375,7 @@ begin
     Exit;
 
   Message := SimpleAI.StringReplacement(Message);
+  Result := Message;
 
   regex := TRegExpr.Create;
   //regex.Expression := '%(.*)%';
