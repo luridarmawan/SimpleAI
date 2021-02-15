@@ -96,7 +96,8 @@ begin
       + '\nUpdated Date: ' + Whois.UpdatedDate
       + '\nCreation Date: ' + Whois.CreationDate
       + '\nExpiration Date: ' + Whois.ExpiredDate
-      + '\nName Server: ' + Whois.NameServer;
+      + '\nName Server: \n' + Whois.NameServer;
+
     if ((Option = 'full') or (Option = 'lengkap')) then
     begin
       Result := StringToJSONString(Whois.Data.Text);
