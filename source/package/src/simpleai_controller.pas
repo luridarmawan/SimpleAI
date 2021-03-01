@@ -1064,6 +1064,8 @@ begin
   json := json + '"intents" : {';
   json := json + '"action" : "' + actionName + '",';
   json := json + '"name" : "' + IntentName + '",';
+  if not SimpleAILib.Intent.Context.IsEmpty then
+    json := json + '"context" : "' + SimpleAILib.Intent.Context + '",';;
   if Debug then
   begin
     json := json + '"key" : "' + FSimpleAILib.Intent.IntentKey + '",';

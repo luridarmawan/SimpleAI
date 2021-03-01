@@ -113,6 +113,7 @@ type
     function getOriginalMessage: string;
     function getReplyType: string;
     function getResponseText: TStringList;
+    function getSourceParameters: TStringList;
     function getStandardWordCheck: Boolean;
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
@@ -208,6 +209,7 @@ type
     property LastSeen:Cardinal read getLastSeen; // in seconds
     property OriginalMessage: string read getOriginalMessage write setOriginalMessage;
     property AdditionalParameters: TStrings read getAdditionalParameters;
+    property SourceParameters: TStringList read getSourceParameters;
     property ResponseText: TStringList read getResponseText;
     property IsExternal: Boolean read FIsExternal;
     property IsMarkup: Boolean read getIsMarkup;
@@ -820,6 +822,11 @@ begin
   Result := SimpleAI.ResponseText;
 end;
 
+function TSimpleBotModule.getSourceParameters: TStringList;
+begin
+  Result := SimpleAI.SimpleAILib.Intent.SourceParameters;
+end;
+
 function TSimpleBotModule.getStandardWordCheck: Boolean;
 begin
   Result := SimpleAI.StandardWordCheck;
@@ -989,14 +996,16 @@ end;
 
 function TSimpleBotModule.Exec(Message: string): string;
 var
-  json: TJSONUtil;
+  i: integer;
   messageCount: integer;
+  sourceKey, sourceValue, sourceTime,
   s, text_response, askIntent, lastVisit, greetingResponse: string;
   lst: TStrings;
   context_params: TStringList;
 
   lastvisit_length: Int64;
   dt: TDateTime;
+  json: TJSONUtil;
 begin
   FIsExternal := False;
   if not CLI then
@@ -1077,6 +1086,17 @@ begin
       SimpleAI.ResponseText.Insert(0, greetingResponse);
     SimpleAI.ResponseText.Text := trim(SimpleAI.ResponseText.Text);
     text_response := SimpleAI.ResponseText.Text;
+
+    if SimpleAI.SimpleAILib.Intent.SourceParameters.Count > 0 then
+    begin
+      for i:=0 to SimpleAI.SimpleAILib.Intent.SourceParameters.Count-1 do
+      begin
+        sourceTime := Now.AsString;
+        sourceKey := SimpleAI.SimpleAILib.Intent.SourceParameters.Names[i];
+        sourceValue := SimpleAI.SimpleAILib.Intent.SourceParameters.ValueFromIndex[i];
+        UserData['saved'+sourceKey] := sourceTime + '|' + sourceValue;
+      end;
+    end;
 
     if SimpleAI.Action <> '' then
     begin

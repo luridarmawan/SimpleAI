@@ -50,6 +50,7 @@ type
     FParameters: TStringList;
     FPattern: string;
     FPrefix: string;
+    FSourceParameters: TStringList;
     FSuffix: string;
     LogUtil : TLogUtil;
 
@@ -83,6 +84,7 @@ type
 
     property isLoaded: boolean read FisLoaded;
     property isBoundary: boolean read FBoundary write FBoundary;
+    property SourceParameters: TStringList read FSourceParameters;
     property Parameters: TStringList read FParameters;
     property PatternString: string read FPattern;
     property Debug: boolean read FDebug write FDebug;
@@ -119,6 +121,7 @@ begin
   FEntities := TEntitiesFAI.Create;
   FParameters := TStringList.Create;
   FDataAsList := TStringList.Create;
+  FSourceParameters := TStringList.Create;
 
   FAction := '';
   FContext := '';
@@ -137,6 +140,7 @@ begin
   if Assigned(FData) then
     FData.Free;
 
+  FSourceParameters.Free;
   FDataAsList.Free;
   FParameters.Free;
   FEntities.Free;
@@ -285,7 +289,10 @@ begin
 
             //FParameters.Values[ '_'+section_name + '_value'] := regex.Match[ match_index];
             if trim(section_name) <> '' then
+            begin
               FParameters.Values[section_name + '_value'] := regex.Match[match_index];
+              FSourceParameters.Values[section_name] := regex.Match[match_index];
+            end;
             varsIndex.Values['$' + i2s(match_index)] := regex.Match[match_index];
             Inc(match_index);
           until regex.Match[match_index] = '';
