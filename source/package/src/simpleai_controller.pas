@@ -64,6 +64,7 @@ type
     FKeyName: string;
     FMsg: string;
     FNonStandardWordFile: String;
+    FOnBeforeExecCommand: TNotifyEvent;
     FOriginalMessage: string;
     FPrefixText: string;
     FReplySuffix: string;
@@ -173,6 +174,9 @@ type
     property CustomReplyType: string read FCustomReplyType;
     property CustomReplyMode: string read FCustomReplyMode;
     property CustomReplyData: TJSONUtil read FCustomReplyData;
+
+  published
+    property OnBeforeExecCommand: TNotifyEvent read FOnBeforeExecCommand write FOnBeforeExecCommand;
   end;
 
 implementation
@@ -995,6 +999,8 @@ begin
   item_list.Free;
   if isCommand(Result) then
   begin
+    if Assigned(FOnBeforeExecCommand) then
+      FOnBeforeExecCommand(self);
     FIsExternal := True;
     Result := execCommand(Result);
   end;

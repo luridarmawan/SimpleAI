@@ -100,6 +100,7 @@ type
     FDataLoaded: boolean;
     Text: string;
     FIsStemming : boolean;
+    procedure beforeExecCommandHandler(Sender: TObject);
     function getAdditionalParameters: TStrings;
     function getCustomReplyData: TJSONUtil;
     function getCustomReplyMode: string;
@@ -478,6 +479,27 @@ end;
 function TSimpleBotModule.getDebug: boolean;
 begin
   Result := SimpleAI.Debug;
+end;
+
+procedure TSimpleBotModule.beforeExecCommandHandler(Sender: TObject);
+var
+  i: integer;
+  key, savedValue, reservedKeyword: string;
+  reservedKeywordAsList: TStrings;
+begin
+  reservedKeyword := SimpleAI.SimpleAILib.Intent.Data.ReadString(SimpleAI.IntentName,'reserved', '');
+  if not reservedKeyword.IsEmpty then
+  begin
+    reservedKeywordAsList := Explode(reservedKeyword, ',');
+    for i:=0 to reservedKeywordAsList.Count-1 do
+    begin
+      key := reservedKeywordAsList[i];
+      savedValue := UserData['saved'+key];
+      if not savedValue.IsEmpty then
+        AdditionalParameters.Values['saved'+key] := savedValue;
+    end;
+    reservedKeywordAsList.Free;
+  end;
 end;
 
 function TSimpleBotModule.getAdditionalParameters: TStrings;
@@ -996,7 +1018,7 @@ end;
 
 function TSimpleBotModule.Exec(Message: string): string;
 var
-  i: integer;
+  i, j: integer;
   messageCount: integer;
   sourceKey, sourceValue, sourceTime,
   s, text_response, askIntent, lastVisit, greetingResponse: string;
@@ -1079,6 +1101,7 @@ begin
   messageCount := messageCount + 1;
 
   SimpleAI.Stemming := FIsStemming;
+  SimpleAI.OnBeforeExecCommand := @beforeExecCommandHandler;
   if SimpleAI.Exec(Text) then
   begin
     FIsExternal := SimpleAI.IsExternal;
@@ -1094,7 +1117,11 @@ begin
         sourceTime := Now.AsString;
         sourceKey := SimpleAI.SimpleAILib.Intent.SourceParameters.Names[i];
         sourceValue := SimpleAI.SimpleAILib.Intent.SourceParameters.ValueFromIndex[i];
-        UserData['saved'+sourceKey] := sourceTime + '|' + sourceValue;
+        j := pos('$', sourceKey);
+        if j = 0 then
+        begin
+          UserData['saved'+sourceKey] := sourceTime + '|' + sourceValue;
+        end;
       end;
     end;
 
