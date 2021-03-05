@@ -63,7 +63,11 @@ type
     DataFile: TextFile;
     FFullName: string;
     FGroupChatID: string;
+    FInvitedFullName: string;
+    FInvitedUserId: string;
+    FInvitedUserName: string;
     FIsGroup: boolean;
+    FIsInvitation: boolean;
     FUserID: string;
     FUserPrefix: string;
     Telegram: TTelegramIntegration;
@@ -124,9 +128,13 @@ type
     property FullName: string read FFullName write FFullName;
     property GroupName: string read FGroupName write setGroupName;
     property GroupChatID: string read FGroupChatID write FGroupChatID;
+    property InvitedUserId: string read FInvitedUserId write FInvitedUserId;
+    property InvitedUserName: string read FInvitedUserName write FInvitedUserName;
+    property InvitedFullName: string read FInvitedFullName write FInvitedFullName;
     property IsRecording: boolean read getIsRecording;
     property RecordNumber: integer read FRecordNumber;
     property IsGroup: boolean read FIsGroup write FIsGroup;
+    property IsInvitation: boolean read FIsInvitation write FIsInvitation;
     property IsPermitted: boolean read getIsPermiited;
     property isCollectiveWelcomeGreeting: boolean read getisCollectiveWelcomeGreeting;
     property isSpamChecking: boolean read getisSpamChecking;
@@ -446,6 +454,7 @@ constructor TCarikController.Create;
 begin
   FReady := False;
   FIsGroup := False;
+  FIsInvitation := False;
   Path := Config[_NOTULEN_CONFIG_PATH];
   if Path = '' then
     Path := _NOTULEN_PATH_DEFAULT;
