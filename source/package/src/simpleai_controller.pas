@@ -630,7 +630,7 @@ begin
 
     FImageURL := json['image'];
     FImageCaption := json['image_caption'];
-    FAutoPrune := json['prune'];
+    FAutoPrune := s2b(json['prune']);
     if ACache and (Result <> '') then
     begin
       SaveCache(AURL, Result);
