@@ -52,6 +52,7 @@ type
     FActionCallback: string;
     FAdditionalParameters: TStrings;
     FAIName: string;
+    FAutoPrune: boolean;
     FCustomReply: TJSONUtil;
     FCustomReplyData: TJSONUtil;
     FCustomReplyMode: string;
@@ -155,6 +156,7 @@ type
     property TrimMessage: boolean read FTrimMessage write FTrimMessage;
     property ImageURL: string read FImageURL;
     property ImageCaption: string read FImageCaption;
+    property AutoPrune: boolean read FAutoPrune;
     property OriginalMessage: string read FOriginalMessage write FOriginalMessage;
     property ReplyType: string read FReplyType;
     property ReplySuffix: string read FReplySuffix;
@@ -628,6 +630,7 @@ begin
 
     FImageURL := json['image'];
     FImageCaption := json['image_caption'];
+    FAutoPrune := json['prune'];
     if ACache and (Result <> '') then
     begin
       SaveCache(AURL, Result);
@@ -795,6 +798,7 @@ begin
   FActionCallback := '';
   FImageURL := '';
   FImageCaption := '';
+  FAutoPrune := false;
   FIsURLEncoded := false;
   FTrimMessage := False;
   FIsExternal := False;
