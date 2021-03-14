@@ -21,6 +21,7 @@ const
   _SIMPLEAI_INTENT_ACTIONKEY = 'action';
   _SIMPLEAI_OBJECT = 'object';
   _SIMPLEAI_CONTEXT = 'context';
+  _SIMPLEAI_RESERVED = 'reserved';
   _SIMPLEAI_VARIABLE = 'var';
   _SIMPLEAI_BOUNDARY = 'boundary';
   _SIMPLEAI_LINK = 'link';
@@ -190,6 +191,8 @@ begin
       if tmp[0] = _SIMPLEAI_OBJECT then
         Continue;
       if tmp[0] = _SIMPLEAI_CONTEXT then
+        Continue;
+      if tmp[0] = _SIMPLEAI_RESERVED then
         Continue;
       if tmp[0] = _SIMPLEAI_BOUNDARY then
       begin
