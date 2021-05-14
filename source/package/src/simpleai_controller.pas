@@ -50,6 +50,7 @@ type
   TSimpleAI = class
   private
     FActionCallback: string;
+    FAdditionalHeaders: TStrings;
     FAdditionalParameters: TStrings;
     FAIName: string;
     FAutoPrune: boolean;
@@ -141,6 +142,8 @@ type
     property Parameters: TStrings read getParameters;
     property AdditionalParameters: TStrings
       read FAdditionalParameters write FAdditionalParameters;
+    property AdditionalHeaders: TStrings
+      read FAdditionalHeaders write FAdditionalHeaders;
     property Values[KeyValue: string]: string read getParameterValue; default;
     property ActionCallback: string read FActionCallback;
     property IsURLEncoded: Boolean read FIsURLEncoded;
@@ -552,6 +555,10 @@ begin
         FormData[FSimpleAILib.Parameters.Names[i]] :=
           UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
       end;
+      for i := 0 to FAdditionalHeaders.Count - 1 do
+      begin
+        AddHeader(FAdditionalHeaders.Names[i], FAdditionalHeaders.ValueFromIndex[i]);
+      end;
       Response := Post();
       Result := Response.ResultText;
       if Response.ResultCode = 200 then
@@ -793,6 +800,7 @@ begin
   FSimpleAILib := TSimpleAILib.Create;
   FResponseText := TStringList.Create;
   FAdditionalParameters := TStringList.Create;
+  FAdditionalHeaders := TStringList.Create;
   FMsg := '';
   FOriginalMessage := '';
   FActionCallback := '';
@@ -822,6 +830,7 @@ destructor TSimpleAI.Destroy;
 begin
   FCustomReplyData.Free;
   FCustomReply.Free;
+  FAdditionalHeaders.Free;
   FAdditionalParameters.Free;
   FResponseText.Free;
   FResponseDataAsList.Free;
