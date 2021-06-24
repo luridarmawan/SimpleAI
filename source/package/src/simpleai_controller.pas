@@ -537,6 +537,8 @@ begin
   begin
     AllowRedirect := True;
     try
+      //ContentType := 'application/x-www-form-urlencoded';
+      //ContentType := 'multipart/form-data';
       AddHeader('_source', 'carik');
       AddHeader('User-Agent', 'carik/nlp');
       //get header from response list
