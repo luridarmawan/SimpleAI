@@ -69,8 +69,10 @@ type
     FOnBeforeExecCommand: TNotifyEvent;
     FOriginalMessage: string;
     FPrefixText: string;
+    FProtocolFormat: string;
     FReplySuffix: string;
     FReplyType: string;
+    FRequestData: TJSONUtil;
     FRequestText: string;
     FResponseText: TStringList;
     FSimpleAILib: TSimpleAILib;
@@ -139,6 +141,8 @@ type
     property IsMarkUp: boolean read GetIsMarkUp;
     property KeyName: string read FKeyName;
     property VarName: string read FVarName;
+    property ProtocolFormat: string read FProtocolFormat;
+    property RequestData: TJSONUtil read FRequestData;
     property Parameters: TStrings read getParameters;
     property AdditionalParameters: TStrings
       read FAdditionalParameters write FAdditionalParameters;
@@ -554,8 +558,19 @@ begin
 
       for i := 0 to FSimpleAILib.Parameters.Count - 1 do
       begin
-        FormData[FSimpleAILib.Parameters.Names[i]] :=
-          UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
+        if ProtocolFormat = 'json' then
+        begin
+          FRequestData['data/'+FSimpleAILib.Parameters.Names[i]] :=
+            FSimpleAILib.Parameters.ValueFromIndex[i];
+        end
+        else
+          FormData[FSimpleAILib.Parameters.Names[i]] :=
+            UrlEncode(FSimpleAILib.Parameters.ValueFromIndex[i]);
+      end;
+      if ProtocolFormat = 'json' then
+      begin
+        ContentType := 'application/json';
+        RequestBody := TStringStream.Create(FRequestData.AsJSON);
       end;
       for i := 0 to FAdditionalHeaders.Count - 1 do
       begin
@@ -806,6 +821,7 @@ begin
   FMsg := '';
   FOriginalMessage := '';
   FActionCallback := '';
+  FProtocolFormat := '';
   FImageURL := '';
   FImageCaption := '';
   FAutoPrune := false;
@@ -826,10 +842,12 @@ begin
   FCustomReplyMode := '';
   FCustomReply := TJSONUtil.Create;
   FCustomReplyData := TJSONUtil.Create;
+  FRequestData := TJSONUtil.Create;
 end;
 
 destructor TSimpleAI.Destroy;
 begin
+  FRequestData.Free;
   FCustomReplyData.Free;
   FCustomReply.Free;
   FAdditionalHeaders.Free;
@@ -982,6 +1000,8 @@ begin
   FResponseData.ReadSectionRaw(IntentName, item_list);
 
   // clean up
+  FProtocolFormat := item_list.Values['format'];
+  if FProtocolFormat.IsEmpty then FProtocolFormat := 'json';
   for i := item_list.Count - 1 downto 0 do
   begin
     if pos('say=', item_list[i]) <> 1 then

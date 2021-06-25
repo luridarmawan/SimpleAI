@@ -989,8 +989,11 @@ procedure TSimpleBotModule.SetSession(Key, Value: string);
 var
   sessionKey: string;
 begin
-  sessionKey := FSessionUserID + '_' + Key;
-  _SESSION[sessionKey] := Value;
+  try
+    sessionKey := FSessionUserID + '_' + Key;
+    _SESSION[sessionKey] := Value;
+  except
+  end;
 end;
 
 function TSimpleBotModule.GetSession(Key: string): string;
