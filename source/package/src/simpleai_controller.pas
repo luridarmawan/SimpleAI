@@ -402,7 +402,7 @@ var
   begin
     Result := StringReplace(AText, '<b>', '*', [rfReplaceAll]);
     Result := StringReplace(Result, '</b>', '*', [rfReplaceAll]);
-    Result := StripHTML(Result);
+    //Result := StripHTML(Result);
     Result := StringReplace(Result, #9, '', [rfReplaceAll]);
     Result := StringReplace(Result, #13, '\n', [rfReplaceAll]);
     Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);
