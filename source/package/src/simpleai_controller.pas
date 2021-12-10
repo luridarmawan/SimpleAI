@@ -57,6 +57,7 @@ type
     FCustomReply: TJSONUtil;
     FCustomReplyData: TJSONUtil;
     FCustomReplyMode: string;
+    FCustomReplySuffix: string;
     FCustomReplyType: string;
     FImageCaption: string;
     FImageURL: string;
@@ -182,6 +183,7 @@ type
     property CustomReply: TJSONUtil read FCustomReply;
     property CustomReplyType: string read FCustomReplyType;
     property CustomReplyMode: string read FCustomReplyMode;
+    property CustomReplySuffix: string read FCustomReplySuffix;
     property CustomReplyData: TJSONUtil read FCustomReplyData;
 
   published
@@ -840,6 +842,7 @@ begin
   FReplyType := '';
   FReplySuffix := '';
   FCustomReplyMode := '';
+  FCustomReplySuffix := '';
   FCustomReply := TJSONUtil.Create;
   FCustomReplyData := TJSONUtil.Create;
   FRequestData := TJSONUtil.Create;
@@ -1218,6 +1221,7 @@ begin
 
   FCustomReplyType := FCustomReply['action/type'];
   FCustomReplyMode := FCustomReply['action/mode'];
+  FCustomReplySuffix := FCustomReply['action/suffix'];
   FCustomReplyData.LoadFromJsonString(FCustomReply.ValueArray['action/data'].AsJSON, False);
 end;
 
