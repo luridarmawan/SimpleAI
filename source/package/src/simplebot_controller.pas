@@ -716,6 +716,7 @@ begin
   Result := StringReplace(Result, 'tambah', '+', [rfReplaceAll]);
   Result := StringReplace(Result, 'dikurangi', '-', [rfReplaceAll]);
   Result := StringReplace(Result, 'dikurang', '-', [rfReplaceAll]);
+  Result := StringReplace(Result, '_', '-', [rfReplaceAll]);
   Result := StringReplace(Result, 'koma', '.', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp.', '', [rfReplaceAll]);
   Result := StringReplace(Result, 'rp', '', [rfReplaceAll]);
@@ -1372,6 +1373,7 @@ begin
   s := s.Replace('dikali', '*');
   s := s.Replace('dikurangi', '-');
   s := s.Replace('minus', '-');
+  s := s.Replace('_', '-');
   s := s.Replace('plus', '+');
   s := s.Replace('tambah', '+');
   s := s.Replace('bagi', '/');

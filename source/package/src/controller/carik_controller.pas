@@ -202,6 +202,7 @@ begin
     Result := True;
 end;
 
+//TODO: fix this function !!!!
 function TCarikController.getisSpamChecking: boolean;
 var
   i: Integer;
