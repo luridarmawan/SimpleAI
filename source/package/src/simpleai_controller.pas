@@ -59,6 +59,7 @@ type
     FCustomReplyMode: string;
     FCustomReplySuffix: string;
     FCustomReplyType: string;
+    FCustomReplyURL: string;
     FImageCaption: string;
     FImageURL: string;
     FIsExternal: Boolean;
@@ -184,6 +185,7 @@ type
     property CustomReplyType: string read FCustomReplyType;
     property CustomReplyMode: string read FCustomReplyMode;
     property CustomReplySuffix: string read FCustomReplySuffix;
+    property CustomReplyURL: string read FCustomReplyURL;
     property CustomReplyData: TJSONUtil read FCustomReplyData;
 
   published
@@ -1210,6 +1212,7 @@ procedure TSimpleAI.parseReply(AText: string);
 begin
   FCustomReplyType := '';
   FCustomReplyMode := '';
+  FCustomReplyURL := '';
   FCustomReply.LoadFromJsonString(AText, False);
   FReplyType := FCustomReply['type'];
   FReplySuffix := FCustomReply['suffix'];
@@ -1222,6 +1225,8 @@ begin
   FCustomReplyType := FCustomReply['action/type'];
   FCustomReplyMode := FCustomReply['action/mode'];
   FCustomReplySuffix := FCustomReply['action/suffix'];
+  if FCustomReplyType = 'form' then
+    FCustomReplyURL := FCustomReply['action/url'];
   FCustomReplyData.LoadFromJsonString(FCustomReply.ValueArray['action/data'].AsJSON, False);
 end;
 

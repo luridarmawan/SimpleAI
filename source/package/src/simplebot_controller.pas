@@ -105,6 +105,7 @@ type
     function getCustomReplyData: TJSONUtil;
     function getCustomReplyMode: string;
     function getCustomReplyType: string;
+    function getCustomReplyURL: string;
     function getDebug: boolean;
     function getHandler(const TagName: string): THandlerCallback;
     function getIsCustomAction: boolean;
@@ -200,6 +201,7 @@ type
     property CustomReplyType: string read getCustomReplyType;
     property CustomReplyMode: string read getCustomReplyMode;
     property CustomReplyData: TJSONUtil read getCustomReplyData;
+    property CustomReplyURL: string read getCustomReplyURL;
 
   published
     property UseRedis: boolean read FUseRedis write FUseRedis;
@@ -520,6 +522,11 @@ end;
 function TSimpleBotModule.getCustomReplyType: string;
 begin
   Result := SimpleAI.CustomReplyType;
+end;
+
+function TSimpleBotModule.getCustomReplyURL: string;
+begin
+  Result := SimpleAI.CustomReplyURL;
 end;
 
 procedure TSimpleBotModule.setHandler(const TagName: string; AValue: THandlerCallback);
