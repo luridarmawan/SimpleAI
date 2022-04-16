@@ -30,6 +30,7 @@ type
     function getPattern: string;
     function getPrefix: string;
     function getSuffix: string;
+    function getWeight: integer;
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
@@ -46,6 +47,7 @@ type
     property Intent: TIntentsFAI read FIntents;
     property Action: string read getAction;
     property IntentName: string read getIntentName;
+    property Weight: integer read getWeight;
     property Parameters: TStrings read getParameters;
     property Pattern: string read getPattern;
     property Prefix: string read getPrefix;
@@ -93,6 +95,11 @@ end;
 function TSimpleAILib.getSuffix: string;
 begin
   Result := FIntents.Suffix;
+end;
+
+function TSimpleAILib.getWeight: integer;
+begin
+  Result := FIntents.Weight;
 end;
 
 constructor TSimpleAILib.Create;

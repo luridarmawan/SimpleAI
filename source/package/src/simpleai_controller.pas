@@ -108,6 +108,7 @@ type
     function execJson(AURL: string; ACache: boolean = False): string;
     function execJsonGet(AURL: string; ACache: boolean = False): string;
     function execGet(AURL: string; ACache: boolean = False): string;
+    function getWeight: integer;
 
     procedure setDebug(AValue: boolean);
     function isValidCommand(ACommandString: string): boolean;
@@ -140,6 +141,7 @@ type
     property SimpleAILib: TSimpleAILib read FSimpleAILib;
     property Action: string read getAction;
     property IntentName: string read getIntentName;
+    property Weight: integer read getWeight;
     property IsMarkUp: boolean read GetIsMarkUp;
     property KeyName: string read FKeyName;
     property VarName: string read FVarName;
@@ -787,6 +789,11 @@ begin
   end;
 end;
 
+function TSimpleAI.getWeight: integer;
+begin
+  Result := SimpleAILib.Weight;
+end;
+
 function TSimpleAI.getTimeSession(): string;
 var
   Hour, Min, Sec, HSec: word;
@@ -1110,6 +1117,8 @@ begin
   json := json + '"intents" : {';
   json := json + '"action" : "' + actionName + '",';
   json := json + '"name" : "' + IntentName + '",';
+  if Weight > 0 then
+    json := json + '"weight" : "' + Weight.ToString + '",';//ulil
   if not SimpleAILib.Intent.Context.IsEmpty then
     json := json + '"context" : "' + SimpleAILib.Intent.Context + '",';;
   if Debug then

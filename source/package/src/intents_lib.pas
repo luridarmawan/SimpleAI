@@ -25,6 +25,7 @@ const
   _SIMPLEAI_VARIABLE = 'var';
   _SIMPLEAI_BOUNDARY = 'boundary';
   _SIMPLEAI_LINK = 'link';
+  _SIMPLEAI_WEIGHT = 'weight';
   _SIMPLEAI_PREFIX = 'prefix';
   _SIMPLEAI_SUFFIX = 'suffix';
   _AI_VARKEY = 'varkey';
@@ -53,6 +54,7 @@ type
     FPrefix: string;
     FSourceParameters: TStringList;
     FSuffix: string;
+    FWeight: integer;
     LogUtil : TLogUtil;
 
   public
@@ -80,6 +82,7 @@ type
     property IntentKey: string read FIntentKey;
     property Prefix: string read FPrefix;
     property Suffix: string read FSuffix;
+    property Weight: integer read FWeight;
     property IntentKeySpecific: string read FIntentKeySpecific;
     property Entity: TEntitiesFAI read FEntities;
 
@@ -131,6 +134,7 @@ begin
   FIntentKey := '';
   FDebug := False;
   FBoundary := True;
+  FWeight := 0;
   //LogUtil := TLogUtil.Create;
 end;
 
@@ -206,6 +210,11 @@ begin
       begin
         linkName := tmp[1];
         Continue;
+      end;
+      if tmp[0] = _SIMPLEAI_WEIGHT then
+      begin
+        FWeight := s2i(tmp[1]);
+        continue;
       end;
       pattern := tmp[1];
 

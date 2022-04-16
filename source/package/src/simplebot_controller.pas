@@ -119,6 +119,7 @@ type
     function getStandardWordCheck: Boolean;
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
+    function getWeight: integer;
 
     procedure setBotName(AValue: string);
     procedure setDebug(AValue: boolean);
@@ -193,6 +194,7 @@ type
     property OnError: TOnErrorCallback read FOnError write FOnError;
     property TrimMessage: boolean read getTrimMessage write setTrimMessage;
 
+    property Weight: integer read getWeight;
     property SessionUserID:string read FSessionUserID write FSessionUserID;
 
     // CustomAction
@@ -629,6 +631,11 @@ begin
     Result := FUserDataAsJson[KeyName];
     //LogUtil.Add('GET: ' + KeyName + ' -> ' + Result, 'REDIS');
   end;
+end;
+
+function TSimpleBotModule.getWeight: integer;
+begin
+  Result := SimpleAI.Weight;
 end;
 
 function TSimpleBotModule.handlerProcessing(ActionName, Message: string): string;
