@@ -153,7 +153,7 @@ end;
 
 function TIntentsFAI.Exec(Text: string): boolean;
 var
-  i, j, k, v, p, match_index, groupIndex: integer;
+  i, j, k, v, p, match_index, groupIndex, tmpWeight: integer;
   linkName, groupName: string;
   Source, s, pattern, entity_name, intent_name, key_used, section_name: string;
   intent_list, item_list, pattern_str: TStrings;
@@ -213,7 +213,7 @@ begin
       end;
       if tmp[0] = _SIMPLEAI_WEIGHT then
       begin
-        FWeight := s2i(tmp[1]);
+        tmpWeight := s2i(tmp[1]);
         continue;
       end;
       pattern := tmp[1];
@@ -341,6 +341,7 @@ begin
             FIntentName := linkName;
           end;
 
+          FWeight := tmpWeight;
           regex.Free;
           tmp.Free;
           pattern_str.Free;
