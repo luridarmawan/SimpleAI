@@ -118,6 +118,7 @@ type
     function getResponseText: TStringList;
     function getSourceParameters: TStringList;
     function getStandardWordCheck: Boolean;
+    function getTimeOutMessage: string;
     function getTrimMessage: boolean;
     function getUserData(const KeyName: string): string;
     function getWeight: integer;
@@ -134,6 +135,7 @@ type
     procedure setOriginalMessage(AValue: string);
     procedure setStandardWordCheck(AValue: Boolean);
     procedure setStorageType(AValue: TStorageType);
+    procedure setTimeOutMessage(AValue: string);
     procedure setTrimMessage(AValue: boolean);
     procedure setUserData(const KeyName: string; AValue: string);
     function URL_Handler(const IntentName: string; Params: TStrings): string;
@@ -221,6 +223,7 @@ type
     property IsExternal: Boolean read FIsExternal;
     property IsMarkup: Boolean read getIsMarkup;
     property ConnectTimeout: Integer read getConnectTimeout write setConnectTimeout;
+    property TimeOutMessage: string read getTimeOutMessage write setTimeOutMessage;
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
@@ -882,6 +885,11 @@ begin
   Result := SimpleAI.StandardWordCheck;
 end;
 
+function TSimpleBotModule.getTimeOutMessage: string;
+begin
+  Result := SimpleAI.TimeOutMessage;
+end;
+
 procedure TSimpleBotModule.setIsStemming(AValue: boolean);
 begin
     FIsStemming := AValue;
@@ -913,6 +921,11 @@ begin
       FRedis := TRedisConstroller.Create;
   end;
 
+end;
+
+procedure TSimpleBotModule.setTimeOutMessage(AValue: string);
+begin
+  SimpleAI.TimeOutMessage := AValue;
 end;
 
 procedure TSimpleBotModule.setTrimMessage(AValue: boolean);

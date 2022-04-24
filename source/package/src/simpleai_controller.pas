@@ -84,6 +84,7 @@ type
     FStemmedText: string;
     FStemmedJson: string;
     FStemmedWordCount, FNonStandardWordCount, FUnknownWordCount : Integer;
+    FTimeOutMessage: string;
     FStemmingDictionary: string;
     FSuffixText: string;
     FTrimMessage: boolean;
@@ -173,6 +174,7 @@ type
     property ReplyType: string read FReplyType;
     property ReplySuffix: string read FReplySuffix;
     property ConnectTimeout: Integer read FConnectTimeout write FConnectTimeout;
+    property TimeOutMessage: string read FTimeOutMessage write FTimeOutMessage;
 
     // Stemming
     property Stemming: boolean read getIsStemming write setIsStemming;
@@ -599,7 +601,7 @@ begin
       begin
         Result := 'FAILED: ' + Result;
         if not Debug then
-          Result := '';
+          Result := FTimeOutMessage;
       end;
     except
       on e: Exception do
@@ -607,7 +609,9 @@ begin
         if Debug then
         begin
           Result := e.Message;
-        end;
+        end
+        else
+          Result := FTimeOutMessage;
       end;
     end;
 
@@ -646,11 +650,12 @@ begin
     if Debug then
     begin
       //TODO: log debug;
-    end;
-    Result := '';
+    end
+    else
+      Result := FTimeOutMessage;
   end;
 
-  if Result = '' then
+  if ((not FIsSuccesfull) or (Result = '')) then
     Exit;
 
   parseReply(Result);
@@ -773,7 +778,7 @@ begin
         FIsSuccesfull := True;
         Result := 'FAILED: ' + Result;
         if not Debug then
-          Result := '';
+          Result := FTimeOutMessage;
       end;
     except
       on e: Exception do
@@ -781,7 +786,9 @@ begin
         if Debug then
         begin
           Result := e.Message;
-        end;
+        end
+        else
+          Result := FTimeOutMessage;
       end;
     end;
     Free;
@@ -834,6 +841,7 @@ begin
   FAdditionalParameters := TStringList.Create;
   FAdditionalHeaders := TStringList.Create;
   FConnectTimeout := 0;
+  FTimeOutMessage := '';
   FMsg := '';
   FOriginalMessage := '';
   FActionCallback := '';
