@@ -54,6 +54,7 @@ type
     FAdditionalParameters: TStrings;
     FAIName: string;
     FAutoPrune: boolean;
+    FConnectTimeout: Integer;
     FCustomReply: TJSONUtil;
     FCustomReplyData: TJSONUtil;
     FCustomReplyMode: string;
@@ -171,6 +172,7 @@ type
     property OriginalMessage: string read FOriginalMessage write FOriginalMessage;
     property ReplyType: string read FReplyType;
     property ReplySuffix: string read FReplySuffix;
+    property ConnectTimeout: Integer read FConnectTimeout write FConnectTimeout;
 
     // Stemming
     property Stemming: boolean read getIsStemming write setIsStemming;
@@ -546,6 +548,7 @@ begin
   with THTTPLib.Create(AURL) do
   begin
     AllowRedirect := True;
+    if FConnectTimeout > 0 then ConnectTimeout := FConnectTimeout;
     try
       //ContentType := 'application/x-www-form-urlencoded';
       //ContentType := 'multipart/form-data';
@@ -744,6 +747,7 @@ begin
   with THTTPLib.Create(tempURL) do
   begin
     AllowRedirect := True;
+    if FConnectTimeout > 0 then ConnectTimeout := FConnectTimeout;
     try
       AddHeader('_source', 'carik');
       //get header from response list
@@ -829,6 +833,7 @@ begin
   FResponseText := TStringList.Create;
   FAdditionalParameters := TStringList.Create;
   FAdditionalHeaders := TStringList.Create;
+  FConnectTimeout := 0;
   FMsg := '';
   FOriginalMessage := '';
   FActionCallback := '';

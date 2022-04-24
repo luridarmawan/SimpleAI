@@ -102,6 +102,7 @@ type
     FIsStemming : boolean;
     procedure beforeExecCommandHandler(Sender: TObject);
     function getAdditionalParameters: TStrings;
+    function getConnectTimeout: Integer;
     function getCustomReplyData: TJSONUtil;
     function getCustomReplyMode: string;
     function getCustomReplyType: string;
@@ -122,6 +123,7 @@ type
     function getWeight: integer;
 
     procedure setBotName(AValue: string);
+    procedure setConnectTimeout(AValue: Integer);
     procedure setDebug(AValue: boolean);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
     function handlerProcessing(ActionName, Message: string): string;
@@ -218,6 +220,7 @@ type
     property ResponseText: TStringList read getResponseText;
     property IsExternal: Boolean read FIsExternal;
     property IsMarkup: Boolean read getIsMarkup;
+    property ConnectTimeout: Integer read getConnectTimeout write setConnectTimeout;
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
@@ -475,6 +478,11 @@ begin
   SimpleAI.AIName := AValue;
 end;
 
+procedure TSimpleBotModule.setConnectTimeout(AValue: Integer);
+begin
+  SimpleAI.ConnectTimeout := AValue;
+end;
+
 procedure TSimpleBotModule.setDebug(AValue: boolean);
 begin
   SimpleAI.Debug := AValue;
@@ -509,6 +517,11 @@ end;
 function TSimpleBotModule.getAdditionalParameters: TStrings;
 begin
   Result := SimpleAI.AdditionalParameters;
+end;
+
+function TSimpleBotModule.getConnectTimeout: Integer;
+begin
+  Result := SimpleAI.ConnectTimeout;
 end;
 
 function TSimpleBotModule.getCustomReplyData: TJSONUtil;
