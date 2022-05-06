@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="4">
+  <Package Version="5">
     <Name Value="simplebot_package"/>
     <Author Value="Luri Darmawan"/>
     <CompilerOptions>
@@ -18,7 +18,7 @@
     </CompilerOptions>
     <Description Value="SimpleBOT package
 "/>
-    <Version Minor="12" Release="18"/>
+    <Version Minor="13"/>
     <Files Count="8">
       <Item1>
         <Filename Value="src/simplebot_controller.pas"/>
@@ -53,6 +53,7 @@
         <UnitName Value="jadwalsholat_controller"/>
       </Item8>
     </Files>
+    <CompatibilityMode Value="True"/>
     <i18n>
       <EnableI18N Value="True"/>
       <OutDir Value="locale"/>

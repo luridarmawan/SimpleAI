@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="4">
+  <Package Version="5">
     <Name Value="simpleai_package"/>
     <Author Value="Luri Darmawan"/>
     <CompilerOptions>
@@ -18,7 +18,7 @@
     </CompilerOptions>
     <Description Value="Simple NLP package
 "/>
-    <Version Minor="12" Release="18"/>
+    <Version Minor="13"/>
     <Files Count="5">
       <Item1>
         <Filename Value="src/entities_lib.pas"/>
@@ -41,6 +41,7 @@
         <UnitName Value="similarity_lib"/>
       </Item5>
     </Files>
+    <CompatibilityMode Value="True"/>
     <i18n>
       <EnableI18N Value="True"/>
       <OutDir Value="locale"/>
