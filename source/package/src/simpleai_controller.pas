@@ -1220,6 +1220,14 @@ begin
     end;
   end;
 
+  // compatibility
+  if not FImageURL.IsEmpty then
+  begin
+    o['action/action/type'] := 'image';
+    o['action/action/data/caption'] := FImageCaption;
+    o['action/action/data/url'] := FImageURL;
+  end;
+
   json := o.AsJSON;
   o.Free;
   Result := json;
