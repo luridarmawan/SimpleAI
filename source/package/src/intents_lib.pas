@@ -25,6 +25,7 @@ const
   _SIMPLEAI_VARIABLE = 'var';
   _SIMPLEAI_BOUNDARY = 'boundary';
   _SIMPLEAI_LINK = 'link';
+  _SIMPLEAI_REACTION = 'reaction';
   _SIMPLEAI_WEIGHT = 'weight';
   _SIMPLEAI_PREFIX = 'prefix';
   _SIMPLEAI_SUFFIX = 'suffix';
@@ -52,6 +53,7 @@ type
     FParameters: TStringList;
     FPattern: string;
     FPrefix: string;
+    FReaction: string;
     FSourceParameters: TStringList;
     FSuffix: string;
     FWeight: integer;
@@ -83,6 +85,7 @@ type
     property Prefix: string read FPrefix;
     property Suffix: string read FSuffix;
     property Weight: integer read FWeight;
+    property Reaction: string read FReaction;
     property IntentKeySpecific: string read FIntentKeySpecific;
     property Entity: TEntitiesFAI read FEntities;
 
@@ -135,6 +138,7 @@ begin
   FDebug := False;
   FBoundary := True;
   FWeight := 0;
+  FReaction := '';
   //LogUtil := TLogUtil.Create;
 end;
 
@@ -212,6 +216,10 @@ begin
         Continue;
       end;
       if tmp[0] = _SIMPLEAI_WEIGHT then
+      begin
+        continue;
+      end;
+      if tmp[0] = _SIMPLEAI_REACTION then
       begin
         continue;
       end;
@@ -341,6 +349,9 @@ begin
           end;
 
           FWeight := FData.ReadInteger(FIntentName, _SIMPLEAI_WEIGHT, 0);
+          FReaction := FData.ReadString(FIntentName, _SIMPLEAI_REACTION, '');
+          if not FReaction.IsEmpty then
+            FParameters.Values['reaction'] := FReaction;
           regex.Free;
           tmp.Free;
           pattern_str.Free;

@@ -114,6 +114,7 @@ type
     function getIsStemming: boolean;
     function getLastSeen: Cardinal;
     function getOriginalMessage: string;
+    function getReaction: string;
     function getReplyType: string;
     function getResponseText: TStringList;
     function getSourceParameters: TStringList;
@@ -199,6 +200,7 @@ type
     property TrimMessage: boolean read getTrimMessage write setTrimMessage;
 
     property Weight: integer read getWeight;
+    property Reaction: string read getReaction;
     property SessionUserID:string read FSessionUserID write FSessionUserID;
 
     // CustomAction
@@ -863,6 +865,11 @@ end;
 function TSimpleBotModule.getOriginalMessage: string;
 begin
   Result := SimpleAI.OriginalMessage;
+end;
+
+function TSimpleBotModule.getReaction: string;
+begin
+  Result := SimpleAI.Reaction;
 end;
 
 function TSimpleBotModule.getReplyType: string;

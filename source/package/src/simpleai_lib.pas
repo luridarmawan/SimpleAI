@@ -29,6 +29,7 @@ type
     function getParameterValue(KeyName: string): string;
     function getPattern: string;
     function getPrefix: string;
+    function getReaction: string;
     function getSuffix: string;
     function getWeight: integer;
   public
@@ -48,6 +49,7 @@ type
     property Action: string read getAction;
     property IntentName: string read getIntentName;
     property Weight: integer read getWeight;
+    property Reaction: string read getReaction;
     property Parameters: TStrings read getParameters;
     property Pattern: string read getPattern;
     property Prefix: string read getPrefix;
@@ -90,6 +92,11 @@ end;
 function TSimpleAILib.getPrefix: string;
 begin
   Result := FIntents.Prefix;
+end;
+
+function TSimpleAILib.getReaction: string;
+begin
+  Result := FIntents.Reaction;
 end;
 
 function TSimpleAILib.getSuffix: string;

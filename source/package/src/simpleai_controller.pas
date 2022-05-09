@@ -95,6 +95,7 @@ type
     function getIsCustomAction: boolean;
     function getIsMarkUp: boolean;
     function getIsStemming: boolean;
+    function getReaction: string;
     function getResponseJson: string;
     function getTimeSession(): string;
 
@@ -144,6 +145,7 @@ type
     property Action: string read getAction;
     property IntentName: string read getIntentName;
     property Weight: integer read getWeight;
+    property Reaction: string read getReaction;
     property IsMarkUp: boolean read GetIsMarkUp;
     property KeyName: string read FKeyName;
     property VarName: string read FVarName;
@@ -1255,6 +1257,11 @@ end;
 function TSimpleAI.getIsStemming: boolean;
 begin
   Result := FIsStemming;
+end;
+
+function TSimpleAI.getReaction: string;
+begin
+  Result := SimpleAILib.Reaction;
 end;
 
 function TSimpleAI.getIsMarkUp: boolean;
