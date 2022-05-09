@@ -58,6 +58,7 @@ type
     FSuffix: string;
     FWeight: integer;
     LogUtil : TLogUtil;
+    procedure setReaction(AValue: string);
 
   public
     constructor Create; virtual;
@@ -85,7 +86,7 @@ type
     property Prefix: string read FPrefix;
     property Suffix: string read FSuffix;
     property Weight: integer read FWeight;
-    property Reaction: string read FReaction;
+    property Reaction: string read FReaction write setReaction;
     property IntentKeySpecific: string read FIntentKeySpecific;
     property Entity: TEntitiesFAI read FEntities;
 
@@ -120,6 +121,13 @@ begin
   //result.Add(s);
   if (Length(Str) <> 0) then
     Result.Add(Str);
+end;
+
+procedure TIntentsFAI.setReaction(AValue: string);
+begin
+  if FReaction=AValue then Exit;
+  FReaction := AValue;
+  FParameters.Values['reaction'] := AValue;
 end;
 
 constructor TIntentsFAI.Create;

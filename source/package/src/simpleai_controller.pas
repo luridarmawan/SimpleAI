@@ -89,6 +89,7 @@ type
     FSuffixText: string;
     FTrimMessage: boolean;
     FVarName: string;
+    FReaction: string;
     FIsStemming: boolean;
     FStandardWordCheck: Boolean;
 
@@ -669,6 +670,9 @@ begin
     Result := json.Data.FindPath(pathName).AsString;
 
     FImageURL := json['image'];
+    FReaction := json['reaction'];
+    if not FReaction.IsEmpty then
+      SimpleAILib.Intent.Reaction := FReaction;
     FImageCaption := json['image_caption'];
     FAutoPrune := s2b(json['prune']);
     if ACache and (Result <> '') then
@@ -863,6 +867,7 @@ begin
   FStandardWordCheck := False;
   FNonStandardWordFile := 'files' + DirectorySeparator + WORD_NONSTANDARD_FILE;
 
+  FReaction := '';
   FReplyType := '';
   FReplySuffix := '';
   FCustomReplyMode := '';
@@ -1261,7 +1266,10 @@ end;
 
 function TSimpleAI.getReaction: string;
 begin
-  Result := SimpleAILib.Reaction;
+  if FReaction.IsEmpty then
+    Result := SimpleAILib.Reaction
+  else
+    Result := FReaction;
 end;
 
 function TSimpleAI.getIsMarkUp: boolean;
