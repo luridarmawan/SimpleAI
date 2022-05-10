@@ -759,11 +759,14 @@ begin
   Result := Result.Replace('berapa', '');
   Result := Result.Replace('sama', '+');
   Result := Result.Trim;
-  if Result[1] = ',' then
-    Result := Copy(Result, 2);
-  if Result[1] = '.' then
-    Result := Copy(Result, 2);
-  Result := Result.Trim;
+  if not Result.IsEmpty then
+  begin
+    if Result[1] = ',' then
+      Result := Copy(Result, 2);
+    if Result[1] = '.' then
+      Result := Copy(Result, 2);
+    Result := Result.Trim;
+  end;
   Result := StringHumanToNominal(Result);
   Result := Result.Replace(' ' , '');
   if (Result[1] in AllowedOperator) then
