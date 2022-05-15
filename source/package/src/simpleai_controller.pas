@@ -62,6 +62,7 @@ type
     FCustomReplyType: string;
     FCustomReplyURL: string;
     FImageCaption: string;
+    FImagePosition: string;
     FImageURL: string;
     FIsExternal: Boolean;
     FIsSuccesfull: boolean;
@@ -172,6 +173,7 @@ type
     property TrimMessage: boolean read FTrimMessage write FTrimMessage;
     property ImageURL: string read FImageURL;
     property ImageCaption: string read FImageCaption;
+    property ImagePosition: string read FImagePosition;
     property AutoPrune: boolean read FAutoPrune;
     property OriginalMessage: string read FOriginalMessage write FOriginalMessage;
     property ReplyType: string read FReplyType;
@@ -674,6 +676,7 @@ begin
     if not FReaction.IsEmpty then
       SimpleAILib.Intent.Reaction := FReaction;
     FImageCaption := json['image_caption'];
+    FImagePosition := json['image_position'];
     FAutoPrune := s2b(json['prune']);
     if ACache and (Result <> '') then
     begin
@@ -854,6 +857,7 @@ begin
   FProtocolFormat := '';
   FImageURL := '';
   FImageCaption := '';
+  FImagePosition := '';
   FAutoPrune := false;
   FIsURLEncoded := false;
   FTrimMessage := False;
@@ -1192,6 +1196,8 @@ begin
       o['response/action/callback_method'] := cmdAction[1];
     if not FImageCaption.IsEmpty then
       o['response/action/caption'] := FImageCaption;
+    if not FImagePosition.IsEmpty then
+      o['response/action/position'] := FImagePosition;
     for i := 1 to parameterAction.count - 1 do
     begin
       fieldAction := Explode(parameterAction[i], '=');
@@ -1225,6 +1231,8 @@ begin
   begin
     o['action/action/type'] := 'image';
     o['action/action/data/caption'] := FImageCaption;
+    if not FImagePosition.IsEmpty then
+      o['action/action/data/position'] := FImagePosition;
     o['action/action/data/url'] := FImageURL;
   end;
 
