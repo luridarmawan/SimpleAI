@@ -38,6 +38,7 @@ const
   CMD_JSONGET_WITH_CACHE = 'json-get-cache';
   CMD_POST = 'post';
   CMD_POST_WITH_CACHE = 'post-cache';
+  ERR_EXEC_FAILED = 'Maaf, saat ini layanan belum bisa diakses nihhh.\nCoba lagi nanti yaa...';
   CommandList: array  [1..11] of string =
     (_AI_CMD_OPENFILE, _AI_CMD_GET, _AI_CMD_URL, CMD_JSONGET,
     CMD_URL_WITH_CACHE, CMD_GET_WITH_CACHE, CMD_JSON, CMD_JSON_WITH_CACHE,
@@ -604,7 +605,8 @@ begin
       end
       else
       begin
-        Result := 'FAILED: ' + Result;
+        //Result := 'FAILED: ' + Result;
+        Result := ERR_EXEC_FAILED;
         if not Debug then
           Result := FTimeOutMessage;
       end;
@@ -785,7 +787,8 @@ begin
       if Response.ResultCode <> 200 then
       begin
         FIsSuccesfull := True;
-        Result := 'FAILED: ' + Result;
+        //Result := 'FAILED: ' + Result;
+        Result := ERR_EXEC_FAILED;
         if not Debug then
           Result := FTimeOutMessage;
       end;
