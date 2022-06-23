@@ -1227,6 +1227,15 @@ begin
       o.ValueArray['action/action/data'] := customReplyDataAsArray;
     except
     end;
+
+    // compatibility
+    o['action/type'] := FCustomReplyType;
+    o['action/mode'] := FCustomReplyMode;
+    try
+      customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON, False));
+      o.ValueArray['action/data'] := customReplyDataAsArray;
+    except
+    end;
   end;
 
   // compatibility
@@ -1237,6 +1246,13 @@ begin
     if not FImagePosition.IsEmpty then
       o['action/action/data/position'] := FImagePosition;
     o['action/action/data/url'] := FImageURL;
+
+    // compatibility
+    o['action/type'] := 'image';
+    o['action/data/caption'] := FImageCaption;
+    if not FImagePosition.IsEmpty then
+      o['action/data/position'] := FImagePosition;
+    o['action/data/url'] := FImageURL;
   end;
 
   json := o.AsJSON;
