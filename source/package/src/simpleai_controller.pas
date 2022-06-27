@@ -1240,7 +1240,10 @@ begin
     // files
     try
       filesAsArray := TJSONArray(GetJSON(FCustomReply.ValueArray['action/files'].AsJSON, False));
-      o.ValueArray['action/files'] := filesAsArray;
+      if (Assigned(filesAsArray)) then
+      begin
+        o.ValueArray['action/files'] := filesAsArray;
+      end;
     except
     end;
   end;
