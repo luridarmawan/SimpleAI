@@ -1104,7 +1104,7 @@ var
   s, json, actionName, txt, v: string;
   lst: TStrings;
   o: TJSONUtil;
-  customReplyDataAsArray: TJSONArray;
+  customReplyDataAsArray, filesAsArray: TJSONArray;
   cmdAction, parameterAction, fieldAction : TStrings;
 begin
   Result := '';
@@ -1234,6 +1234,13 @@ begin
     try
       customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON, False));
       o.ValueArray['action/data'] := customReplyDataAsArray;
+    except
+    end;
+
+    // files
+    try
+      filesAsArray := TJSONArray(GetJSON(FCustomReply.ValueArray['action/files'].AsJSON, False));
+      o.ValueArray['action/files'] := filesAsArray;
     except
     end;
   end;
