@@ -77,6 +77,7 @@ type
   TSimpleBotModule = class
   private
     FForceUserData: boolean;
+    FFormatNumber: string;
     FUserDataAsJson: TJSONUtil;
     FRedis: TRedisConstroller;
     FAskName: boolean;
@@ -226,6 +227,7 @@ type
     property IsMarkup: Boolean read getIsMarkup;
     property ConnectTimeout: Integer read getConnectTimeout write setConnectTimeout;
     property TimeOutMessage: string read getTimeOutMessage write setTimeOutMessage;
+    property FormatNumber: string read FFormatNumber write FFormatNumber;
 
     // Stemming
     property IsStemming: boolean read getIsStemming write setIsStemming;
@@ -320,6 +322,7 @@ begin
   FForceUserData := False;
   FSessionUserID := '';
   FErrorCount := 0;
+  FFormatNumber := '%5.3N';
   Handler['example'] := @Example_Handler;
   Handler['url'] := @URL_Handler;
   Handler['suggestion'] := @Suggestion.SuggestionHandler;
@@ -620,6 +623,8 @@ function TSimpleBotModule.getUserData(const KeyName: string): string;
 var
   redisKey, redisData: string;
 begin
+  //TODO: add try except;
+  Result := '';
   if FSessionUserID.IsEmpty then Exit;
   Result := GetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName);
 
@@ -793,7 +798,7 @@ begin
     ThousandSeparator:='.';
     DecimalSeparator:=',';
     Result := FloatToStr(resultValue);
-    Result := Format('%5.2N',[resultValue]);
+    Result := Format(FFormatNumber,[resultValue]);
     Result := Result.Replace(',00','');
   except
   end;
@@ -859,8 +864,11 @@ begin
   lastVisit := UserData[_AI_SESSION_LASTVISIT];
   if not lastVisit.IsEmpty then
   begin
-    dt.FromString(lastVisit);
-    Result:= dt.SecondsDiff(Now);
+    try
+      dt.FromString(lastVisit);
+      Result:= dt.SecondsDiff(Now);
+    except
+    end;
   end;
 end;
 
