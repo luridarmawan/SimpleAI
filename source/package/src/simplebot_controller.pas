@@ -799,7 +799,7 @@ begin
     DecimalSeparator:=',';
     Result := FloatToStr(resultValue);
     Result := Format(FFormatNumber,[resultValue]);
-    Result := Result.Replace(',00','');
+    Result := Result.Replace(',000','');
   except
   end;
   mathParser.Free;
