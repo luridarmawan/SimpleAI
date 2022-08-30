@@ -684,13 +684,13 @@ begin
     begin
       SaveCache(AURL, Result);
     end;
+    json.Free;
   except
     on e: Exception do
     begin
       Result := '';
     end;
   end;
-  json.Free;
 
 end;
 
