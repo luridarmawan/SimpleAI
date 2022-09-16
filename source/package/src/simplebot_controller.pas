@@ -109,6 +109,7 @@ type
     function getCustomReplyType: string;
     function getCustomReplyURL: string;
     function getDebug: boolean;
+    function getDefaultSearchPattern: string;
     function getHandler(const TagName: string): THandlerCallback;
     function getIsCustomAction: boolean;
     function getIsMarkup: Boolean;
@@ -128,6 +129,7 @@ type
     procedure setBotName(AValue: string);
     procedure setConnectTimeout(AValue: Integer);
     procedure setDebug(AValue: boolean);
+    procedure setDefaultSearchPattern(AValue: string);
     procedure setHandler(const TagName: string; AValue: THandlerCallback);
     function handlerProcessing(ActionName, Message: string): string;
     function defineHandlerDefault(): string;
@@ -213,6 +215,7 @@ type
     property CustomReplyURL: string read getCustomReplyURL;
 
   published
+    property DefaultSearchPattern: string read getDefaultSearchPattern write setDefaultSearchPattern;
     property UseRedis: boolean read FUseRedis write FUseRedis;
     property ErrorCount: integer read FErrorCount;
     property CLI:Boolean read FCLI write FCLI;
@@ -496,9 +499,19 @@ begin
   SimpleAI.Debug := AValue;
 end;
 
+procedure TSimpleBotModule.setDefaultSearchPattern(AValue: string);
+begin
+  SimpleAI.DefaultSearchPattern := AValue;
+end;
+
 function TSimpleBotModule.getDebug: boolean;
 begin
   Result := SimpleAI.Debug;
+end;
+
+function TSimpleBotModule.getDefaultSearchPattern: string;
+begin
+  Result := SimpleAI.DefaultSearchPattern;
 end;
 
 procedure TSimpleBotModule.beforeExecCommandHandler(Sender: TObject);

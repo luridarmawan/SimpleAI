@@ -24,6 +24,7 @@ type
     FIntents: TIntentsFAI;
     FisLoaded: boolean;
     function getAction: string;
+    function getDefaultSearchPattern: string;
     function getIntentName: string;
     function getParameters: TStrings;
     function getParameterValue(KeyName: string): string;
@@ -32,6 +33,7 @@ type
     function getReaction: string;
     function getSuffix: string;
     function getWeight: integer;
+    procedure setDefaultSearchPattern(AValue: string);
   public
     constructor Create; virtual;
     destructor Destroy; virtual;
@@ -45,6 +47,7 @@ type
 
     property Values[KeyName: string]: string read getParameterValue; default;
   published
+    property DefaultSearchPattern: string read getDefaultSearchPattern write setDefaultSearchPattern;
     property Intent: TIntentsFAI read FIntents;
     property Action: string read getAction;
     property IntentName: string read getIntentName;
@@ -72,6 +75,11 @@ end;
 function TSimpleAILib.getAction: string;
 begin
   Result := FIntents.Action;
+end;
+
+function TSimpleAILib.getDefaultSearchPattern: string;
+begin
+  Result := Intent.DefaultSearchPattern;
 end;
 
 function TSimpleAILib.getParameters: TStrings;
@@ -107,6 +115,11 @@ end;
 function TSimpleAILib.getWeight: integer;
 begin
   Result := FIntents.Weight;
+end;
+
+procedure TSimpleAILib.setDefaultSearchPattern(AValue: string);
+begin
+  Intent.DefaultSearchPattern := AValue;
 end;
 
 constructor TSimpleAILib.Create;

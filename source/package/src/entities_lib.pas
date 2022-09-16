@@ -18,6 +18,7 @@ uses
 const
   _SIMPLEAI_ENTITIES_DATA_FILENAME = 'files/entities.txt';
   _SIMPLEAI_ENTITIES_SEPARATOR = '|';
+  _SIMPLEAI_DEFAULT_SEARCH_PATTERN = '.*'; //alternatif: \w+
 
 type
 
@@ -28,6 +29,7 @@ type
     FAction: string;
     FData: TMemIniFile;
     FDataAsList: TStringList;
+    FDefaultSearchPattern: string;
     FEntityName: string;
     FisLoaded: boolean;
     FKey: string;
@@ -55,6 +57,7 @@ type
     function SetData(List: TStrings): boolean;
 
   published
+    property DefaultSearchPattern: string read FDefaultSearchPattern write FDefaultSearchPattern;
     property Data: TMemIniFile read FData write FData;
     property Action: string read FAction;
     property EntityName: string read FEntityName;
@@ -100,13 +103,13 @@ end;
 
 constructor TEntitiesFAI.Create;
 begin
+  FDefaultSearchPattern := _SIMPLEAI_DEFAULT_SEARCH_PATTERN;
   FEntityName := '';
   FKey := '';
   FValue := '';
   FAction := '';
   FisLoaded := False;
   FDataAsList := TStringList.Create;
-
 end;
 
 destructor TEntitiesFAI.Destroy;
@@ -216,7 +219,7 @@ begin
     end;
   end;
   if Result = '' then
-    Result := '?P<'+EntityName+'>.*';
+    Result := '?P<'+EntityName+'>'+FDefaultSearchPattern;
   Result := '(' + Result + ')';
 
   str.Free;

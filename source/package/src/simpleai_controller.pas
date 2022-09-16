@@ -95,6 +95,7 @@ type
     FIsStemming: boolean;
     FStandardWordCheck: Boolean;
 
+    function getDefaultSearchPattern: string;
     function getIsCustomAction: boolean;
     function getIsMarkUp: boolean;
     function getIsStemming: boolean;
@@ -121,6 +122,7 @@ type
     function isCommand(Msg: string): boolean;
     function execCommand(Message: string): string;
     function openFile(FileName: string): string;
+    procedure setDefaultSearchPattern(AValue: string);
     procedure setIsStemming(AValue: boolean);
     procedure SetStemmingDictionary(AValue: string);
     procedure parseReply(AText:string);
@@ -201,6 +203,7 @@ type
     property CustomReplyData: TJSONUtil read FCustomReplyData;
 
   published
+    property DefaultSearchPattern: string read getDefaultSearchPattern write setDefaultSearchPattern;
     property OnBeforeExecCommand: TNotifyEvent read FOnBeforeExecCommand write FOnBeforeExecCommand;
   end;
 
@@ -533,6 +536,11 @@ begin
     Result := _note.Text;
     _note.Free;
   end;
+end;
+
+procedure TSimpleAI.setDefaultSearchPattern(AValue: string);
+begin
+  SimpleAILib.DefaultSearchPattern := AValue;
 end;
 
 function TSimpleAI.execPost(AURL: string; ACache: boolean): string;
@@ -1335,6 +1343,11 @@ begin
   Result := False;
   if FReplyType = 'action' then
     Result := True;
+end;
+
+function TSimpleAI.getDefaultSearchPattern: string;
+begin
+  Result := SimpleAILib.DefaultSearchPattern;
 end;
 
 

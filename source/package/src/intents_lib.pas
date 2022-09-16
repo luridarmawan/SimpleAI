@@ -25,9 +25,11 @@ const
   _SIMPLEAI_VARIABLE = 'var';
   _SIMPLEAI_BOUNDARY = 'boundary';
   _SIMPLEAI_LINK = 'link';
+  _SIMPLEAI_SEARCH_PATTERN = 'search_pattern';
   _SIMPLEAI_REACTION = 'reaction';
   _SIMPLEAI_WEIGHT = 'weight';
   _SIMPLEAI_PREFIX = 'prefix';
+  _SIMPLEAI_DEFAULT_SEARCH_PATTERN = '.*'; //alternatif: \w+
   _SIMPLEAI_SUFFIX = 'suffix';
   _AI_VARKEY = 'varkey';
   _AI_LINKFROM = 'linkFrom';
@@ -58,6 +60,8 @@ type
     FSuffix: string;
     FWeight: integer;
     LogUtil : TLogUtil;
+    function getDefaultSearchPattern: string;
+    procedure setDefaultSearchPattern(AValue: string);
     procedure setReaction(AValue: string);
 
   public
@@ -76,6 +80,7 @@ type
     function AddDataEntitiesFromFile(FileName: string): boolean;
     function SetData(List: TStrings): boolean;
   published
+    property DefaultSearchPattern: string read getDefaultSearchPattern write setDefaultSearchPattern;
     property Data: TMemIniFile read FData write FData;
     property Entities: TEntitiesFAI read FEntities;
     property Action: string read FAction;
@@ -128,6 +133,16 @@ begin
   if FReaction=AValue then Exit;
   FReaction := AValue;
   FParameters.Values['reaction'] := AValue;
+end;
+
+function TIntentsFAI.getDefaultSearchPattern: string;
+begin
+  Result := Entities.DefaultSearchPattern;
+end;
+
+procedure TIntentsFAI.setDefaultSearchPattern(AValue: string);
+begin
+  Entities.DefaultSearchPattern := AValue;
 end;
 
 constructor TIntentsFAI.Create;
@@ -199,6 +214,7 @@ begin
 
     FBoundary := True;
     linkName := '';
+    FEntities.DefaultSearchPattern := _SIMPLEAI_DEFAULT_SEARCH_PATTERN;
     for j := 0 to item_list.Count - 1 do
     begin
       tmp := Explode(item_list[j], '=');
@@ -221,6 +237,11 @@ begin
       if tmp[0] = _SIMPLEAI_LINK then
       begin
         linkName := tmp[1];
+        Continue;
+      end;
+      if tmp[0] = _SIMPLEAI_SEARCH_PATTERN then
+      begin
+        FEntities.DefaultSearchPattern := tmp[1];
         Continue;
       end;
       if tmp[0] = _SIMPLEAI_WEIGHT then
