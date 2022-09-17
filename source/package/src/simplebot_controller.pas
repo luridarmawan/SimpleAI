@@ -1194,7 +1194,10 @@ begin
         j := pos('$', sourceKey);
         if j = 0 then
         begin
-          UserData['saved'+sourceKey] := sourceTime + '|' + sourceValue;
+          try
+            UserData['saved'+sourceKey] := sourceTime + '|' + sourceValue;
+          except
+          end;
         end;
       end;
     end;
