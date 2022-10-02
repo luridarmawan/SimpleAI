@@ -874,7 +874,11 @@ var
   dt: TDateTime;
 begin
   Result := 0;
-  lastVisit := UserData[_AI_SESSION_LASTVISIT];
+  try
+    lastVisit := UserData[_AI_SESSION_LASTVISIT];
+  except
+    lastVisit := '';
+  end;
   if not lastVisit.IsEmpty then
   begin
     try
