@@ -1109,10 +1109,10 @@ end;
 function TSimpleAI.getResponseJson: string;
 var
   i: integer;
-  s, json, actionName, txt, v: string;
+  s, json, actionName, txt, k, v: string;
   lst: TStrings;
   o: TJSONUtil;
-  customReplyDataAsArray, filesAsArray: TJSONArray;
+  customReplyDataAsArray, filesAsArray, itemAsArray: TJSONArray;
   cmdAction, parameterAction, fieldAction : TStrings;
 begin
   Result := '';
@@ -1130,6 +1130,7 @@ begin
       txt := txt + ',';
   end;
 
+  {
   json := json + '';
   json := json + '{';
   json := json + '"code" : 0,';
@@ -1183,11 +1184,56 @@ begin
     json := json + ',"msg" : "' + FMsg + '"';
   json := json + '}';
   json := json + '}';
+  }
 
   lst.Free;
 
   o := TJSONUtil.Create;
-  o.LoadFromJsonString( json, False);
+  //o.LoadFromJsonString( json, False);
+  o['code'] := 0;
+  o['request/text'] := FRequestText;
+  if FOriginalMessage <> '' then
+    o['request/original_text'] := FRequestText;
+  if FIsStemming then
+  begin
+    o['stemming/text'] := FStemmedText;
+    o['stemming/wordcount'] := i2s(FStemmedWordCount);
+    o['stemming/nonstandardword_count'] := i2s(FNonStandardWordCount);
+    o['stemming/unknownword_count'] := i2s(FUnknownWordCount);
+    try
+      o.ValueArray['stemming/response'] := GetJSON(FStemmedJson) as TJSONArray;
+    except
+    end;
+  end;
+  o['response/intents/action'] := actionName;
+  o['response/intents/name'] := IntentName;
+  if Weight > 0 then
+    o['response/intents/weight'] := Weight.ToString;
+  if not SimpleAILib.Intent.Context.IsEmpty then
+    o['response/intents/context'] := SimpleAILib.Intent.Context;
+  if Debug then
+  begin
+    o['response/intents/key'] := FSimpleAILib.Intent.IntentKey;
+    o['response/intents/pattern'] := FSimpleAILib.Pattern;
+  end;
+  for i := 0 to FSimpleAILib.Parameters.Count - 1 do
+  begin
+    v := FSimpleAILib.Parameters.ValueFromIndex[i];
+    k := FSimpleAILib.Parameters.Names[i];
+    o['response/intents/parameters/'+k] := v;
+  end;
+  if FIsExternal then
+    o['response/intents/external'] := true;
+
+  itemAsArray := TJSONArray.Create;
+  for i := 0 to FResponseText.Count - 1 do
+  begin
+    itemAsArray.Add(trim(FResponseText.ValueFromIndex[i]));
+  end;
+  o.ValueArray['response/text'] := itemAsArray;
+  o['response/elapsed_time'] := ElapsedTime.ToString;
+  if FMsg <> '' then
+    o['response/msg'] := FMsg;
 
   //image view
   if not FImageURL.IsEmpty then
