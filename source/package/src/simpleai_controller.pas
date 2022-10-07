@@ -1191,6 +1191,7 @@ begin
   o := TJSONUtil.Create;
   //o.LoadFromJsonString( json, False);
   o['code'] := 0;
+  o['bot/name'] := AIName;
   o['request/text'] := FRequestText;
   if FOriginalMessage <> '' then
     o['request/original_text'] := FRequestText;
