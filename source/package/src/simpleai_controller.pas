@@ -521,6 +521,9 @@ begin
     end;
   end;
 
+  if Debug then
+    AdditionalParameters.Values['service_url'] := url;
+
   lst.Free;
 end;
 
