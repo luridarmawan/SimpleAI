@@ -1043,6 +1043,13 @@ begin
   if EntitiesKey <> '' then
   begin
     Result := FResponseData.ReadString(IntentName, EntitiesKey, '._');
+    if isCommand(Result) then
+    begin
+      if Assigned(FOnBeforeExecCommand) then
+        FOnBeforeExecCommand(self);
+      FIsExternal := True;
+      Result := execCommand(Result);
+    end;
     Exit;
   end;
 
