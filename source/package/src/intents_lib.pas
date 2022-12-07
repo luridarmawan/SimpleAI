@@ -24,6 +24,8 @@ const
   _SIMPLEAI_RESERVED = 'reserved';
   _SIMPLEAI_VARIABLE = 'var';
   _SIMPLEAI_BOUNDARY = 'boundary';
+  _SIMPLEAI_MERGE = 'merge';
+  _SIMPLEAI_MIXED = 'mixed';
   _SIMPLEAI_LINK = 'link';
   _SIMPLEAI_SEARCH_PATTERN = 'search_pattern';
   _SIMPLEAI_REACTION = 'reaction';
@@ -51,6 +53,7 @@ type
     FIntentName: string;
     FEntities: TEntitiesFAI;
     FisLoaded: boolean;
+    FMerge: Boolean;
     FObjectName: string;
     FParameters: TStringList;
     FPattern: string;
@@ -91,6 +94,7 @@ type
     property Prefix: string read FPrefix;
     property Suffix: string read FSuffix;
     property Weight: integer read FWeight;
+    property Merge: Boolean read FMerge;
     property Reaction: string read FReaction write setReaction;
     property IntentKeySpecific: string read FIntentKeySpecific;
     property Entity: TEntitiesFAI read FEntities;
@@ -162,6 +166,7 @@ begin
   FBoundary := True;
   FWeight := 0;
   FReaction := '';
+  FMerge := False;
   //LogUtil := TLogUtil.Create;
 end;
 
@@ -252,6 +257,10 @@ begin
       begin
         continue;
       end;
+      if tmp[0] = _SIMPLEAI_MERGE then
+        Continue;
+      if tmp[0] = _SIMPLEAI_MIXED then
+        Continue;
       pattern := tmp[1];
 
       // if there are '=' in text
@@ -379,6 +388,7 @@ begin
 
           FWeight := FData.ReadInteger(FIntentName, _SIMPLEAI_WEIGHT, 0);
           FReaction := FData.ReadString(FIntentName, _SIMPLEAI_REACTION, '');
+          FMerge := FData.ReadBool(FIntentName, _SIMPLEAI_MERGE, False);
           if not FReaction.IsEmpty then
             FParameters.Values['reaction'] := FReaction;
           regex.Free;

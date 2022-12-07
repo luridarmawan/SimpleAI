@@ -98,6 +98,7 @@ type
     function getDefaultSearchPattern: string;
     function getIsCustomAction: boolean;
     function getIsMarkUp: boolean;
+    function getIsMerge: boolean;
     function getIsStemming: boolean;
     function getReaction: string;
     function getResponseJson: string;
@@ -151,6 +152,7 @@ type
     property IntentName: string read getIntentName;
     property Weight: integer read getWeight;
     property Reaction: string read getReaction;
+    property IsMerge: boolean read getIsMerge;
     property IsMarkUp: boolean read GetIsMarkUp;
     property KeyName: string read FKeyName;
     property VarName: string read FVarName;
@@ -1393,6 +1395,11 @@ begin
   end;
   if s = 'false' then
     Result := False;
+end;
+
+function TSimpleAI.getIsMerge: boolean;
+begin
+  Result := SimpleAILib.IsMerge;
 end;
 
 function TSimpleAI.getIsCustomAction: boolean;

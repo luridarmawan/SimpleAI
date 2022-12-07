@@ -26,6 +26,7 @@ type
     function getAction: string;
     function getDefaultSearchPattern: string;
     function getIntentName: string;
+    function getIsMerge: boolean;
     function getParameters: TStrings;
     function getParameterValue(KeyName: string): string;
     function getPattern: string;
@@ -53,6 +54,7 @@ type
     property IntentName: string read getIntentName;
     property Weight: integer read getWeight;
     property Reaction: string read getReaction;
+    property IsMerge: boolean read getIsMerge;
     property Parameters: TStrings read getParameters;
     property Pattern: string read getPattern;
     property Prefix: string read getPrefix;
@@ -70,6 +72,11 @@ implementation
 function TSimpleAILib.getIntentName: string;
 begin
   Result := FIntents.IntentName;
+end;
+
+function TSimpleAILib.getIsMerge: boolean;
+begin
+  Result := FIntents.Merge;
 end;
 
 function TSimpleAILib.getAction: string;

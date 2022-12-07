@@ -113,6 +113,7 @@ type
     function getHandler(const TagName: string): THandlerCallback;
     function getIsCustomAction: boolean;
     function getIsMarkup: Boolean;
+    function getIsMerge: boolean;
     function getIsStemming: boolean;
     function getLastSeen: Cardinal;
     function getOriginalMessage: string;
@@ -204,6 +205,7 @@ type
 
     property Weight: integer read getWeight;
     property Reaction: string read getReaction;
+    property IsMerge: boolean read getIsMerge;
     property SessionUserID:string read FSessionUserID write FSessionUserID;
 
     // CustomAction
@@ -583,6 +585,11 @@ end;
 function TSimpleBotModule.getIsMarkup: Boolean;
 begin
   Result := SimpleAI.IsMarkUp;
+end;
+
+function TSimpleBotModule.getIsMerge: boolean;
+begin
+  Result := SimpleAI.IsMerge;
 end;
 
 function TSimpleBotModule.getTrimMessage: boolean;
