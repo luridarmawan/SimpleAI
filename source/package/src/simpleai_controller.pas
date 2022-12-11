@@ -1241,7 +1241,7 @@ begin
   itemAsArray := TJSONArray.Create;
   for i := 0 to FResponseText.Count - 1 do
   begin
-    itemAsArray.Add(trim(FResponseText.ValueFromIndex[i]));
+    itemAsArray.Add(trim(FResponseText[i]));
   end;
   o.ValueArray['response/text'] := itemAsArray;
   o['response/elapsed_time'] := ElapsedTime.ToString;
