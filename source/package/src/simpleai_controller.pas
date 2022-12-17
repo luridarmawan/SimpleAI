@@ -58,6 +58,8 @@ type
     FConnectTimeout: Integer;
     FCustomReply: TJSONUtil;
     FCustomReplyData: TJSONUtil;
+    FCustomReplyIsMainMenu: boolean;
+    FCustomReplyMenuLevel: string;
     FCustomReplyMode: string;
     FCustomReplySuffix: string;
     FCustomReplyType: string;
@@ -199,6 +201,8 @@ type
     property IsCustomAction: boolean read getIsCustomAction;
     property CustomReply: TJSONUtil read FCustomReply;
     property CustomReplyType: string read FCustomReplyType;
+    property CustomReplyMenuLevel: string read FCustomReplyMenuLevel;
+    property CustomReplyIsMainMenu: boolean read FCustomReplyIsMainMenu;
     property CustomReplyMode: string read FCustomReplyMode;
     property CustomReplySuffix: string read FCustomReplySuffix;
     property CustomReplyURL: string read FCustomReplyURL;
@@ -692,6 +696,8 @@ begin
       SimpleAILib.Intent.Reaction := FReaction;
     FImageCaption := json['image_caption'];
     FImagePosition := json['image_position'];
+    FCustomReplyIsMainMenu := json['main'];
+    FCustomReplyMenuLevel := json['level'];
     FAutoPrune := s2b(json['prune']);
     if ACache and (Result <> '') then
     begin
@@ -892,6 +898,8 @@ begin
   FReplySuffix := '';
   FCustomReplyMode := '';
   FCustomReplySuffix := '';
+  FCustomReplyMenuLevel := '';
+  FCustomReplyIsMainMenu := False;
   FCustomReply := TJSONUtil.Create;
   FCustomReplyData := TJSONUtil.Create;
   FRequestData := TJSONUtil.Create;
@@ -1298,6 +1306,8 @@ begin
     // compatibility
     o['action/type'] := FCustomReplyType;
     o['action/mode'] := FCustomReplyMode;
+    if not FCustomReplyMenuLevel.IsEmpty then
+      o['action/mode'] := FCustomReplyMenuLevel;
     try
       customReplyDataAsArray := TJSONArray(GetJSON(CustomReplyData.Data.AsJSON, False));
       o.ValueArray['action/data'] := customReplyDataAsArray;
@@ -1364,6 +1374,9 @@ begin
   end;
 
   FCustomReplyType := FCustomReply['action/type'];
+  FCustomReplyMenuLevel := FCustomReply['action/level'];
+  FCustomReplyIsMainMenu := FCustomReply['action/main'];
+
   FCustomReplyMode := FCustomReply['action/mode'];
   FCustomReplySuffix := FCustomReply['action/suffix'];
   if FCustomReplyType = 'form' then
