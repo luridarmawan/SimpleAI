@@ -1375,7 +1375,11 @@ begin
 
   FCustomReplyType := FCustomReply['action/type'];
   FCustomReplyMenuLevel := FCustomReply['action/level'];
-  FCustomReplyIsMainMenu := FCustomReply['action/main'];
+  try
+    FCustomReplyIsMainMenu := false;
+    FCustomReplyIsMainMenu := FCustomReply['action/main'];
+  except
+  end;
 
   FCustomReplyMode := FCustomReply['action/mode'];
   FCustomReplySuffix := FCustomReply['action/suffix'];
