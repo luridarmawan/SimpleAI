@@ -1374,7 +1374,7 @@ begin
   end;
 
   FCustomReplyType := FCustomReply['action/type'];
-  FCustomReplyMenuLevel := FCustomReply['action/level'];
+  FCustomReplyMenuLevel := FCustomReply['level'];
   try
     FCustomReplyIsMainMenu := false;
     FCustomReplyIsMainMenu := FCustomReply['action/main'];
