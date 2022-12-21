@@ -696,7 +696,7 @@ begin
       SimpleAILib.Intent.Reaction := FReaction;
     FImageCaption := json['image_caption'];
     FImagePosition := json['image_position'];
-    FCustomReplyIsMainMenu := json['main'];
+    FCustomReplyIsMainMenu := s2b(json['main']);
     FCustomReplyMenuLevel := json['level'];
     FAutoPrune := s2b(json['prune']);
     if ACache and (Result <> '') then
