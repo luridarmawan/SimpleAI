@@ -1252,8 +1252,8 @@ begin
     itemAsArray.Add(trim(FResponseText[i]));
   end;
   s := trim(CustomReply['text']);
-  if not s.IsEmpty then
-    itemAsArray.Add(s);
+  //if not s.IsEmpty then
+  //  itemAsArray.Add(s);
   o.ValueArray['response/text'] := itemAsArray;
   o['response/elapsed_time'] := ElapsedTime.ToString;
   if FMsg <> '' then
