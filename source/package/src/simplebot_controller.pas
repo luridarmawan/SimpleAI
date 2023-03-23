@@ -1332,9 +1332,12 @@ begin
 
   //---
   Result := text_response;
-  setSession(_AI_SESSION_MESSAGECOUNT, i2s(messageCount));
-  setSession(_AI_SESSION_LASTVISIT, Now.AsString);
-  UserData[_AI_SESSION_LASTVISIT] := Now.AsString;
+  try
+    setSession(_AI_SESSION_MESSAGECOUNT, i2s(messageCount));
+    setSession(_AI_SESSION_LASTVISIT, Now.AsString);
+    UserData[_AI_SESSION_LASTVISIT] := Now.AsString;
+  except
+  end;
 end;
 
 function TSimpleBotModule.prepareQuestion: boolean;
