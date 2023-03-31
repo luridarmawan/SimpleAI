@@ -646,16 +646,19 @@ begin
   //TODO: add try except;
   Result := '';
   if FSessionUserID.IsEmpty then Exit;
-  Result := GetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName);
+  try
+    Result := GetSession( FSessionUserID + '_' + _AI_SESSION_USER + KeyName);
+  except
+  end;
 
   if (FStorageType = stFile)and(FStorageFileName<>'') then
   begin
     try
       FUserData := TIniFile.Create( FStorageFileName);
       Result := FUserData.ReadString( FSessionUserID, KeyName, '');
+      FUserData.Free;
     except
     end;
-    FUserData.Free;
   end;
   if FStorageType = stRedis then
   begin
