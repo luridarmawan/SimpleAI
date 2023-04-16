@@ -78,6 +78,7 @@ type
   private
     FForceUserData: boolean;
     FFormatNumber: string;
+    FIsMathSuccess: boolean;
     FUserDataAsJson: TJSONUtil;
     FRedis: TRedisConstroller;
     FAskName: boolean;
@@ -228,6 +229,7 @@ type
     property AdditionalParameters: TStrings read getAdditionalParameters;
     property SourceParameters: TStringList read getSourceParameters;
     property ResponseText: TStringList read getResponseText;
+    property IsMathSuccess: boolean read FIsMathSuccess;
     property IsExternal: Boolean read FIsExternal;
     property IsMarkup: Boolean read getIsMarkup;
     property ConnectTimeout: Integer read getConnectTimeout write setConnectTimeout;
@@ -765,6 +767,7 @@ var
 const
   AllowedOperator = ['+', '-', '/', '*', '^'];
 begin
+  FIsMathSuccess := True;
   Result := SimpleAI.Parameters.Values['Formula_value'];
   Result := StringReplace(Result, ':', '/', [rfReplaceAll]);
   Result := StringReplace(Result, 'x', '*', [rfReplaceAll]);
@@ -789,6 +792,7 @@ begin
   Result := Result.Trim;
   if Result.IsEmpty then
     Exit;
+  FIsMathSuccess := False;
   if Result[1] = ',' then
     Result := Copy(Result, 2);
   if Result[1] = '.' then
@@ -823,6 +827,7 @@ begin
     Result := FloatToStr(resultValue);
     Result := Format(FFormatNumber,[resultValue]);
     Result := Result.Replace(',000','');
+    FIsMathSuccess := True;
   except
   end;
   mathParser.Free;

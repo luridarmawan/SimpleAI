@@ -1255,7 +1255,7 @@ begin
   //if not s.IsEmpty then
   //  itemAsArray.Add(s);
   o.ValueArray['response/text'] := itemAsArray;
-  o['response/elapsed_time'] := ElapsedTime.ToString;
+  o['response/elapsed_time'] := ElapsedTime.ToString.ToInteger;
   if FMsg <> '' then
     o['response/msg'] := FMsg;
 
