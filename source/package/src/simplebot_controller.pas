@@ -611,6 +611,7 @@ begin
     try
       FUserData := TIniFile.Create( FStorageFileName);
       FUserData.WriteString( FSessionUserID, KeyName, AValue);
+      FUserData.Free;
     except
       on E:Exception do
       begin
@@ -618,7 +619,6 @@ begin
           LogUtil.Add( E.Message, 'USERDATA');
       end;
     end;
-    FUserData.Free;
   end;
 
   if FStorageType = stRedis then
