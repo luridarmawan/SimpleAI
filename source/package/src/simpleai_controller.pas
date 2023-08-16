@@ -1050,6 +1050,13 @@ begin
   if link <> '' then
     IntentName := link;
 
+  item_list := TStringList.Create;
+  FResponseData.ReadSectionRaw(IntentName, item_list);
+
+  // clean up
+  FProtocolFormat := item_list.Values['format'];
+  if FProtocolFormat.IsEmpty then FProtocolFormat := 'json';
+
   if EntitiesKey <> '' then
   begin
     Result := FResponseData.ReadString(IntentName, EntitiesKey, '._');
@@ -1063,12 +1070,6 @@ begin
     Exit;
   end;
 
-  item_list := TStringList.Create;
-  FResponseData.ReadSectionRaw(IntentName, item_list);
-
-  // clean up
-  FProtocolFormat := item_list.Values['format'];
-  if FProtocolFormat.IsEmpty then FProtocolFormat := 'json';
   for i := item_list.Count - 1 downto 0 do
   begin
     if pos('say=', item_list[i]) <> 1 then
