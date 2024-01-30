@@ -58,6 +58,7 @@ type
     FConnectTimeout: Integer;
     FCustomReply: TJSONUtil;
     FCustomReplyData: TJSONUtil;
+    FCustomReplyFiles: TJSONUtil;
     FCustomReplyIsMainMenu: boolean;
     FCustomReplyMenuLevel: string;
     FCustomReplyMode: string;
@@ -207,6 +208,7 @@ type
     property CustomReplySuffix: string read FCustomReplySuffix;
     property CustomReplyURL: string read FCustomReplyURL;
     property CustomReplyData: TJSONUtil read FCustomReplyData;
+    property CustomReplyFiles: TJSONUtil read FCustomReplyFiles;
 
   published
     property DefaultSearchPattern: string read getDefaultSearchPattern write setDefaultSearchPattern;
@@ -902,12 +904,14 @@ begin
   FCustomReplyIsMainMenu := False;
   FCustomReply := TJSONUtil.Create;
   FCustomReplyData := TJSONUtil.Create;
+  FCustomReplyFiles := TJSONUtil.Create;
   FRequestData := TJSONUtil.Create;
 end;
 
 destructor TSimpleAI.Destroy;
 begin
   FRequestData.Free;
+  FCustomReplyFiles.Free;
   FCustomReplyData.Free;
   FCustomReply.Free;
   FAdditionalHeaders.Free;
@@ -1364,6 +1368,8 @@ begin
 end;
 
 procedure TSimpleAI.parseReply(AText: string);
+var
+  customReplyDataAsString: string;
 begin
   FCustomReplyType := '';
   FCustomReplyMode := '';
@@ -1389,7 +1395,19 @@ begin
   FCustomReplySuffix := FCustomReply['action/suffix'];
   if FCustomReplyType = 'form' then
     FCustomReplyURL := FCustomReply['action/url'];
-  FCustomReplyData.LoadFromJsonString(FCustomReply.ValueArray['action/data'].AsJSON, False);
+  try
+    customReplyDataAsString := FCustomReply.ValueArray['action/data'].AsJSON;
+    FCustomReplyData.LoadFromJsonString(customReplyDataAsString, False);
+  except
+  end;
+
+  // files
+  try
+    customReplyDataAsString := FCustomReply.ValueArray['action/files'].AsJSON;
+    FCustomReplyFiles.LoadFromJsonString(customReplyDataAsString, False);
+  except
+  end;
+
 end;
 
 function TSimpleAI.getIsStemming: boolean;
