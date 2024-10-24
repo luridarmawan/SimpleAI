@@ -224,6 +224,7 @@ type
     property CLI:Boolean read FCLI write FCLI;
     property StorageType:TStorageType read FStorageType write setStorageType;
     property StorageFileName:string read FStorageFileName write FStorageFileName;
+    property Redis: TRedisConstroller read FRedis write FRedis;
     property LastSeen:Cardinal read getLastSeen; // in seconds
     property OriginalMessage: string read getOriginalMessage write setOriginalMessage;
     property AdditionalParameters: TStrings read getAdditionalParameters;
