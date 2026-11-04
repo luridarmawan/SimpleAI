@@ -18,7 +18,7 @@
     </CompilerOptions>
     <Description Value="SimpleBOT package
 "/>
-    <Version Minor="13"/>
+    <Version Major="1" Release="1"/>
     <Files Count="8">
       <Item1>
         <Filename Value="src/simplebot_controller.pas"/>
