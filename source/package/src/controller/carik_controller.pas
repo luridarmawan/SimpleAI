@@ -905,16 +905,36 @@ begin
   if Text = '' then
     Exit;
   lst := Explode(Text, ':');
-  if lst.Count = 1 then
+  try
+    if lst.Count < 2 then
+      Exit;
+    if isValidCommand(lst[0]) then
+      Result := True;
+  finally
+    lst.Free;
+  end;
+end;
+
+// satu segmen path yang aman: tanpa pemisah direktori, tidak diawali '.'
+// (menolak '..', file tersembunyi). Byte >= #128 (UTF-8) diizinkan.
+function isSafePathSegment(const AValue: string): boolean;
+var
+  c: char;
+begin
+  Result := False;
+  if (AValue = '') or (Length(AValue) > 128) then
     Exit;
-  if isValidCommand(lst[0]) then
-    Result := True;
-  lst.Free;
+  if AValue[1] = '.' then
+    Exit;
+  for c in AValue do
+    if not ((c in ['A'..'Z', 'a'..'z', '0'..'9', '.', '_', '-']) or (Ord(c) >= 128)) then
+      Exit;
+  Result := True;
 end;
 
 function TCarikController.ExecCommand(Text: string): string;
 var
-  s, _dir: string;
+  s, _dir, baseDir, fileName: string;
   lst: TStrings;
 
 begin
@@ -925,16 +945,33 @@ begin
   _dir := StringReplace(_dir, '//', '/', [rfReplaceAll]);
 
   lst := Explode(Text, ':');
-  case lst[0] of
-    _AI_CMD_OPENFILE:
-    begin
-      s := trim(_dir + lst[1]);
-      s := StringReplace(s, '\n', '', [rfReplaceAll]);
-      Result := openFile(s);
+  try
+    if lst.Count < 1 then
+      Exit;
+    case lst[0] of
+      _AI_CMD_OPENFILE:
+      begin
+        if lst.Count < 2 then
+          Exit;
+        fileName := Trim(StringReplace(lst[1], '\n', '', [rfReplaceAll]));
+        // nama file (dari teks respons) & nama grup (dari judul chat) bisa
+        // dikendalikan user: cegah path traversal (mis. "file:../../config/config.json")
+        if not isSafePathSegment(fileName) then
+          Exit;
+        if (FGroupName <> '') and not isSafePathSegment(FGroupName) then
+          Exit;
+        s := _dir + fileName;
+        // pertahanan berlapis: path final harus tetap di dalam direktori dokumen
+        baseDir := IncludeTrailingPathDelimiter(ExpandFileName(_dir));
+        s := ExpandFileName(s);
+        if Pos(baseDir, s) <> 1 then
+          Exit;
+        Result := openFile(s);
+      end;
     end;
+  finally
+    lst.Free;
   end;
-
-  lst.Free;
 end;
 
 function TCarikController.AdminAdd(ValidUserName: string): boolean;
